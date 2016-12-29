@@ -1,8 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<script src="/js/AngularControllers/NBA.js"></script>
-<div  ng-app="NFLApp">
+<script src="/js/AngularControllers/NBA/NBA.js"></script>
+<script src="/js/AngularControllers/NBA/NBAController.js"></script>
+<script src="/js/AngularControllers/NBA/NBAControllerHelpers.js"></script>
+<div  ng-app="NBAApp">
     <div class="container" ng-controller="NBAController as nba">
 
         <div class="row">
@@ -14,12 +16,12 @@
         </div>
 
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-xs-12">
                 <uib-tabset active="activeJustified" justified="true">
                     <uib-tab index="0" heading="Players" >
                         <!-- start player selection -->
                         <div class="row">
-                            <div class="col-sm-8">
+                            <div class="col-xs-offset-1 col-xs-11 col-sm-offset-0 col-sm-8 col-lg-offset-0 col-lg-8" >
                                 <div class="panel panel-default" >
                                     <div class="panel-heading">
                                         <div class='btn-toolbar pull-right'>
@@ -60,49 +62,49 @@
                                                         <tr>
                                                             <th>Add</th>
                                                             <th>
-                                                                <a href="#" ng-click="sortType = '_Name'; sortReverse = !sortReverse">
-                                                                    Name
-                                                                </a>
+                                                                <span class="fake-link"  ng-click="sortType = '_Name'; sortReverse = !sortReverse">
+                                                                      Name
+                                                                </span>
                                                             </th>
                                                             <th>
-                                                                <a href="#" ng-click="sortType = '_Team'; sortReverse = !sortReverse">
+                                                                <span class="fake-link"  ng-click="sortType = '_Team'; sortReverse = !sortReverse">
                                                                     Team
-                                                                </a>
+                                                                </span>
                                                             </th>
                                                             <th>
-                                                                <a href="#" ng-click="sortType = '_Opponent'; sortReverse = !sortReverse">
-                                                                    Opp
-                                                                </a>
+                                                                <span class="fake-link"  ng-click="sortType = '_Opponent'; sortReverse = !sortReverse">
+                                                                      Opp
+                                                                </span>
                                                             </th>
                                                             <th>
-                                                                <a href="#" ng-click="sortType = '_playerGame'; sortReverse = !sortReverse">
+                                                                <span class="fake-link" ng-click="sortType = '_Game'; sortReverse = !sortReverse">
                                                                     Game
-                                                                </a>
+                                                                </span>
                                                             </th>
                                                             <th>
-                                                                <a href="#" ng-click="sortType = '_Position'; sortReverse = !sortReverse">
+                                                                <span class="fake-link"  ng-click="sortType = '_Position'; sortReverse = !sortReverse">
                                                                     Position
-                                                                </a>
+                                                                </span>
                                                             </th>
                                                             <th>
-                                                                <a href="#" ng-click="sortType = '_FPPG'; sortReverse = !sortReverse">
+                                                                <span class="fake-link"  ng-click="sortType = '_FPPG'; sortReverse = !sortReverse">
                                                                     FPPG
-                                                                </a>
+                                                                </span>
                                                             </th>
                                                             <th>
-                                                                <a href="#" ng-click="sortType = '_ActualFantasyPoints'; sortReverse = !sortReverse">
+                                                                <span class="fake-link"  ng-click="sortType = '_ActualFantasyPoints'; sortReverse = !sortReverse">
                                                                     Actual
-                                                                </a>
+                                                                </span>
                                                             </th>
                                                             <th>
-                                                                <a href="#" ng-click="sortType = '_Salary'; sortReverse = !sortReverse">
+                                                                <span class="fake-link" ng-click="sortType = '_Salary'; sortReverse = !sortReverse">
                                                                     Salary
-                                                                </a>
+                                                                </span>
                                                             </th>
                                                             <th>
-                                                                <a href="#" ng-click="sortType = '_ProjectedPointsPerDollar'; sortReverse = !sortReverse">
+                                                                <span class="fake-link"  ng-click="sortType = '_ProjectedPointsPerDollar'; sortReverse = !sortReverse">
                                                                     Pts / $
-                                                                </a>
+                                                                </span>
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -112,10 +114,10 @@
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Team}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Opponent}}</td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._playerGame}}</td>
+                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Game}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Position}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._FPPG}}</td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._ActualFantasyPoints}}</td>
+                                                            <td><input class="form-control actualPoints"  ng-model="player._ActualFantasyPoints" type="number" ></td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Salary}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._ProjectedPointsPerDollar}}</td>
                                                         </tr>
@@ -131,7 +133,7 @@
 
                                 </div>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-xs-offset-1 col-xs-11 col-sm-offset-0 col-sm-4 col-lg-offset-0 col-lg-4">
                                 <!-- start Draft selection -->
                                 <div class="panel panel-default" >
                                     <div class="panel-heading">
@@ -239,7 +241,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-12">
+                            <div class="col-xs-offset-1 col-xs-11 col-sm-offset-0 col-sm-12 col-lg-offset-0 col-lg-12">
                                 <div class="panel panel-default" >
                                     <div class="panel-heading">
                                         <div class='btn-toolbar pull-right'>
@@ -305,24 +307,24 @@
                                                         <tr>
                                                             <th>Draft</th>
                                                             <th>
-                                                                <a href="#" ng-click="setDraftSortTypeAndReverse('projection')">
+                                                                <span class="fake-link" ng-click="setDraftSortTypeAndReverse('projection')">
                                                                     FPPG
-                                                                </a>
+                                                                </span>
                                                             </th>
                                                             <th>
-                                                                <a href="#" ng-click="setDraftSortTypeAndReverse('actual')">
+                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('actual')">
                                                                     Actual Pts
-                                                                </a>
+                                                                </span>
                                                             </th>
                                                             <th>
-                                                                <a href="#" ng-click="setDraftSortTypeAndReverse('validTeam')">
+                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('validTeam')">
                                                                     Teams Valid
-                                                                </a>
+                                                                </span>
                                                             </th>
                                                             <th>
-                                                                <a href="#" ng-click="setDraftSortTypeAndReverse('validSalary')">
+                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('validSalary')">
                                                                     Salary Valid
-                                                                </a>
+                                                                </span>
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -346,12 +348,15 @@
                         </div>
                     </uib-tab>
 
-                    <uib-tab index="1" heading="DataBase" ng-click="loadNBASavedSettingsDetails()">
+                    <uib-tab index="1" heading="DataBase" ng-click="loadHistory()">
                         <div class="row">
-                            <div class="col-sm-12">
+                            <div class="col-xs-offset-1 col-xs-11 col-sm-offset-0 col-sm-12 col-lg-offset-0 col-lg-12">
                               <div class="panel panel-default" >
                                   <div class="panel-heading">
                                     <div class='btn-toolbar pull-right'>
+                                      <label class="btn btn-primary btn-file btn-xs">
+                                          Load Fanduel Results CSV File <input type="file" multiple style="display: none;" onchange="angular.element(this).scope().loadActual(this.files)">
+                                      </label>
                                       <label class="btn btn-primary btn-file btn-xs">
                                           Add Fanduel Player CSV File <input type="file" multiple style="display: none;" onchange="angular.element(this).scope().loadPlayers(this.files)">
                                       </label>
@@ -374,9 +379,14 @@
                                             <tbody ng-repeat="savedSettings in savedPastSettings">
                                               <tr>
                                                 <td>@{{$index+1}}</td>
-                                                <td>@{{savedSettings.title}}</td>
+                                                <td><input class="form-control" type="text" ng-model="savedSettings.title"></td>
                                                 <td>@{{savedSettings.created_at}}</td>
-                                                <td><button class="btn btn-sm btn-primary" ng-click="loadSavedSettings(savedSettings.id)">Load Settings</button></td>
+                                                <td>
+                                                  <button class="btn btn-sm btn-primary" ng-click="loadSave(savedSettings.id)">Load</button>
+                                                  <button class="btn btn-sm btn-info" ng-click="updateTitle(savedSettings.id, savedSettings.title)">Update</button>
+                                                  -
+                                                  <button class="btn btn-sm btn-danger" ng-click="deleteSave(savedSettings.id)">Delete</button>
+                                                </td>
                                               </tr>
                                             </tbody>
                                           </table>
@@ -384,7 +394,7 @@
                                     </div>
                                     <div class="row">
                                       <div class="col-sm-12">
-                                        <button class="btn btn-info" ng-click="loadNBASavedSettingsDetails()" ng-disabled="savedPastSettings.length % 10 != 0">Load More</button>
+                                        <button class="btn btn-info" ng-click="loadHistory()" ng-disabled="savedPastSettings.length % 10 != 0">Load More</button>
                                       </div>
                                     </div>
                                   </div>

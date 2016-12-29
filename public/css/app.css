@@ -60,3 +60,16 @@ textarea {
     padding:5px;
     padding-top:2px;
 }
+.fake-link {
+  cursor:pointer;
+  text-decoration: underline;
+  color: #337ab7;
+}
+.actualPoints {
+  height: 22px;
+  max-width:44px;
+ padding: 2px 5px;
+ font-size: 12px;
+ line-height: 1.5; /* If Placeholder of the input is moved up, rem/modify this. */
+ border-radius: 3px;
+}
