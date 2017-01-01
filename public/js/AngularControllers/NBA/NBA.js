@@ -15,6 +15,18 @@ NBAApp.filter('position', function () {
     };
 })
 
+NBAApp.filter('removeInjured', function () {
+    return function (allPlayers) {
+        var filteredPlayers = [];
+        allPlayers.forEach(function (element) {
+            if (element._playerInjured != 'danger' && element._playerInjured != 'warning') {
+                filteredPlayers.push(element);
+            }
+        });
+        return filteredPlayers;
+    };
+})
+
 NBAApp.filter('team', function () {
     return function (allPlayers, input) {
         var filteredPlayers = [];
@@ -117,6 +129,18 @@ NBAApp.filter('removeCalcDraft', function () {
         return filteredDrafts;
     };
 })
+
+
+
+NBAApp.directive('customOnChange', function() {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attrs) {
+      var onChangeHandler = scope.$eval(attrs.customOnChange);
+      element.bind('change', onChangeHandler);
+    }
+  };
+});
 
 NBAApp.directive('setHeight', function ($window) {
     return {

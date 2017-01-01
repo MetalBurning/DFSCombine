@@ -5,21 +5,18 @@
     <div class="modal-body">
       <div class="row">
           <div class="col-xs-12">
-            <h4>Title (Optional): "{{title}}" Saved: <span class="glyphicon" ng-class="{true: 'glyphicon-floppy-saved ', false: 'glyphicon-floppy-remove '}[saved]" aria-hidden="true"></span> </h4>
+            <div uib-alert ng-repeat="alert in alerts track by $index" ng-show="$last" ng-class="'alert-' + alert.type" close="closeAlert($index)">{{alert.msg}} - ({{alert.number}})</div>
           </div>
       </div>
       <div class="row">
           <div class="col-xs-12">
-            <div class="input-group">
-              <span class="input-group-btn">
-                <button type="button" class="btn btn-primary" ng-click="savePlayerData()" >Save Current Settings</button>
-              </span>
-              <input type="text" class="form-control" ng-model="title" style="max-width: 100%">
-            </div><!-- /input-group -->
+              <label>Title: "{{title}}"</label>
+              <input type="text" class="form-control" ng-model="title" style="min-width:100%;">
           </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-success" ng-click="savePlayerData()">Save</button>
+      <button class="btn btn-success"  ng-show="hasCurrentRead()" ng-click="update()" ng-disabled="!CreateUpdateButtonEnabled">Update</button>
+      <button class="btn btn-success"  ng-show="!hasCurrentRead()" ng-click="create()" ng-disabled="!CreateUpdateButtonEnabled">Create</button>
         <button class="btn btn-danger" ng-click="ok()">Dismiss</button>
     </div>

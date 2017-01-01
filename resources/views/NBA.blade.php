@@ -9,16 +9,14 @@
 
         <div class="row">
             <div class="col-xs-12" id="messages">
-                <div class="alert alert-@{{_Message.messageType}}"  role="alert" ng-show="_Message.hasData">
-                    <button type="button" class="close"  aria-label="Close" ng-click="resetMessage()"><span aria-hidden="true">&times;</span></button>@{{_Message.message}}
-                </div>
+              <div uib-alert ng-repeat="alert in alerts track by $index" ng-show="$last" ng-class="'alert-' + alert.type" close="closeAlert($index)">@{{alert.msg}} - (@{{alert.number}})</div>
             </div>
         </div>
 
         <div class="row">
             <div class="col-xs-12">
                 <uib-tabset active="activeJustified" justified="true">
-                    <uib-tab index="0" heading="Players" >
+                    <uib-tab index="0" heading="@{{mainTabHeading}}" >
                         <!-- start player selection -->
                         <div class="row">
                             <div class="col-xs-offset-1 col-xs-11 col-sm-offset-0 col-sm-8 col-lg-offset-0 col-lg-8" >
@@ -36,7 +34,7 @@
                                     </div>
                                     <div class="panel-body" set-height id="players">
                                         <div class="row">
-                                            <div class="col-xs-6">
+                                            <div class="col-xs-5">
                                                 <h4>Filter Position</h4>
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-primary" ng-click="SelectedPosition = '';" ng-class="{true: 'active', false: ''}[SelectedPosition === '']">All</button>
@@ -47,11 +45,16 @@
                                                     <button type="button" class="btn btn-primary" ng-click="SelectedPosition = 'C';" ng-class="{true: 'active', false: ''}[SelectedPosition === 'C']">C</button>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-6">
+                                            <div class="col-xs-4">
                                                 <h4>Filter Teams</h4>
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-primary" ng-repeat="team in _AllTeams" ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeams.indexOf(team) > -1]">@{{team}}</button>
                                                 </div>
+                                            </div>
+                                            <div class="col-xs-3">
+                                                <h4>Options</h4>
+                                                <button type="button" class="btn btn-info" ng-click="addTopTeamPlayers()" >TT</button>
+                                                <button type="button" class="btn btn-info" ng-click="addTopActualResults()" >Top</button>
                                             </div>
                                         </div>
 
@@ -262,11 +265,11 @@
                                               <div class="row">
                                                 <div class="col-xs-12">
                                                   <button type="button" class="btn btn-primary" ng-click="buildDrafts()" >ReBuild Drafts</button>
-                                                  Possible: @{{TotalPossibleDrafts}}, Valid: @{{TotalValidDrafts}}
+                                                  <abbr title="Total possible combinations excluding rules (Salary, Team limits)">Possible: @{{TotalPossibleDrafts}}</abbr>, <abbr title="Total possible valid draft combinations, only valid combinations are displayed">Valid: @{{TotalValidDrafts}}</abbr>
                                                 </div>
                                               </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-5">
                                               <div class="row">
                                                 <div class="col-xs-12">
                                                   <h4>@{{ (parseFloat(AVERAGE) + parseFloat(STDEVIATION)).toFixed(2) }} => Drafts <= @{{ (parseFloat(AVERAGE) - parseFloat(STDEVIATION)).toFixed(2) }}</h4>
@@ -285,7 +288,7 @@
                                                 </div>
                                               </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                               <div class="row">
                                                 <div class="col-xs-12">
                                                   <h4>Draft Options</h4>
@@ -293,8 +296,7 @@
                                               </div>
                                               <div class="row">
                                                 <div class="col-xs-12">
-                                                  <button type="button" class="btn btn-primary" ng-click="switchValidDraftSelector()" ng-class="{true: 'active', false: ''}[SelectedValidDrafts]">Show Valid Only</button>
-                                                    <button type="button" class="btn btn-info" ng-click="DownloadDraftCSV()">DownloadDrafts</button>
+                                                  <button type="button" class="btn btn-info" ng-click="DownloadDraftCSV()">DownloadDrafts</button>
                                                 </div>
                                               </div>
 
@@ -355,10 +357,10 @@
                                   <div class="panel-heading">
                                     <div class='btn-toolbar pull-right'>
                                       <label class="btn btn-primary btn-file btn-xs">
-                                          Load Fanduel Results CSV File <input type="file" multiple style="display: none;" onchange="angular.element(this).scope().loadActual(this.files)">
+                                          Load Fanduel Results CSV File <input type="file" style="display: none;"  custom-on-change="loadActual">
                                       </label>
                                       <label class="btn btn-primary btn-file btn-xs">
-                                          Add Fanduel Player CSV File <input type="file" multiple style="display: none;" onchange="angular.element(this).scope().loadPlayers(this.files)">
+                                          Add Fanduel Player CSV File <input type="file" style="display: none;" custom-on-change="loadPlayers">
                                       </label>
                                     </div>
                                       <h3 class="panel-title">Load Saved History</h3>
@@ -382,10 +384,10 @@
                                                 <td><input class="form-control" type="text" ng-model="savedSettings.title"></td>
                                                 <td>@{{savedSettings.created_at}}</td>
                                                 <td>
-                                                  <button class="btn btn-sm btn-primary" ng-click="loadSave(savedSettings.id)">Load</button>
+                                                  <button class="btn btn-sm btn-primary" ng-click="read(savedSettings.id)">Load</button>
                                                   <button class="btn btn-sm btn-info" ng-click="updateTitle(savedSettings.id, savedSettings.title)">Update</button>
                                                   -
-                                                  <button class="btn btn-sm btn-danger" ng-click="deleteSave(savedSettings.id)">Delete</button>
+                                                  <button class="btn btn-sm btn-danger" ng-click="delete(savedSettings.id)">Delete</button>
                                                 </td>
                                               </tr>
                                             </tbody>

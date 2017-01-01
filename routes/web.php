@@ -25,11 +25,14 @@ Route::post('/NFL/loadSavedSettingsDetails', 'ApplicationController@loadNFLSaved
 
 //NBA
 Route::get('/NBA', 'ApplicationController@NBA');
-Route::post('/NBA/saveSettings', 'ApplicationController@saveNBASettings');
-Route::post('/NBA/loadSave', 'ApplicationController@loadNBASave');
 Route::post('/NBA/loadHistory', 'ApplicationController@loadNBAHistory');
-Route::post('/NBA/deleteSave', 'ApplicationController@deleteNBASave');
-Route::post('/NBA/updateTitle', 'ApplicationController@updateNBATitle');
+
+Route::post('/NBA/create', 'ApplicationController@createNBA');
+Route::post('/NBA/read', 'ApplicationController@readNBA');
+Route::post('/NBA/update', 'ApplicationController@updateNBA');
+Route::post('/NBA/delete', 'ApplicationController@deleteNBA');
+
+Route::post('/NBA/updateTitle', 'ApplicationController@updateTitleNBA');
 
 //NHL
 Route::get('/NHL', 'ApplicationController@NHL');

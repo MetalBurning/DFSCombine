@@ -2,7 +2,9 @@
 angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filter', '$uibModal', '$window', function ($http, $scope, $filter, $uibModal, $window) {
     var nfl = this;
 
-    $scope._Message = { hasData: true, messageType: "info", message: "Please Upload/Load Players..." };
+    $scope.alerts = [
+      { type: 'info', msg: 'Please Upload/Load Players...', number: 1 }
+    ];
 
     $scope._Positions = [];
     $scope._AllTeams = [];
@@ -28,7 +30,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     $scope._AllDraftData = [];
     $scope.TotalPossibleDrafts = 0;
     $scope.TotalValidDrafts = 0;
-    $scope.SelectedValidDrafts = false;
+    $scope.SelectedValidDrafts = true;
 
     $scope.sortType = '_FPPG'; // set the default sort type
     $scope.sortReverse = true;  // set the default sort order
@@ -38,11 +40,16 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     $scope.SelectedStackPositions = [];
     $scope.SelectedDraft = null;
 
-    $scope.savedPastSettings = [];
+
     $scope.AVERAGE = parseFloat(-1);
     $scope.STDEVIATION = parseFloat(-1);
     $scope.TopRange = -1;
     $scope.BottomRange = -1;
+
+
+    //database
+    $scope.savedPastSettings = [];
+    $scope.currentRead = null;
 
     //$scope._AllPlayers = positionFilter($scope._AllPlayers, $scope.SelectedPosition);
 
@@ -58,19 +65,37 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
     //});
 
+    $scope.mainTabHeading = "Players";
+
     var compareNumbers = function(a, b) {
         return b-a;
     }
 
     $scope.displayNewMessage = function (messageType, messageContent) {
-        $window.scrollTo(0, 0);
-        $scope._Message.message = "";
-        $scope._Message.hasData = true;
-        $scope._Message.messageType = messageType;
-        $scope._Message.message = messageContent;
+      $window.scrollTo(0, 0);
+      $scope.addAlert(messageType, messageContent);
+    }
+    $scope.addAlert = function(type, message) {
+      var sameNumberOfAlerts = 1;
+      if($scope.alerts.length > 100) {
+        $scope.alerts = [];
+      }
+      $scope.alerts.forEach(function(alert) {
+        if(alert.type == type && alert.msg == message) {
+          sameNumberOfAlerts++;
+        }
+      });
+
+      $scope.alerts.push({type: type, msg: message, number: sameNumberOfAlerts});
+    }
+    $scope.closeAlert = function(index) {
+      $scope.alerts.splice(index, 1);
     }
 
-    $scope.loadActual = function (file) {
+    $scope.loadActual = function (event) {
+
+      var file = event.target.files[0];
+
         var allText = "";
         var reader = new FileReader();
         reader.onload = function (e) {
@@ -120,17 +145,27 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 });
             }
 
-            $scope.displayNewMessage("info", "Player Actual Results have been successfully loaded");
+            $scope.$apply(function() {
+
+              $scope.displayNewMessage("success", "Player Actual Results have been successfully loaded");
+
+            });
+
         }
-        reader.readAsText(file[0]);
+        reader.readAsText(file);
     }
 
 
 
-    $scope.loadPlayers = function (file) {
+    $scope.loadPlayers = function (event) {
       $scope.clearPlayerPools();
       $scope.clearDrafts();
       $scope.clearAllPlayers();
+      $scope.currentRead = null;
+      $scope.mainTabHeading = "Players";
+
+      var file = event.target.files[0];
+
         var allText = "";
         var reader = new FileReader();
         reader.onload = function (e) {
@@ -212,10 +247,14 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 }
 
             }
+            $scope.$apply(function() {
 
-            $scope.displayNewMessage("info", "Players have been successfully loaded");
+              $scope.displayNewMessage("success", "Players have been successfully loaded");
+
+            });
+
         }
-        reader.readAsText(file[0]);
+        reader.readAsText(file);
     }
 
     // $scope.$watch('AVERAGE',function(val,old){
@@ -228,6 +267,85 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     //    $scope.TopRange = ($scope.AVERAGE + $scope.STDEVIATION);
     //    $scope.BottomRange = ($scope.AVERAGE - $scope.STDEVIATION);
     // });
+
+    $scope.addTopActualResults = function() {
+      $scope.clearPlayerPools();
+
+      var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_ActualFantasyPoints', true);
+      var allPGs = $filter('position')(orderedPlayers, 'PG');
+      var allSGs = $filter('position')(orderedPlayers, 'SG');
+      var allSFs = $filter('position')(orderedPlayers, 'SF');
+      var allPFs = $filter('position')(orderedPlayers, 'PF');
+      var allPFs = $filter('position')(orderedPlayers, 'PF');
+      var allCs = $filter('position')(orderedPlayers, 'C');
+
+      var PGTeams = [];
+
+      for(var j = 0; j < 4; j++) {
+        if(allPGs.length >= j) {
+          $scope.addPlayerToPool(allPGs[j]);
+        }
+        if(allSGs.length >= j) {
+          $scope.addPlayerToPool(allSGs[j]);
+        }
+        if(allSFs.length >= j) {
+          $scope.addPlayerToPool(allSFs[j]);
+        }
+        if(allPFs.length >= j) {
+          $scope.addPlayerToPool(allPFs[j]);
+        }
+        if(allCs.length >= j) {
+          $scope.addPlayerToPool(allCs[j]);
+        }
+      }
+
+    }
+
+    $scope.addTopTeamPlayers = function() {
+
+      $scope.clearPlayerPools();
+
+      var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
+      var NonInjuredPlayers =  $filter('removeInjured')(orderedPlayers);
+      var allPGs = $filter('position')(NonInjuredPlayers, 'PG');
+      var allSGs = $filter('position')(NonInjuredPlayers, 'SG');
+      var allSFs = $filter('position')(NonInjuredPlayers, 'SF');
+      var allPFs = $filter('position')(NonInjuredPlayers, 'PF');
+
+
+      var PGTeams = [];
+      allPGs.forEach(function(PG) {
+        if(PGTeams.length <= $scope._AllTeams.length && PGTeams.indexOf(PG._Team) == -1) {
+          $scope.addPlayerToPool(PG);
+          PGTeams.push(PG._Team);
+        }
+      });
+
+      var SGTeams = [];
+      allSGs.forEach(function(SG) {
+        if(SGTeams.length <= $scope._AllTeams.length && SGTeams.indexOf(SG._Team) == -1) {
+          $scope.addPlayerToPool(SG);
+          SGTeams.push(SG._Team);
+        }
+      });
+
+      var SFTeams = [];
+      allSFs.forEach(function(SF) {
+        if(SFTeams.length <= $scope._AllTeams.length && SFTeams.indexOf(SF._Team) == -1) {
+          $scope.addPlayerToPool(SF);
+          SFTeams.push(SF._Team);
+        }
+      });
+
+      var PFTeams = [];
+      allPFs.forEach(function(PF) {
+        if(PFTeams.length <= $scope._AllTeams.length && PFTeams.indexOf(PF._Team) == -1) {
+          $scope.addPlayerToPool(PF);
+          PFTeams.push(PF._Team);
+        }
+      });
+    }
+
     $scope.parseFloat = function(value)
     {
        return parseFloat(value);
@@ -443,6 +561,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         switch (player._Position)
         {
             case 'PG':
+                $scope.unLockPlayer(player);
                 $scope._PGPlayerPool.splice($scope._PGPlayerPool.indexOf(player), 1);
                 break;
             case 'SG':
@@ -454,6 +573,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 $scope._SFPlayerPool.splice($scope._SFPlayerPool.indexOf(player), 1);
                 break;
             case 'PF':
+                $scope.unLockPlayer(player);
                 $scope._PFPlayerPool.splice($scope._PFPlayerPool.indexOf(player), 1);
                 break;
             case 'C':
@@ -822,10 +942,10 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
     }
 
-    $scope.switchValidDraftSelector = function () {
-        $scope.SelectedValidDrafts = !$scope.SelectedValidDrafts;
-        $scope.buildDrafts();
-    }
+    // $scope.switchValidDraftSelector = function () {
+    //     $scope.SelectedValidDrafts = !$scope.SelectedValidDrafts;
+    //     $scope.buildDrafts();
+    // }
 
     $scope.setPlayerPercentInDraft = function (player) {
         if ($scope.SelectedValidDrafts) {
@@ -1002,18 +1122,20 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             resolve: {
                 postObject: function () {
                     return postObject;
+                },
+                currentRead: function() {
+                  return $scope.currentRead;
                 }
             }
         });
     }
 
-    $scope.loadSave = function(saveDetailsID) {
+    $scope.read = function(saveDetailsID) {
 
-      $http.post('/NBA/loadSave', {'id':saveDetailsID}).then(function successCallback(response) {
-          var jsonData = JSON.parse(response.data['userSaveJSON']);
-
-          $scope.loadPlayersFromSave(jsonData);
-          //$scope.tabs[0].active = true;
+      $http.post('/NBA/read', {'id':saveDetailsID}).then(function successCallback(response) {
+          $scope.currentRead = response.data;
+          $scope.loadPlayersFromSave(JSON.parse($scope.currentRead['userSaveJSON']));
+          $scope.mainTabHeading = "Players - "+$scope.currentRead['title'];
       }, function errorCallBack(response) {
         $scope.displayNewMessage('danger', 'Loading Single Save - Failed');
       });
@@ -1031,8 +1153,8 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       });
     }
 
-    $scope.deleteSave = function(saveID) {
-      $http.post('/NBA/deleteSave', {'id':saveID}).then(function successCallback(response) {
+    $scope.delete = function(saveID) {
+      $http.post('/NBA/delete', {'id':saveID}).then(function successCallback(response) {
         var indexToDelete = -1;
         for(var j = 0; j < $scope.savedPastSettings.length;j++) {
           if($scope.savedPastSettings[j].id == saveID) {
@@ -1049,11 +1171,10 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     }
     $scope.updateTitle = function(saveID, title) {
       $http.post('/NBA/updateTitle', {'id':saveID, 'title': title}).then(function successCallback(response) {
-        $scope.displayNewMessage('success', 'Title Update - Success');
+        $scope.displayNewMessage('success', 'Title Update - Success, Saved: '+title);
       }, function errorCallBack(response) {
         $scope.displayNewMessage('danger', 'Title Update - Failed, '+response.data.title);
       });
-
     }
     $scope.loadPlayerInPool = function(playerPool, singlePlayer) {
       playerPool.forEach(function(singlePlayerInPool) {
