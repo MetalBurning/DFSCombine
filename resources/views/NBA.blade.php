@@ -9,7 +9,7 @@
 
         <div class="row">
             <div class="col-xs-12" id="messages">
-              <div uib-alert ng-repeat="alert in alerts track by $index" ng-show="$last" ng-class="'alert-' + alert.type" close="closeAlert($index)">@{{alert.msg}} - (@{{alert.number}})</div>
+              <div uib-alert ng-repeat="alert in alerts track by $index" ng-show="$last" ng-class="'alert-' + alert.type" close="closeAlert($index)">@{{alert.msg}} - <abbr title="Number of notification of this type.">(@{{alert.number}})</abbr></div>
             </div>
         </div>
 
@@ -55,6 +55,7 @@
                                                 <h4>Options</h4>
                                                 <button type="button" class="btn btn-info" ng-click="addTopTeamPlayers()" >TT</button>
                                                 <button type="button" class="btn btn-info" ng-click="addTopActualResults()" >Top</button>
+                                                <button type="button" class="btn btn-info" ng-click="autoAddPlayerFormula()" >Auto</button>
                                             </div>
                                         </div>
 
@@ -164,7 +165,7 @@
                                                             <td><button class="btn btn-xs btn-success" ng-click="lockAndUnLockPlayer(PGPlayers)"><span class="glyphicon" ng-class="{true: 'glyphicon-floppy-saved', false: 'glyphicon-floppy-remove'}[_PGPlayerLocked.indexOf(PGPlayers) > -1]"></span></button><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(PGPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(PGPlayers)">@{{PGPlayers._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(PGPlayers)"><abbr title="Percentage in total generated drafts">@{{PGPlayers._PercentInDrafts}}%</abbr></td>
-                                                            <td ng-click="openClosePlayerDetails(PGPlayers)">@{{PGPlayers._Team}}<br />@{{PGPlayers._FPPG}}</td>
+                                                            <td ng-click="openClosePlayerDetails(PGPlayers)">@{{PGPlayers._Team}}<br /><abbr title="Player FPPG">@{{PGPlayers._FPPG}}</abbr></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -181,7 +182,7 @@
                                                             <td><button class="btn btn-xs btn-success" ng-click="lockAndUnLockPlayer(SGPlayers)"><span class="glyphicon" ng-class="{true: 'glyphicon-floppy-saved', false: 'glyphicon-floppy-remove'}[_SGPlayerLocked.indexOf(SGPlayers) > -1]"></span></button><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(SGPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(SGPlayers)">@{{SGPlayers._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(SGPlayers)"><abbr title="Percentage in total generated drafts">@{{SGPlayers._PercentInDrafts}}%</abbr></td>
-                                                            <td ng-click="openClosePlayerDetails(SGPlayers)">@{{SGPlayers._Team}}<br />@{{SGPlayers._FPPG}}</td>
+                                                            <td ng-click="openClosePlayerDetails(SGPlayers)">@{{SGPlayers._Team}}<br /><abbr title="Player FPPG">@{{SGPlayers._FPPG}}</abbr></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -198,7 +199,7 @@
                                                             <td><button class="btn btn-xs btn-success" ng-click="lockAndUnLockPlayer(SFPlayers)"><span class="glyphicon" ng-class="{true: 'glyphicon-floppy-saved', false: 'glyphicon-floppy-remove'}[_SFPlayerLocked.indexOf(SFPlayers) > -1]"></span></button><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(SFPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(SFPlayers)">@{{SFPlayers._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(SFPlayers)"><abbr title="Percentage in total generated drafts">@{{SFPlayers._PercentInDrafts}}%</abbr></td>
-                                                            <td ng-click="openClosePlayerDetails(SFPlayers)">@{{SFPlayers._Team}}<br />@{{SFPlayers._FPPG}}</td>
+                                                            <td ng-click="openClosePlayerDetails(SFPlayers)">@{{SFPlayers._Team}}<br /><abbr title="Player FPPG">@{{SFPlayers._FPPG}}</abbr></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -215,7 +216,7 @@
                                                             <td><button class="btn btn-xs btn-success" ng-click="lockAndUnLockPlayer(PFPlayers)"><span class="glyphicon" ng-class="{true: 'glyphicon-floppy-saved', false: 'glyphicon-floppy-remove'}[_PFPlayerLocked.indexOf(PFPlayers) > -1]"></span></button><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(PFPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(PFPlayers)">@{{PFPlayers._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(PFPlayers)"><abbr title="Percentage in total generated drafts">@{{PFPlayers._PercentInDrafts}}%</abbr></td>
-                                                            <td ng-click="openClosePlayerDetails(PFPlayers)">@{{PFPlayers._Team}}<br />@{{PFPlayers._FPPG}}</td>
+                                                            <td ng-click="openClosePlayerDetails(PFPlayers)">@{{PFPlayers._Team}}<br /><abbr title="Player FPPG">@{{PFPlayers._FPPG}}</abbr></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -232,7 +233,7 @@
                                                             <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(CPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(CPlayers)">@{{CPlayers._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(CPlayers)"><abbr title="Percentage in total generated drafts">@{{CPlayers._PercentInDrafts}}%</abbr></td>
-                                                            <td ng-click="openClosePlayerDetails(CPlayers)">@{{CPlayers._Team}}<br />@{{CPlayers._FPPG}}</td>
+                                                            <td ng-click="openClosePlayerDetails(CPlayers)">@{{CPlayers._Team}}<br /><abbr title="Player FPPG">@{{CPlayers._FPPG}}</abbr></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -272,7 +273,7 @@
                                             <div class="col-md-5">
                                               <div class="row">
                                                 <div class="col-xs-12">
-                                                  <h4>@{{ (parseFloat(AVERAGE) + parseFloat(STDEVIATION)).toFixed(2) }} => Drafts <= @{{ (parseFloat(AVERAGE) - parseFloat(STDEVIATION)).toFixed(2) }}</h4>
+                                                  <h4><abbr title="Top range to keep.">@{{ (parseFloat(AVERAGE) + parseFloat(STDEVIATION)).toFixed(2) }}</abbr> => Drafts <= <abbr title="Bottom range to keep.">@{{ (parseFloat(AVERAGE) - parseFloat(STDEVIATION)).toFixed(2) }}</abbr></h4>
                                                 </div>
                                               </div>
                                               <div class="row">
@@ -296,6 +297,7 @@
                                               </div>
                                               <div class="row">
                                                 <div class="col-xs-12">
+                                                  <button type="button" class="btn btn-default" ng-click="removeDraftsWithBadPlayerSetups()">RM Sp</button>
                                                   <button type="button" class="btn btn-info" ng-click="DownloadDraftCSV()">DownloadDrafts</button>
                                                 </div>
                                               </div>
@@ -373,21 +375,23 @@
                                             <thead>
                                                 <tr>
                                                     <th>Draft #</th>
-                                                    <th>Title (Optional)</th>
+                                                    <th>Title</th>
                                                     <th>Draft Created Date</th>
                                                     <th>Load</th>
                                                 </tr>
                                             </thead>
                                             <tbody ng-repeat="savedSettings in savedPastSettings">
                                               <tr>
-                                                <td>@{{$index+1}}</td>
-                                                <td><input class="form-control" type="text" ng-model="savedSettings.title"></td>
-                                                <td>@{{savedSettings.created_at}}</td>
-                                                <td>
+                                                <td class="col-md-1">@{{$index+1}}</td>
+                                                <td class="col-md-4"><input class="form-control" type="text" ng-model="savedSettings.title"></td>
+                                                <td class="col-md-3">@{{savedSettings.created_at}}</td>
+                                                <td class="col-md-4">
                                                   <button class="btn btn-sm btn-primary" ng-click="read(savedSettings.id)">Load</button>
                                                   <button class="btn btn-sm btn-info" ng-click="updateTitle(savedSettings.id, savedSettings.title)">Update</button>
                                                   -
-                                                  <button class="btn btn-sm btn-danger" ng-click="delete(savedSettings.id)">Delete</button>
+                                                  <button class="btn btn-sm btn-danger"  ng-show="!showDeleteConfirmation(savedSettings.id)" ng-click="setDeleteConfirmation(savedSettings.id)">Delete</button>
+                                                  <button class="btn btn-sm btn-primary" ng-show="showDeleteConfirmation(savedSettings.id)" ng-click="delete(savedSettings.id)">Yes</button>
+                                                  <button class="btn btn-sm btn-default" ng-show="showDeleteConfirmation(savedSettings.id)" ng-click="unsetDeleteConfirmation()">No</button>
                                                 </td>
                                               </tr>
                                             </tbody>

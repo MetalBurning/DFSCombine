@@ -131,7 +131,6 @@ NBAApp.filter('removeCalcDraft', function () {
 })
 
 
-
 NBAApp.directive('customOnChange', function() {
   return {
     restrict: 'A',

@@ -1,4 +1,3 @@
-
 angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filter', '$uibModal', '$window', function ($http, $scope, $filter, $uibModal, $window) {
     var nfl = this;
 
@@ -31,10 +30,11 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     $scope.TotalPossibleDrafts = 0;
     $scope.TotalValidDrafts = 0;
     $scope.SelectedValidDrafts = true;
+    $scope.sortTypeDraft = 'projection';
 
     $scope.sortType = '_FPPG'; // set the default sort type
     $scope.sortReverse = true;  // set the default sort order
-    $scope.sortReverseDraft = false;
+    $scope.sortReverseDraft = true;
     $scope.SelectedPosition = '';     // set the default search/filter term
     $scope.SelectedTeams = [];
     $scope.SelectedStackPositions = [];
@@ -66,6 +66,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     //});
 
     $scope.mainTabHeading = "Players";
+    $scope.DeleteConfirmationID = -1;
 
     var compareNumbers = function(a, b) {
         return b-a;
@@ -161,6 +162,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       $scope.clearPlayerPools();
       $scope.clearDrafts();
       $scope.clearAllPlayers();
+      $scope.clearAllPlayerFilters();
       $scope.currentRead = null;
       $scope.mainTabHeading = "Players";
 
@@ -311,7 +313,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       var allSGs = $filter('position')(NonInjuredPlayers, 'SG');
       var allSFs = $filter('position')(NonInjuredPlayers, 'SF');
       var allPFs = $filter('position')(NonInjuredPlayers, 'PF');
-
+      var allCs = $filter('position')(NonInjuredPlayers, 'C');
 
       var PGTeams = [];
       allPGs.forEach(function(PG) {
@@ -346,6 +348,384 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       });
     }
 
+    $scope.teamRemovalFormularHelpers = function(PGPlayersToAdd, PGPlayersToLock) {
+      var PGTeams = [];
+      var PGPlayersToAddAfterTeamRemoval = [];
+
+      if(PGPlayersToLock.length != 0) {
+        PGTeams.push(PGPlayersToLock[0]._Team);
+        PGPlayersToAddAfterTeamRemoval.push(PGPlayersToLock[0]);
+      }
+
+      PGPlayersToAdd.forEach(function(PG) {
+        if(PGTeams.indexOf(PG._Team) != -1) {
+          //find other player with same team
+          //compare salaries, and add the highest One
+          var indexOfAddedTeam = PGTeams.indexOf(PG._Team);
+          var existingPlayerSameTeam = PGPlayersToAddAfterTeamRemoval[indexOfAddedTeam];
+          if(existingPlayerSameTeam._Salary < PG._Salary) {
+            //replace
+            PGPlayersToAddAfterTeamRemoval[indexOfAddedTeam] = PG;
+          } else if(existingPlayerSameTeam._Salary === PG._Salary) {
+            if(existingPlayerSameTeam._FPPG < PG._FPPG) {
+              PGPlayersToAddAfterTeamRemoval[indexOfAddedTeam] = PG;
+            }
+          } else {
+            //do nothing, allready have best player (highest salary)
+          }
+        } else if( PGTeams.indexOf(PG._Team) == -1) {
+          PGTeams.push(PG._Team);
+          PGPlayersToAddAfterTeamRemoval.push(PG);
+        }
+      });
+      return PGPlayersToAddAfterTeamRemoval;
+    }
+
+    $scope.autoAddPlayerFormula = function() {
+
+      $scope.clearPlayerPools();
+
+      // var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
+      // var NonInjuredPlayers =  $filter('removeInjured')(orderedPlayers);
+      // var allPGs = $filter('position')(NonInjuredPlayers, 'PG');
+      // var allSGs = $filter('position')(NonInjuredPlayers, 'SG');
+      // var allSFs = $filter('position')(NonInjuredPlayers, 'SF');
+      // // var allPFs = $filter('position')(NonInjuredPlayers, 'PF');
+      // var allCs = $filter('position')(NonInjuredPlayers, 'C');
+      //
+      // var dictionary = {};
+      // var dictionaryTeamPlayersToGet = {};
+      // $scope._AllTeams.forEach(function(team) {
+      //   dictionary[team] = [];
+      // });
+      // orderedPlayers.forEach(function(singlePlayer) {
+      //   dictionary[singlePlayer._Team].push(singlePlayer);
+      // });
+      //
+      // $scope._AllTeams.forEach(function(team) {
+      //   var numInjuredInTop5 = 0;
+      //   if(dictionary[team].length > 0) {
+      //     for(var j = 0; j < dictionary[team].length; j++) {
+      //       if(j < 5) {
+      //         //top 5
+      //         if(dictionary[team][j]._playerInjured == 'danger') {
+      //           numInjuredInTop5++;
+      //         }
+      //       }
+      //     }
+      //   }
+      //   if(numInjuredInTop5 == 1) {
+      //     dictionaryTeamPlayersToGet[team] = 5;
+      //   } else if(numInjuredInTop5 > 1) {
+      //     dictionaryTeamPlayersToGet[team] = 6;
+      //   } else {
+      //     dictionaryTeamPlayersToGet[team] = 4;
+      //   }
+      // });
+      // $scope._AllTeams.forEach(function(team) {
+      //   var tempTeamPlayers = $filter('removeInjured')(dictionary[team]);
+      //
+      //   for(var j = 0; j < dictionaryTeamPlayersToGet[team]; j++) {
+      //     if(tempTeamPlayers[j]._Position != 'C' && tempTeamPlayers[j]._FPPG > 10) {
+      //       $scope.addPlayerToPool(tempTeamPlayers[j]);
+      //     } else if(tempTeamPlayers[j]._Position == 'C') {
+      //       dictionaryTeamPlayersToGet[team]++;
+      //     }
+      //   }
+      // });
+      //
+      // //PG
+      // for(var j = 0; j < 2; j++) {
+      //   if(!$scope.playerInPool(allPGs[j])){
+      //     $scope.addPlayerToPool(allPGs[j]);
+      //   }
+      // }
+      // if( (allPGs[0]._FPPG - allPGs[1]._FPPG) > 6) {
+      //   $scope.lockAndUnLockPlayer(allPGs[0]);
+      // }
+      //
+      // //SG
+      // //if in bottom 3 players, remove
+      // for(var j = allSGs.length-1; j > (allSGs.length - 4); j--) {
+      //   if($scope.playerInPool(allSGs[j])){
+      //     $scope.removePlayerFromPool(allSGs[j]);
+      //   }
+      // }
+      //
+      // //SF
+      // for(var j = 0; j < 2; j++) {
+      //   if(!$scope.playerInPool(allSFs[j])){
+      //     $scope.addPlayerToPool(allSFs[j]);
+      //   }
+      // }
+      // $scope.lockAndUnLockPlayer(allSFs[0]);
+      //
+      // //C
+      // if( (allCs[0]._FPPG - allCs[1]._FPPG) > 8) {
+      //   $scope.addPlayerToPool(allCs[0]);
+      // } else {
+      //   $scope.addPlayerToPool(allCs[0]);
+      //   $scope.addPlayerToPool(allCs[1]);
+      // }
+
+      var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
+      var NonInjuredPlayers =  $filter('removeInjured')(orderedPlayers);
+      var allPGs = $filter('position')(NonInjuredPlayers, 'PG');
+      var allSGs = $filter('position')(NonInjuredPlayers, 'SG');
+      var allSFs = $filter('position')(NonInjuredPlayers, 'SF');
+      var allPFs = $filter('position')(NonInjuredPlayers, 'PF');
+      var allCs = $filter('position')(NonInjuredPlayers, 'C');
+      // //version 3
+      //
+      // //PG
+      // var PGPlayersToAdd = [];
+      // var PGPlayersToLock = [];
+      //
+      // if( (allPGs[0]._FPPG - allPGs[1]._FPPG) > 6) {
+      //   PGPlayersToLock.push(allPGs[0]);
+      // } else {
+      //   PGPlayersToAdd.push(allPGs[0]);
+      // }
+      // for(var j = 0; j < allPGs.length; j++) {
+      //   if( j == 1 || j == 2  || j == 3 || j == 4 || j == 5 || j == 6 || j == 7 || j == 8) {
+      //     PGPlayersToAdd.push(allPGs[j]);
+      //   }
+      // }
+      //
+      // var PGPlayersToAddAfterTeamRemoval = $scope.teamRemovalFormularHelpers(PGPlayersToAdd, PGPlayersToLock);
+      //
+      // //finally add players
+      // PGPlayersToAddAfterTeamRemoval.forEach(function(PG) {
+      //   if(PGPlayersToLock.length > 0 && PG._Name === PGPlayersToLock[0]._Name) {
+      //       $scope.addPlayerToPool(PG);
+      //       $scope.lockAndUnLockPlayer(PG);
+      //   } else {
+      //     $scope.addPlayerToPool(PG);
+      //   }
+      //
+      // });
+      //
+      // //SG
+      // var SGPlayersToAdd = [];
+      // var SGPlayersToLock = [];
+      //
+      // if( (allSGs[0]._FPPG - allSGs[1]._FPPG) > 9) {
+      //   SGPlayersToLock.push(allSGs[0]);
+      // } else {
+      //   SGPlayersToAdd.push(allSGs[0]);
+      // }
+      // for(var j = 0; j < allSGs.length; j++) {
+      //   if( j == 1 || j == 2  || j == 3 || j == 4 || j == 5 || j == 6) {
+      //     SGPlayersToAdd.push(allSGs[j]);
+      //   }
+      // }
+      //
+      // var SGPlayersToAddAfterTeamRemoval = $scope.teamRemovalFormularHelpers(SGPlayersToAdd, SGPlayersToLock);
+      //
+      // //finally add players
+      // SGPlayersToAddAfterTeamRemoval.forEach(function(SG) {
+      //   if(SGPlayersToLock.length > 0 && SG._Name === SGPlayersToLock[0]._Name) {
+      //       $scope.addPlayerToPool(SG);
+      //       $scope.lockAndUnLockPlayer(SG);
+      //   } else {
+      //     $scope.addPlayerToPool(SG);
+      //   }
+      // });
+      //
+      //
+      // //SF
+      //
+      // var SFPlayersToAdd = [];
+      // var SFPlayersToLock = [];
+      //
+      // SFPlayersToLock.push(allSFs[0]);
+      //
+      // for(var j = 0; j < allSFs.length; j++) {
+      //   if( j == 1 || j == 2  || j == 3) {
+      //     SFPlayersToAdd.push(allSFs[j]);
+      //   }
+      // }
+      //
+      // var SFPlayersToAddAfterTeamRemoval = $scope.teamRemovalFormularHelpers(SFPlayersToAdd, SFPlayersToLock);
+      //
+      // //finally add players
+      // SFPlayersToAddAfterTeamRemoval.forEach(function(player) {
+      //   if(SFPlayersToLock.length > 0 && player._Name === SFPlayersToLock[0]._Name) {
+      //       $scope.addPlayerToPool(player);
+      //       $scope.lockAndUnLockPlayer(player);
+      //   } else {
+      //     $scope.addPlayerToPool(player);
+      //   }
+      // });
+      //
+      // //PF
+      //
+      // var PFPlayersToAdd = [];
+      // var PFPlayersToLock = [];
+      //
+      // if( (allPFs[0]._FPPG - allPFs[1]._FPPG) > 9) {
+      //   PFPlayersToLock.push(allPFs[0]);
+      // } else {
+      //   PFPlayersToAdd.push(allPFs[0]);
+      // }
+      // for(var j = 0; j < allPFs.length; j++) {
+      //   if( j == 1 || j == 2  || j == 3 || j == 4 || j == 5 || j == 6) {
+      //     PFPlayersToAdd.push(allPFs[j]);
+      //   }
+      // }
+      //
+      // var PFPlayersToAddAfterTeamRemoval = $scope.teamRemovalFormularHelpers(PFPlayersToAdd, PFPlayersToLock);
+      //
+      // //finally add players
+      // PFPlayersToAddAfterTeamRemoval.forEach(function(player) {
+      //   if(PFPlayersToLock.length > 0 && player._Name === PFPlayersToLock[0]._Name) {
+      //       $scope.addPlayerToPool(player);
+      //       $scope.lockAndUnLockPlayer(player);
+      //   } else {
+      //     $scope.addPlayerToPool(player);
+      //   }
+      // });
+      // //C
+      //
+      // if( (allCs[0]._FPPG - allCs[1]._FPPG) > 8) {
+      //   $scope.addPlayerToPool(allCs[0]);
+      // } else {
+      //   $scope.addPlayerToPool(allCs[0]);
+      //   $scope.addPlayerToPool(allCs[1]);
+      // }
+
+      //version 2
+
+      // //PG
+      // if( (allPGs[0]._FPPG - allPGs[1]._FPPG) > 6) {
+      //   $scope.addPlayerToPool(allPGs[0]);
+      //   $scope.lockAndUnLockPlayer(allPGs[0]);
+      // } else {
+      //   $scope.addPlayerToPool(allPGs[0]);
+      // }
+      // for(var j = 0; j < allPGs.length; j++) {
+      //   if( j == 1 || j == 2  || j == 3 ) {
+      //     $scope.addPlayerToPool(allPGs[j]);
+      //   }
+      // }
+      //
+      // //SG
+      // var SGPlayersToAdd = [];
+      // var SGPlayersToLock = [];
+      //
+      // if( (allSGs[0]._FPPG - allSGs[1]._FPPG) > 9) {
+      //   SGPlayersToLock.push(allSGs[0]);
+      // } else {
+      //   SGPlayersToAdd.push(allSGs[0]);
+      // }
+      // for(var j = 0; j < allSGs.length; j++) {
+      //   if( j == 1 || j == 2  || j == 3 || j == 4 || j == 5 || j == 6) {
+      //     SGPlayersToAdd.push(allSGs[j]);
+      //   }
+      // }
+      //
+      // var SGPlayersToAddAfterTeamRemoval = $scope.teamRemovalFormularHelpers(SGPlayersToAdd, SGPlayersToLock);
+      //
+      // //finally add players
+      // SGPlayersToAddAfterTeamRemoval.forEach(function(SG) {
+      //   if(SGPlayersToLock.length > 0 && SG._Name === SGPlayersToLock[0]._Name) {
+      //       $scope.addPlayerToPool(SG);
+      //       $scope.lockAndUnLockPlayer(SG);
+      //   } else {
+      //     $scope.addPlayerToPool(SG);
+      //   }
+      // });
+      //
+      // //SF
+      //
+      // $scope.addPlayerToPool(allSFs[0]);
+      // $scope.lockAndUnLockPlayer(allSFs[0]);
+      //
+      // for(var j = 0; j < allSFs.length; j++) {
+      //   if( j == 1 || j == 2  || j == 3 ) {
+      //     $scope.addPlayerToPool(allSFs[j]);
+      //   }
+      // }
+      //
+      // //PF
+      //
+      // var PFPlayersToAdd = [];
+      // var PFPlayersToLock = [];
+      //
+      // if( (allPFs[0]._FPPG - allPFs[1]._FPPG) > 9) {
+      //   PFPlayersToLock.push(allPFs[0]);
+      // } else {
+      //   PFPlayersToAdd.push(allPFs[0]);
+      // }
+      // for(var j = 0; j < allPFs.length; j++) {
+      //   if( j == 1 || j == 2  || j == 3 || j == 4 || j == 5 || j == 6) {
+      //     PFPlayersToAdd.push(allPFs[j]);
+      //   }
+      // }
+      //
+      // var PFPlayersToAddAfterTeamRemoval = $scope.teamRemovalFormularHelpers(PFPlayersToAdd, PFPlayersToLock);
+      //
+      // //finally add players
+      // PFPlayersToAddAfterTeamRemoval.forEach(function(player) {
+      //   if(PFPlayersToLock.length > 0 && player._Name === PFPlayersToLock[0]._Name) {
+      //       $scope.addPlayerToPool(player);
+      //       $scope.lockAndUnLockPlayer(player);
+      //   } else {
+      //     $scope.addPlayerToPool(player);
+      //   }
+      // });
+      //
+      //
+      // //C
+      //
+      // if( (allCs[0]._FPPG - allCs[1]._FPPG) > 8) {
+      //   $scope.addPlayerToPool(allCs[0]);
+      // } else {
+      //   $scope.addPlayerToPool(allCs[0]);
+      //   $scope.addPlayerToPool(allCs[1]);
+      // }
+
+      //version 1
+      for(var j = 0; j < allPGs.length; j++) {
+        if(j == 0 || j == 1 || j == 2 || j == 3 ) {
+          $scope.addPlayerToPool(allPGs[j]);
+        }
+      }
+      for(var j = 0; j < allSGs.length; j++) {
+        if(j == 0 || j == 1 || j == 2 || j == 3 || j == 4 || j == 5) {
+          if(allSGs[j]._FPPG > 8) {
+            $scope.addPlayerToPool(allSGs[j]);
+          }
+        }
+      }
+
+      $scope.addPlayerToPool(allSFs[0]);
+      $scope.lockAndUnLockPlayer(allSFs[0]);
+
+      for(var j = 0; j < allSFs.length; j++) {
+        if( j == 1 || j == 2 || j == 3) {
+          $scope.addPlayerToPool(allSFs[j]);
+        }
+      }
+
+      for(var j = 0; j < allPFs.length; j++) {
+        if( j == 0 || j == 1 || j == 2 || j == 3 || j == 4 || j == 5) {
+          if(allPFs[j]._FPPG > 8) {
+            $scope.addPlayerToPool(allPFs[j]);
+          }
+        }
+      }
+
+      if( (allCs[0]._FPPG - allCs[1]._FPPG) > 8) {
+        $scope.addPlayerToPool(allCs[0]);
+      } else {
+        $scope.addPlayerToPool(allCs[0]);
+        $scope.addPlayerToPool(allCs[1]);
+      }
+      $scope.AVERAGE = 257.6;
+      $scope.STDEVIATION = 4.8;
+
+    }
     $scope.parseFloat = function(value)
     {
        return parseFloat(value);
@@ -984,6 +1364,87 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
     }
 
+    $scope.removeDraftsWithBadPlayerSetups = function() {
+      var PG1Limit = parseInt(2);
+      var SG1Limit = parseInt(2);
+      var SF1Limit = parseInt(1);
+      var PF1Limit = parseInt(3);
+
+      var PGsOrdered = $filter('orderBy')($scope._PGPlayerPool, '_FPPG', true);
+      var SGsOrdered = $filter('orderBy')($scope._SGPlayerPool, '_FPPG', true);
+      var SFsOrdered = $filter('orderBy')($scope._SFPlayerPool, '_FPPG', true);
+      var PFsOrdered = $filter('orderBy')($scope._PFPlayerPool, '_FPPG', true);
+
+      var indexesOfDraftsToRemove = [];
+      for(var j = 0; j < $scope._AllDraftData.length; j++) {
+
+        var PGPlayers = $filter('position')($scope._AllDraftData[j].players, 'PG');
+        var SGPlayers = $filter('position')($scope._AllDraftData[j].players, 'SG');
+        var SFPlayers = $filter('position')($scope._AllDraftData[j].players, 'SF');
+        var PFPlayers = $filter('position')($scope._AllDraftData[j].players, 'PF');
+
+        var indexOfPG1Player = PGsOrdered.indexOf(PGPlayers[0]);
+        var indexOfPG2Player = PGsOrdered.indexOf(PGPlayers[1]);
+        if(indexOfPG1Player > (PG1Limit - 1) && indexOfPG2Player > (PG1Limit - 1)) {
+          indexesOfDraftsToRemove.push(j);
+        }
+        var indexOfSG1Player = SGsOrdered.indexOf(SGPlayers[0]);
+        var indexOfSG2Player = SGsOrdered.indexOf(SGPlayers[1]);
+        if(indexOfSG1Player > (SG1Limit - 1) && indexOfSG2Player > (SG1Limit - 1)) {
+          indexesOfDraftsToRemove.push(j);
+        }
+        var indexOfSF1Player = SFsOrdered.indexOf(SFPlayers[0]);
+        var indexOfSF2Player = SFsOrdered.indexOf(SFPlayers[1]);
+        if(indexOfSF1Player > (SF1Limit - 1) && indexOfSF2Player > (SF1Limit - 1)) {
+          indexesOfDraftsToRemove.push(j);
+        }
+
+        var indexOfPF1Player = PFsOrdered.indexOf(PFPlayers[0]);
+        var indexOfPF2Player = PFsOrdered.indexOf(PFPlayers[1]);
+        if(indexOfPF1Player > (PF1Limit - 1) && indexOfPF2Player > (PF1Limit - 1)) {
+          indexesOfDraftsToRemove.push(j);
+        }
+
+        //special coralation between PF -> SG
+        if(indexOfSG1Player != 0 && indexOfSG2Player != 0) {
+          //no #1 player in SG
+          if(indexOfPF1Player > 0 && indexOfPF2Player > 0) {
+            //if both PFs are above the 3rd ranked player, ignore this draft
+            indexesOfDraftsToRemove.push(j);
+          }
+        }
+
+
+      }
+      var draftsToKeep = [];
+      for(var j = 0; j < $scope._AllDraftData.length; j++) {
+        if(indexesOfDraftsToRemove.indexOf(j) == -1) {
+          draftsToKeep.push($scope._AllDraftData[j]);
+        }
+      }
+
+      $scope._AllDraftData = draftsToKeep;
+
+      $scope.TotalPossibleDrafts = $scope._AllDraftData.length;
+      var validDraftData = $filter('checkValidOnly')($scope._AllDraftData, true);
+      $scope.TotalValidDrafts = validDraftData.length;
+
+      $scope._AllPlayers.forEach(function (player) {
+          player._TimesInDrafts = 0;
+          player._TimesInValidDrafts = 0;
+      });
+      validDraftData.forEach(function (draftData) {
+          draftData.players.forEach(function (player) {
+              var playerIndexInGlobal = $scope._AllPlayers.indexOf(player);
+              $scope._AllPlayers[playerIndexInGlobal]._TimesInValidDrafts += 1;
+          });
+      });
+
+      $scope._AllPlayers.forEach(function (player) {
+          $scope.setPlayerPercentInDraft(player);
+      });
+    }
+
     $scope.getDraftProjection = function (draft) {
         var totalProjection = 0;
         draft.forEach(function (player) {
@@ -1090,7 +1551,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     $scope.clearAllPlayerFilters = function () {
         $scope.SelectedTeams = [];
         $scope.SelectedWeeks = [];
-        $scope.SelectedWeeks.push($scope._AllWeeks[0]);
     }
 
     //#################################################################
@@ -1149,8 +1609,20 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
           $scope.savedPastSettings.push(singleDraftDetail);
         });
       }, function errorCallBack(response) {
-        $scope.displayNewMessage('danger', 'Loading More Saves - Failed');
+        $scope.displayNewMessage('danger', 'Loading More Saves - Failed, '+response.data.error);
       });
+    }
+
+    $scope.setDeleteConfirmation = function(id) {
+      $scope.DeleteConfirmationID = id;
+    }
+
+    $scope.unsetDeleteConfirmation = function() {
+      $scope.DeleteConfirmationID = -1;
+    }
+
+    $scope.showDeleteConfirmation = function(id) {
+      return ($scope.DeleteConfirmationID == id);
     }
 
     $scope.delete = function(saveID) {
@@ -1195,7 +1667,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       $scope.clearPlayerPools();
       $scope.clearDrafts();
       $scope.clearAllPlayers();
-
+      $scope.clearAllPlayerFilters();
 
       $scope._AllPlayers = savedData._AllPlayers;
       $scope._AllPlayersMASTER = savedData._AllPlayers;
