@@ -19,13 +19,22 @@ Auth::routes();
 
 //NFL
 Route::get('/NFL', 'ApplicationController@NFL');
-Route::post('/NFL/saveSettings', 'ApplicationController@saveNFLSettings');
-Route::post('/NFL/loadSavedSettings', 'ApplicationController@loadNFLSettings');
-Route::post('/NFL/loadSavedSettingsDetails', 'ApplicationController@loadNFLSavedSettingsDetails');
+Route::post('/NFL/loadHistory', 'ApplicationController@loadNFLHistory');
+
+Route::post('/NFL/buildDraft', 'ApplicationController@buildDraftNFL');
+
+Route::post('/NFL/create', 'ApplicationController@createNFL');
+Route::post('/NFL/read', 'ApplicationController@readNFL');
+Route::post('/NFL/update', 'ApplicationController@updateNFL');
+Route::post('/NFL/delete', 'ApplicationController@deleteNFL');
+
+Route::post('/NFL/updateTitle', 'ApplicationController@updateTitleNFL');
 
 //NBA
 Route::get('/NBA', 'ApplicationController@NBA');
 Route::post('/NBA/loadHistory', 'ApplicationController@loadNBAHistory');
+
+Route::post('/NBA/buildDraft', 'ApplicationController@buildDraftNBA');
 
 Route::post('/NBA/create', 'ApplicationController@createNBA');
 Route::post('/NBA/read', 'ApplicationController@readNBA');

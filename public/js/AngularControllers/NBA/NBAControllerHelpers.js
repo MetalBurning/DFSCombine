@@ -37,6 +37,9 @@ angular.module('NBAApp').controller('SaveModalController', function ($scope, $ui
 
   $scope.postObject = postObject;
   $scope.currentRead = currentRead;
+
+  $scope.readData = undefined;
+
   if(currentRead != null) {
     $scope.title = currentRead['title'];
   } else {
@@ -71,6 +74,7 @@ angular.module('NBAApp').controller('SaveModalController', function ($scope, $ui
       $http.post('/NBA/create', {'postObject':JSON.stringify($scope.postObject), 'title': $scope.title}).then(function successCallback(response) {
          $scope.saved = true;
          $scope.displayNewMessage('success', 'Creating - Success');
+         $scope.readData = response.data;
       }, function errorCallBack(response) {
         if(response.data.title.length > 0) {
           $scope.displayNewMessage('danger', 'Creating - Failed, '+response.data.title);
@@ -91,6 +95,7 @@ angular.module('NBAApp').controller('SaveModalController', function ($scope, $ui
       $http.post('/NBA/update', {'id':$scope.currentRead['id'], 'postObject':JSON.stringify($scope.postObject), 'title': $scope.title}).then(function successCallback(response) {
          $scope.displayNewMessage('success', 'Updating - Success');
          $scope.saved = true;
+         $scope.readData = response.data;
       }, function errorCallBack(response) {
         if(response.data.title.length > 0) {
           $scope.displayNewMessage('danger', 'Updating - Failed, '+response.data.title);
@@ -114,11 +119,20 @@ angular.module('NBAApp').controller('SaveModalController', function ($scope, $ui
 
 
   $scope.ok = function () {
-      $uibModalInstance.close();
+    if($scope.readData !== undefined) {
+      $uibModalInstance.close({title: $scope.title, postObject: $scope.postObject, readData: $scope.readData});
+    } else {
+      $uibModalInstance.dismiss();
+    }
   };
 
   $scope.cancel = function () {
-      $uibModalInstance.dismiss('cancel');
+    if($scope.readData !== undefined) {
+      $uibModalInstance.close({title: $scope.title, postObject: $scope.postObject, readData: $scope.readData});
+    } else {
+      $uibModalInstance.dismiss();
+    }
+
   };
 });
 

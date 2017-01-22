@@ -9,7 +9,7 @@
 
         <div class="row">
             <div class="col-xs-12" id="messages">
-              <div uib-alert ng-repeat="alert in alerts track by $index" ng-show="$last" ng-class="'alert-' + alert.type" close="closeAlert($index)">@{{alert.msg}} - <abbr title="Number of notification of this type.">(@{{alert.number}})</abbr></div>
+              <div uib-alert ng-repeat="alert in alerts track by $index" ng-show="$last" ng-class="'alert-' + alert.type" close="closeAlert($index)">@{{alert.msg}} <div ng-show="alert.login" style="display: inline-block;"><a href="/login">Please login again here.</a></div>- <abbr title="Number of notification of this type.">(@{{alert.number}})</abbr></div>
             </div>
         </div>
 
@@ -37,12 +37,12 @@
                                             <div class="col-xs-5">
                                                 <h4>Filter Position</h4>
                                                 <div class="btn-group">
-                                                    <button type="button" class="btn btn-primary" ng-click="SelectedPosition = '';" ng-class="{true: 'active', false: ''}[SelectedPosition === '']">All</button>
-                                                    <button type="button" class="btn btn-primary" ng-click="SelectedPosition = 'PG';" ng-class="{true: 'active', false: ''}[SelectedPosition === 'PG']">PG</button>
-                                                    <button type="button" class="btn btn-primary" ng-click="SelectedPosition = 'SG';" ng-class="{true: 'active', false: ''}[SelectedPosition === 'SG']">SG</button>
-                                                    <button type="button" class="btn btn-primary" ng-click="SelectedPosition = 'SF';" ng-class="{true: 'active', false: ''}[SelectedPosition === 'SF']">SF</button>
-                                                    <button type="button" class="btn btn-primary" ng-click="SelectedPosition = 'PF';" ng-class="{true: 'active', false: ''}[SelectedPosition === 'PF']">PF</button>
-                                                    <button type="button" class="btn btn-primary" ng-click="SelectedPosition = 'C';" ng-class="{true: 'active', false: ''}[SelectedPosition === 'C']">C</button>
+                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('')" ng-class="{true: 'active', false: ''}[SelectedPosition === '']">All</button>
+                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('PG')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'PG']">PG</button>
+                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('SG')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'SG']">SG</button>
+                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('SF')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'SF']">SF</button>
+                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('PF')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'PF']">PF</button>
+                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('C')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'C']">C</button>
                                                 </div>
                                             </div>
                                             <div class="col-xs-4">
@@ -53,9 +53,8 @@
                                             </div>
                                             <div class="col-xs-3">
                                                 <h4>Options</h4>
-                                                <button type="button" class="btn btn-info" ng-click="addTopTeamPlayers()" >TT</button>
-                                                <button type="button" class="btn btn-info" ng-click="addTopActualResults()" >Top</button>
-                                                <button type="button" class="btn btn-info" ng-click="autoAddPlayerFormula()" >Auto</button>
+                                                <button type="button" class="btn btn-xs btn-info" ng-click="addTopActualResults()" >Top Actual</button>
+                                                <button type="button" class="btn btn-xs btn-info" ng-click="autoAddPlayerFormula()" >Top FPPG</button>
                                             </div>
                                         </div>
 
@@ -63,7 +62,7 @@
                                             <div class="col-sm-12">
                                                 <table class="table table-hover">
                                                     <thead>
-                                                        <tr>
+                                                        <tr class="visible-md visible-lg">
                                                             <th>Add</th>
                                                             <th>
                                                                 <span class="fake-link"  ng-click="sortType = '_Name'; sortReverse = !sortReverse">
@@ -87,7 +86,7 @@
                                                             </th>
                                                             <th>
                                                                 <span class="fake-link"  ng-click="sortType = '_Position'; sortReverse = !sortReverse">
-                                                                    Position
+                                                                    Pos
                                                                 </span>
                                                             </th>
                                                             <th>
@@ -111,19 +110,55 @@
                                                                 </span>
                                                             </th>
                                                         </tr>
+                                                        <tr class="visible-xs  visible-sm">
+                                                            <th>Add</th>
+                                                            <th>
+                                                                <span class="fake-link"  ng-click="sortType = '_Name'; sortReverse = !sortReverse">
+                                                                      Name
+                                                                </span>
+                                                            </th>
+                                                            <th>
+                                                                <span class="fake-link" ng-click="sortType = '_Game'; sortReverse = !sortReverse">
+                                                                    Game
+                                                                </span>
+                                                            </th>
+                                                            <th>
+                                                                <span class="fake-link"  ng-click="sortType = '_FPPG'; sortReverse = !sortReverse">
+                                                                    FPPG
+                                                                </span>
+                                                            </th>
+                                                            <th>
+                                                                <span class="fake-link"  ng-click="sortType = '_ActualFantasyPoints'; sortReverse = !sortReverse">
+                                                                    Actual
+                                                                </span>
+                                                            </th>
+                                                            <th>
+                                                                <span class="fake-link" ng-click="sortType = '_Salary'; sortReverse = !sortReverse">
+                                                                    Salary
+                                                                </span>
+                                                            </th>
+                                                        </tr>
                                                     </thead>
                                                     <tbody ng-repeat="player in _AllPlayers | orderBy:sortType:sortReverse | position:SelectedPosition | team:SelectedTeams">
-                                                        <tr class="@{{player._playerInjured}}">
+                                                        <tr class="@{{player._playerInjured}} visible-md visible-lg">
                                                             <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player)" ng-click="addPlayerToPool(player)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player)" ng-click="removePlayerFromPool(player)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Team}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Opponent}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Game}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Position}}</td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._FPPG}}</td>
+                                                            <td><input class="form-control actualPoints"  ng-model="player._FPPG" type="number" ></td>
                                                             <td><input class="form-control actualPoints"  ng-model="player._ActualFantasyPoints" type="number" ></td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Salary}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._ProjectedPointsPerDollar}}</td>
+                                                        </tr>
+                                                        <tr class="@{{player._playerInjured}} visible-xs  visible-sm">
+                                                            <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player)" ng-click="addPlayerToPool(player)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player)" ng-click="removePlayerFromPool(player)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
+                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Game}}</td>
+                                                            <td><input class="form-control actualPoints"  ng-model="player._FPPG" type="number" ></td>
+                                                            <td><input class="form-control actualPoints"  ng-model="player._ActualFantasyPoints" type="number" ></td>
+                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Salary}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -250,12 +285,13 @@
                                     <div class="panel-heading">
                                         <div class='btn-toolbar pull-right'>
                                             <div class='btn-group'>
+                                                <button type="button" class="btn btn-xs btn-info" ng-click="DownloadDraftCSV()">Download</button>
                                                 <button type="button" class="btn btn-xs btn-default" ng-click="clearDrafts()">Clear Drafts</button>
                                             </div>
                                         </div>
-                                        <h3 class="panel-title">Generated Drafts</h3>
+                                        <h3 class="panel-title">Generated Drafts (150 Display Cap)</h3>
                                     </div>
-                                    <div class="panel-body" set-height id="generatedDrafts">
+                                    <div class="panel-body" set-height id="generatedDrafts" >
                                         <div class="row">
                                             <div class="col-md-4">
                                               <div class="row">
@@ -266,7 +302,7 @@
                                               <div class="row">
                                                 <div class="col-xs-12">
                                                   <button type="button" class="btn btn-primary" ng-click="buildDrafts()" >ReBuild Drafts</button>
-                                                  <abbr title="Total possible combinations excluding rules (Salary, Team limits)">Possible: @{{TotalPossibleDrafts}}</abbr>, <abbr title="Total possible valid draft combinations, only valid combinations are displayed">Valid: @{{TotalValidDrafts}}</abbr>
+                                                  <abbr title="Total possible valid draft combinations, only valid combinations are displayed">Total: @{{TotalValidDrafts}}</abbr>
                                                 </div>
                                               </div>
                                             </div>
@@ -296,17 +332,20 @@
                                                 </div>
                                               </div>
                                               <div class="row">
-                                                <div class="col-xs-12">
-                                                  <button type="button" class="btn btn-default" ng-click="removeDraftsWithBadPlayerSetups()">RM Sp</button>
-                                                  <button type="button" class="btn btn-info" ng-click="DownloadDraftCSV()">DownloadDrafts</button>
+                                                <div class="col-xs-3">
+                                                  <button type="button" class="btn btn-primary" ng-click="removeAllButTopN()">Top</button>
+                                                </div>
+                                                <div class="col-xs-9">
+
+                                                  <input type="text" class="form-control" ng-model="nba.TopLimit"  >
                                                 </div>
                                               </div>
 
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <table class="table table-hover">
+                                        <div class="row" >
+                                            <div class="col-xs-12"  >
+                                                <table class="table table-hover" >
                                                     <thead>
                                                         <tr>
                                                             <th>Draft</th>
@@ -320,27 +359,14 @@
                                                                     Actual Pts
                                                                 </span>
                                                             </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('validTeam')">
-                                                                    Teams Valid
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('validSalary')">
-                                                                    Salary Valid
-                                                                </span>
-                                                            </th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody ng-repeat="draft in _AllDraftData | orderBy:sortTypeDraft:sortReverseDraft | checkValidOnly:SelectedValidDrafts">
-                                                        <tr >
+                                                    <tbody >
+                                                        <tr ng-repeat="draft in _AllDisplayedDraftData | orderBy:sortTypeDraft:sortReverseDraft">
                                                             <td>@{{$index + 1}} <button class="btn btn-xs btn-danger" ng-click="removeDraft(draft)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openCloseDraftDetails(draft);">@{{draft.projection}}</td>
                                                             <td ng-click="openCloseDraftDetails(draft);">@{{draft.actual}}</td>
-                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.validTeam}}</td>
-                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.validSalary}}</td>
                                                         </tr>
-
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -358,9 +384,6 @@
                               <div class="panel panel-default" >
                                   <div class="panel-heading">
                                     <div class='btn-toolbar pull-right'>
-                                      <label class="btn btn-primary btn-file btn-xs">
-                                          Load Fanduel Results CSV File <input type="file" style="display: none;"  custom-on-change="loadActual">
-                                      </label>
                                       <label class="btn btn-primary btn-file btn-xs">
                                           Add Fanduel Player CSV File <input type="file" style="display: none;" custom-on-change="loadPlayers">
                                       </label>

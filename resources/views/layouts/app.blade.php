@@ -16,9 +16,9 @@
     <link href="/css/app.css" rel="stylesheet">
 
     <!-- Scripts -->
+    <script src="/js/jquery-1.10.2.min.js"></script>
     <script src="/js/angular.min.js"></script>
     <script src="/js/ui-bootstrap-tpls-2.3.1.min.js"></script>
-
     <script>
         window.Laravel = <?php echo json_encode([
             'csrfToken' => csrf_token(),
@@ -86,7 +86,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="/js/jquery-1.10.2.min.js"></script>
+
     <script src="/js/bootstrap.min.js"></script>
 </body>
 </html>

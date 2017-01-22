@@ -32,34 +32,93 @@ angular.module('NFLApp').controller('DraftModalController', function ($scope, $u
         return totalActual.toFixed(2);
     }
 });
-angular.module('NFLApp').controller('SaveModalController', function ($scope, $uibModalInstance, $http, postObject) {
+angular.module('NFLApp').controller('SaveModalController', function ($scope, $uibModalInstance, $http, postObject, currentRead, $timeout) {
 
   $scope.postObject = postObject;
-  $scope.title = "";
-  $scope.saved = false;
+  $scope.currentRead = currentRead;
 
-  $scope.savePlayerData = function() {
-    if($scope.title.length > 0) {
-      $http.post('/NFL/saveSettings', {'postObject':JSON.stringify($scope.postObject), 'title': $scope.title}).then(function successCallback(response) {
-           $scope.saved = true;
+  $scope.readData = undefined;
+
+  if(currentRead != null) {
+    $scope.title = currentRead['title'];
+  } else {
+    $scope.title = "";
+  }
+  $scope.saved = false;
+  $scope.alerts = [{type: "info", msg: "Save / Update current settings.", number: 1 }];
+
+  $scope.CreateUpdateButtonEnabled = true;
+
+  $scope.displayNewMessage = function (messageType, messageContent) {
+    $scope.addAlert(messageType, messageContent);
+  }
+
+  $scope.addAlert = function(type, message) {
+    var sameNumberOfAlerts = 1;
+    $scope.alerts.forEach(function(alert) {
+      if(alert.type == type && alert.msg == message) {
+        sameNumberOfAlerts++;
+      }
+    });
+    $scope.alerts.push({type: type, msg: message, number: sameNumberOfAlerts});
+  }
+  $scope.closeAlert = function(index) {
+    $scope.alerts.splice(index, 1);
+  }
+
+  $scope.create = function() {
+    if($scope.title.length > 0 ) {
+      $http.post('/NFL/create', {'postObject':JSON.stringify($scope.postObject), 'title': $scope.title}).then(function successCallback(response) {
+         $scope.saved = true;
+         $scope.readData = response.data;
+         $scope.displayNewMessage('success', 'Creating - Success');
       }, function errorCallBack(response) {
-        console.log("errror");
-        $uibModalInstance.close();
+        if(response.data.title.length > 0) {
+          $scope.displayNewMessage('danger', 'Creating - Failed, '+response.data.title);
+        } else if(response.data.postObject.length > 0) {
+          $scope.displayNewMessage('danger', 'Creating - Failed, '+response.data.postObject);
+        }
       });
     } else {
-      $http.post('/NFL/saveSettings', {'postObject':JSON.stringify($scope.postObject)}).then(function successCallback(response) {
+        $scope.displayNewMessage('danger', 'Creating - Failed, title is required');
+    }
+    $scope.CreateUpdateButtonEnabled = false;
+    $timeout(function() {
+       $scope.CreateUpdateButtonEnabled = true;
+    }, 1000);
+  }
+  $scope.update = function() {
+    if($scope.currentRead != null) {
+      $http.post('/NFL/update', {'id':$scope.currentRead['id'], 'postObject':JSON.stringify($scope.postObject), 'title': $scope.title}).then(function successCallback(response) {
+         $scope.readData = response.data;
+         $scope.displayNewMessage('success', 'Updating - Success');
          $scope.saved = true;
       }, function errorCallBack(response) {
-        console.log("errror");
+        if(response.data.title.length > 0) {
+          $scope.displayNewMessage('danger', 'Updating - Failed, '+response.data.title);
+        } else if(response.data.id.length > 0) {
+          $scope.displayNewMessage('danger', 'Updating - Failed, '+response.data.id);
+        } else if(response.data.postObject.length > 0) {
+          $scope.displayNewMessage('danger', 'Updating - Failed, '+response.data.postObject);
+        }
       });
+      $scope.CreateUpdateButtonEnabled = false;
+      $timeout(function() {
+         $scope.CreateUpdateButtonEnabled = true;
+      }, 1000);
     }
-
-
   }
-  $scope.ok = function () {
-      $uibModalInstance.close();
-  };
+  $scope.hasCurrentRead = function() {
+    return ($scope.currentRead != null);
+  }
 
+  $scope.ok = function () {
+    if($scope.readData !== undefined) {
+      $uibModalInstance.close({title: $scope.title, postObject: $scope.postObject, readData: $scope.readData});
+    } else {
+      $uibModalInstance.dismiss();
+    }
+  };
   $scope.cancel = function () {
       $uibModalInstance.dismiss('cancel');
   };

@@ -49,7 +49,29 @@ class ApplicationController extends Controller
       }
       else
       {
-        $errorMessage = array('errorMessage' => 'Not Authorized');
+        $errorMessage = array('error' => 'Unauthenticated.');
+        return Response::json($errorMessage, 500);
+      }
+    }
+
+    public function buildDraftNBA(Request $request)
+    {
+      if(Auth::check()) {
+          $userID = Auth::user()->id;
+
+          $this->validate($request, [
+            'builtDrafts' => 'required|integer'
+          ]);
+
+          $currentTime = Carbon::now();
+
+          DB::table('UserBuilds')->insert(
+              ['userID' => Auth::user()->id, 'sport' => 'NBA', 'drafts' =>  $request->input('builtDrafts')]
+          );
+      }
+      else
+      {
+        $errorMessage = array('error' => 'Unauthenticated.');
         return Response::json($errorMessage, 500);
       }
     }
@@ -59,9 +81,6 @@ class ApplicationController extends Controller
       if(Auth::check()) {
         if($request->input() != NULL) {
 
-          $userID = Auth::user()->id;
-
-
           $this->validate($request, [
               'postObject' => 'required|json',
               'title' => 'required|string|max:255'
@@ -69,16 +88,16 @@ class ApplicationController extends Controller
           $postObject = $request->input('postObject');
           $title = $request->input('title');
 
-          DB::table('UserSaveData')->insert(
-              ['userID' => $userID, 'userSaveJSON' => $postObject, 'title' => $title, 'sport' => 'NBA']
+          $id = DB::table('UserSaveData')->insertGetId(
+              ['userID' => Auth::user()->id, 'userSaveJSON' => $postObject, 'title' => $title, 'sport' => 'NBA']
           );
-
-
+          $savedJSON = DB::table('UserSaveData')->select('userSaveJSON', 'title', 'id')->where([['userID', '=', Auth::user()->id],['id', '=', $id],['sport' ,'=', 'NBA']])->whereNull('deleted_at')->first();
+          return Response::json($savedJSON, 200);
         }
       }
       else
       {
-        $errorMessage = array('errorMessage' => 'Not Authorized');
+        $errorMessage = array('error' => 'Unauthenticated.');
         return Response::json($errorMessage, 500);
       }
     }
@@ -96,7 +115,7 @@ class ApplicationController extends Controller
       }
       else
       {
-        $errorMessage = array('errorMessage' => 'Not Authorized');
+        $errorMessage = array('error' => 'Unauthenticated.');
         return Response::json($errorMessage, 500);
       }
     }
@@ -114,13 +133,14 @@ class ApplicationController extends Controller
 
           $currentTime = Carbon::now();
 
-          $savedTitle = DB::table('UserSaveData')->where([ ['userID', '=', Auth::user()->id], ['sport' ,'=', 'NBA'], ['id', '=', $request->input('id')] ])->whereNull('deleted_at')->update(['title' => $request->input('title')]);
-          $savedJSON = DB::table('UserSaveData')->where([ ['userID', '=', Auth::user()->id], ['sport' ,'=', 'NBA'], ['id', '=', $request->input('id')] ])->whereNull('deleted_at')->update(['userSaveJSON' => $request->input('postObject') ]);
+          DB::table('UserSaveData')->where([ ['userID', '=', Auth::user()->id], ['sport' ,'=', 'NBA'], ['id', '=', $request->input('id')] ])->whereNull('deleted_at')->update(['title' => $request->input('title')]);
+          DB::table('UserSaveData')->where([ ['userID', '=', Auth::user()->id], ['sport' ,'=', 'NBA'], ['id', '=', $request->input('id')] ])->whereNull('deleted_at')->update(['userSaveJSON' => $request->input('postObject') ]);
+          $savedJSON = DB::table('UserSaveData')->select('userSaveJSON', 'title', 'id')->where([['userID', '=', Auth::user()->id],['id', '=',  $request->input('id')],['sport' ,'=', 'NBA']])->whereNull('deleted_at')->first();
           return Response::json($savedJSON, 200);
       }
       else
       {
-        $errorMessage = array('errorMessage' => 'Not Authorized');
+        $errorMessage = array('error' => 'Unauthenticated.');
         return Response::json($errorMessage, 500);
       }
     }
@@ -141,7 +161,7 @@ class ApplicationController extends Controller
       }
       else
       {
-        $errorMessage = array('errorMessage' => 'Not Authorized');
+        $errorMessage = array('error' => 'Unauthenticated.');
         return Response::json($errorMessage, 500);
       }
     }
@@ -161,7 +181,7 @@ class ApplicationController extends Controller
       }
       else
       {
-        $errorMessage = array('errorMessage' => 'Not Authorized');
+        $errorMessage = array('error' => 'Unauthenticated.');
         return Response::json($errorMessage, 500);
       }
     }
@@ -179,6 +199,47 @@ class ApplicationController extends Controller
     public function NFL()
     {
         return view('NFL');
+    }
+
+    public function loadNFLHistory(Request $request)
+    {
+      if(Auth::check()) {
+          $userID = Auth::user()->id;
+
+          $this->validate($request, [
+              'endIndex' => 'required|integer'
+          ]);
+
+          $savedJSON = DB::table('UserSaveData')->select('created_at', 'id', 'title')->where([['userID', '=', Auth::user()->id],['sport' ,'=', 'NFL']])->whereNull('deleted_at')->orderBy('created_at', 'desc')->skip($request->input('endIndex'))->take(10)->get();
+          return Response::json($savedJSON, 200);
+      }
+      else
+      {
+        $errorMessage = array('error' => 'Unauthenticated.');
+        return Response::json($errorMessage, 500);
+      }
+    }
+
+    public function buildDraftNFL(Request $request)
+    {
+      if(Auth::check()) {
+          $userID = Auth::user()->id;
+
+          $this->validate($request, [
+            'builtDrafts' => 'required|integer'
+          ]);
+
+          $currentTime = Carbon::now();
+
+          DB::table('UserBuilds')->insert(
+              ['userID' => Auth::user()->id, 'sport' => 'NFL', 'drafts' =>  $request->input('builtDrafts')]
+          );
+      }
+      else
+      {
+        $errorMessage = array('error' => 'Unauthenticated.');
+        return Response::json($errorMessage, 500);
+      }
     }
 
     public function saveNFLSettings(Request $request)
@@ -210,11 +271,39 @@ class ApplicationController extends Controller
       }
       else
       {
-        $errorMessage = array('errorMessage' => 'Not Authorized');
+        $errorMessage = array('error' => 'Unauthenticated.');
         return Response::json($errorMessage, 500);
       }
     }
-    public function loadNFLSettings(Request $request)
+    public function createNFL(Request $request)
+    {
+      if(Auth::check()) {
+        if($request->input() != NULL) {
+
+          $userID = Auth::user()->id;
+
+
+          $this->validate($request, [
+              'postObject' => 'required|json',
+              'title' => 'required|string|max:255'
+          ]);
+          $postObject = $request->input('postObject');
+          $title = $request->input('title');
+
+          $id = DB::table('UserSaveData')->insertGetId(
+              ['userID' => $userID, 'userSaveJSON' => $postObject, 'title' => $title, 'sport' => 'NFL']
+          );
+          $savedJSON = DB::table('UserSaveData')->select('userSaveJSON', 'title', 'id')->where([['userID', '=', Auth::user()->id],['id', '=', $id],['sport' ,'=', 'NFL']])->whereNull('deleted_at')->first();
+          return Response::json($savedJSON, 200);
+        }
+      }
+      else
+      {
+        $errorMessage = array('error' => 'Unauthenticated.');
+        return Response::json($errorMessage, 500);
+      }
+    }
+    public function readNFL(Request $request)
     {
       if(Auth::check()) {
           $userID = Auth::user()->id;
@@ -223,33 +312,82 @@ class ApplicationController extends Controller
               'id' => 'required|integer'
           ]);
           $idToLoad = $request->input('id');
-          $savedJSON = DB::table('UserSaveData')->select('userSaveJSON')->where([['userID', '=', Auth::user()->id],['id', '=', $request->input('id')],['sport' ,'=', 'NFL']])->first();
+          $savedJSON = DB::table('UserSaveData')->select('userSaveJSON', 'title', 'id')->where([['userID', '=', Auth::user()->id],['id', '=', $request->input('id')],['sport' ,'=', 'NFL']])->whereNull('deleted_at')->first();
           return response()->json($savedJSON);
       }
       else
       {
-        $errorMessage = array('errorMessage' => 'Not Authorized');
+        $errorMessage = array('error' => 'Unauthenticated.');
         return Response::json($errorMessage, 500);
       }
     }
-    public function loadNFLSavedSettingsDetails(Request $request)
+    public function updateNFL(Request $request)
     {
       if(Auth::check()) {
           $userID = Auth::user()->id;
 
           $this->validate($request, [
-              'endIndex' => 'required|integer'
+              'id' => 'required|integer',
+              'title' => 'required|string|max:255',
+              'postObject' => 'json',
           ]);
 
-          $savedJSON = DB::table('UserSaveData')->select('created_at', 'id', 'title')->where([['userID', '=', Auth::user()->id],['sport' ,'=', 'NFL']])->orderBy('created_at', 'desc')->skip($request->input('endIndex'))->take(10)->get();
+          $currentTime = Carbon::now();
+
+          DB::table('UserSaveData')->where([ ['userID', '=', Auth::user()->id], ['sport' ,'=', 'NFL'], ['id', '=', $request->input('id')] ])->whereNull('deleted_at')->update(['title' => $request->input('title')]);
+          DB::table('UserSaveData')->where([ ['userID', '=', Auth::user()->id], ['sport' ,'=', 'NFL'], ['id', '=', $request->input('id')] ])->whereNull('deleted_at')->update(['userSaveJSON' => $request->input('postObject') ]);
+          $savedJSON = DB::table('UserSaveData')->select('userSaveJSON', 'title', 'id')->where([['userID', '=', Auth::user()->id],['id', '=',  $request->input('id')],['sport' ,'=', 'NFL']])->whereNull('deleted_at')->first();
           return Response::json($savedJSON, 200);
       }
       else
       {
-        $errorMessage = array('errorMessage' => 'Not Authorized');
+        $errorMessage = array('error' => 'Unauthenticated.');
         return Response::json($errorMessage, 500);
       }
     }
+    public function deleteNFL(Request $request)
+    {
+      if(Auth::check()) {
+          $userID = Auth::user()->id;
+
+          $this->validate($request, [
+              'id' => 'required|integer'
+          ]);
+
+          $currentTime = Carbon::now();
+
+          $savedJSON = DB::table('UserSaveData')->where([ ['userID', '=', Auth::user()->id], ['sport' ,'=', 'NFL'], ['id', '=', $request->input('id')] ])->whereNull('deleted_at')->update(['deleted_at' => $currentTime->toDateTimeString()]);
+          return Response::json($savedJSON, 200);
+      }
+      else
+      {
+        $errorMessage = array('error' => 'Unauthenticated.');
+        return Response::json($errorMessage, 500);
+      }
+    }
+
+    public function updateTitleNFL(Request $request)
+    {
+      if(Auth::check()) {
+          $userID = Auth::user()->id;
+
+          $this->validate($request, [
+              'id' => 'required|integer',
+              'title' => 'required|string|max:255'
+          ]);
+
+          $currentTime = Carbon::now();
+
+          $savedJSON = DB::table('UserSaveData')->where([ ['userID', '=', Auth::user()->id], ['sport' ,'=', 'NFL'], ['id', '=', $request->input('id')] ])->whereNull('deleted_at')->update(['title' => $request->input('title')]);
+          return Response::json($savedJSON, 200);
+      }
+      else
+      {
+        $errorMessage = array('error' => 'Unauthenticated.');
+        return Response::json($errorMessage, 500);
+      }
+    }
+
 
 
     //#################################################################

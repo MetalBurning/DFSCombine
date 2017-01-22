@@ -8,17 +8,15 @@
     <div class="container" ng-controller="NFLController as nfl">
 
         <div class="row">
-            <div class="col-xs-12" id="messages">
-                <div class="alert alert-@{{_Message.messageType}}"  role="alert" ng-show="_Message.hasData">
-                    <button type="button" class="close"  aria-label="Close" ng-click="resetMessage()"><span aria-hidden="true">&times;</span></button>@{{_Message.message}}
-                </div>
-            </div>
+          <div class="col-xs-12" id="messages">
+            <div uib-alert ng-repeat="alert in alerts track by $index" ng-show="$last" ng-class="'alert-' + alert.type" close="closeAlert($index)">@{{alert.msg}} <div ng-show="alert.login" style="display: inline-block;"><a href="/login">Please login again here.</a></div>- <abbr title="Number of notification of this type.">(@{{alert.number}})</abbr></div>
+          </div>
         </div>
 
         <div class="row">
             <div class="col-sm-12">
                 <uib-tabset active="activeJustified" justified="true">
-                    <uib-tab index="0" heading="Player Settings" >
+                    <uib-tab index="0" heading="@{{mainTabHeading}}" >
                         <!-- start player selection -->
                         <div class="row">
                             <div class="col-sm-8">
@@ -88,7 +86,7 @@
                                                             </th>
                                                             <th>
                                                                 <span class="fake-link" ng-click="sortType = '_Position'; sortReverse = !sortReverse">
-                                                                    Position
+                                                                    Pos
                                                                </span>
                                                             </th>
                                                             <th>
@@ -106,9 +104,14 @@
                                                                     Salary
                                                                 </span>
                                                             </th>
+                                                            <th>
+                                                                <span class="fake-link" ng-click="sortType = '_ProjectedPointsPerDollar'; sortReverse = !sortReverse">
+                                                                    Pts/Salary
+                                                                </span>
+                                                            </th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody ng-repeat="player in _AllPlayers | orderBy:sortType:sortReverse | position:SelectedPosition | team:SelectedTeams | weeks:SelectedWeeks">
+                                                    <tbody ng-repeat="player in _AllPlayers | orderBy:sortType:sortReverse | position:SelectedPosition | team:SelectedTeams">
                                                         <tr class="@{{player._playerInjured}}">
                                                             <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player)" ng-click="addPlayerToPool(player)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player)" ng-click="removePlayerFromPool(player)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
@@ -116,9 +119,10 @@
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Opponent}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Game}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Position}}</td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._FPPG}}</td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._ActualFantasyPoints}}</td>
+                                                            <td><input class="form-control actualPoints"  ng-model="player._FPPG" type="number" ></td>
+                                                            <td><input class="form-control actualPoints"  ng-model="player._ActualFantasyPoints" type="number" ></td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Salary}}</td>
+                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._ProjectedPointsPerDollar}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -159,7 +163,7 @@
                                                         <tr>
                                                             <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(QBPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(QBPlayers)">@{{QBPlayers._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(QBPlayers)"><abbr title="Percentage in total generated drafts">@{{QBPlayers._PercentInDrafts}}</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(QBPlayers)"><abbr title="Percentage in total generated drafts">@{{QBPlayers._PercentInDrafts}}%</abbr></td>
                                                             <td ng-click="openClosePlayerDetails(QBPlayers)">@{{QBPlayers._Team}}<br />@{{QBPlayers._FPPG}}</td>
                                                         </tr>
                                                     </tbody>
@@ -176,7 +180,7 @@
                                                         <tr>
                                                             <td><button class="btn btn-xs btn-success" ng-click="lockAndUnLockPlayer(RBPlayers)"><span class="glyphicon" ng-class="{true: 'glyphicon-floppy-saved', false: 'glyphicon-floppy-remove'}[_RBPlayerLocked.indexOf(RBPlayers) > -1]"></span></button><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(RBPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(RBPlayers)">@{{RBPlayers._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(RBPlayers)"><abbr title="Percentage in total generated drafts">@{{RBPlayers._PercentInDrafts}}</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(RBPlayers)"><abbr title="Percentage in total generated drafts">@{{RBPlayers._PercentInDrafts}}%</abbr></td>
                                                             <td ng-click="openClosePlayerDetails(RBPlayers)">@{{RBPlayers._Team}}<br />@{{RBPlayers._FPPG}}</td>
                                                         </tr>
                                                     </tbody>
@@ -193,7 +197,7 @@
                                                         <tr>
                                                             <td><button class="btn btn-xs btn-success" ng-click="lockAndUnLockPlayer(WRPlayers)"><span class="glyphicon" ng-class="{true: 'glyphicon-floppy-saved', false: 'glyphicon-floppy-remove'}[_WRPlayerLocked.indexOf(WRPlayers) > -1]"></span></button><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(WRPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(WRPlayers)">@{{WRPlayers._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(WRPlayers)"><abbr title="Percentage in total generated drafts">@{{WRPlayers._PercentInDrafts}}</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(WRPlayers)"><abbr title="Percentage in total generated drafts">@{{WRPlayers._PercentInDrafts}}%</abbr></td>
                                                             <td ng-click="openClosePlayerDetails(WRPlayers)">@{{WRPlayers._Team}}<br />@{{WRPlayers._FPPG}}</td>
                                                         </tr>
                                                     </tbody>
@@ -210,7 +214,7 @@
                                                         <tr>
                                                             <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(TEPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(TEPlayers)">@{{TEPlayers._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(TEPlayers)"><abbr title="Percentage in total generated drafts">@{{TEPlayers._PercentInDrafts}}</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(TEPlayers)"><abbr title="Percentage in total generated drafts">@{{TEPlayers._PercentInDrafts}}%</abbr></td>
                                                             <td ng-click="openClosePlayerDetails(TEPlayers)">@{{TEPlayers._Team}}<br />@{{TEPlayers._FPPG}}</td>
                                                         </tr>
                                                     </tbody>
@@ -227,7 +231,7 @@
                                                         <tr>
                                                             <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(KPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(KPlayers)">@{{KPlayers._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(KPlayers)"><abbr title="Percentage in total generated drafts">@{{KPlayers._PercentInDrafts}}</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(KPlayers)"><abbr title="Percentage in total generated drafts">@{{KPlayers._PercentInDrafts}}%</abbr></td>
                                                             <td ng-click="openClosePlayerDetails(KPlayers)">@{{KPlayers._Team}}<br />@{{KPlayers._FPPG}}</td>
                                                         </tr>
                                                     </tbody>
@@ -244,7 +248,7 @@
                                                         <tr>
                                                             <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(DSTPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(DSTPlayers)">@{{DSTPlayers._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(DSTPlayers)"><abbr title="Percentage in total generated drafts">@{{DSTPlayers._PercentInDrafts}}</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(DSTPlayers)"><abbr title="Percentage in total generated drafts">@{{DSTPlayers._PercentInDrafts}}%</abbr></td>
                                                             <td ng-click="openClosePlayerDetails(DSTPlayers)">@{{DSTPlayers._Team}}<br />@{{DSTPlayers._FPPG}}</td>
                                                         </tr>
                                                     </tbody>
@@ -261,6 +265,7 @@
                                     <div class="panel-heading">
                                         <div class='btn-toolbar pull-right'>
                                             <div class='btn-group'>
+                                              <button type="button" class="btn btn-xs btn-info" ng-click="DownloadDraftCSV()">Download</button>
                                                 <button type="button" class="btn btn-xs btn-default" ng-click="clearDrafts()">Clear Drafts</button>
                                             </div>
                                         </div>
@@ -268,7 +273,7 @@
                                     </div>
                                     <div class="panel-body" set-height id="generatedDrafts">
                                       <div class="row">
-                                          <div class="col-md-4">
+                                          <div class="col-md-3">
                                             <div class="row">
                                               <div class="col-xs-12">
                                                 <h4>Build Drafts</h4>
@@ -276,12 +281,12 @@
                                             </div>
                                             <div class="row">
                                               <div class="col-xs-12">
-                                                <button type="button" class="btn btn-primary" ng-click="buildDrafts()" >ReBuild Drafts</button>
-                                                Possible: @{{TotalPossibleDrafts}}, Valid: @{{TotalValidDrafts}}
+                                                <button type="button" class="btn btn-primary" ng-click="buildDrafts()" >Build Drafts</button>
+                                                Possible: @{{TotalValidDrafts}}
                                               </div>
                                             </div>
                                           </div>
-                                          <div class="col-md-4">
+                                          <div class="col-md-6">
                                             <div class="row">
                                               <div class="col-xs-12">
                                                 <h4>@{{ (parseFloat(AVERAGE) + parseFloat(STDEVIATION)).toFixed(2) }} => Drafts <= @{{ (parseFloat(AVERAGE) - parseFloat(STDEVIATION)).toFixed(2) }}</h4>
@@ -300,16 +305,18 @@
                                               </div>
                                             </div>
                                           </div>
-                                          <div class="col-md-4">
+                                          <div class="col-md-3">
                                             <div class="row">
                                               <div class="col-xs-12">
                                                 <h4>Draft Options</h4>
                                               </div>
                                             </div>
                                             <div class="row">
-                                              <div class="col-xs-12">
-                                                <button type="button" class="btn btn-primary" ng-click="switchValidDraftSelector()" ng-class="{true: 'active', false: ''}[SelectedValidDrafts]">Show Valid Only</button>
-                                                  <button type="button" class="btn btn-info" ng-click="DownloadDraftCSV()">DownloadDrafts</button>
+                                              <div class="col-xs-3">
+                                                <button type="button" class="btn btn-primary" ng-click="removeAllButTopN()">Top</button>
+                                              </div>
+                                              <div class="col-xs-9">
+                                                <input type="number" class="form-control" ng-model="nfl.TopLimit"  >
                                               </div>
                                             </div>
 
@@ -322,34 +329,22 @@
                                                         <tr>
                                                             <th>Draft</th>
                                                             <th>
-                                                                <span class="fake-link" ng-click="sortTypeDraft = 'projection'; sortReverseDraft = !sortReverseDraft">
+                                                                <span class="fake-link" ng-click="setDraftSortTypeAndReverse('projection')">
                                                                     FPPG
                                                                 </span>
                                                             </th>
                                                             <th>
-                                                                <span class="fake-link" ng-click="sortTypeDraft = 'actual'; sortReverseDraft = !sortReverseDraft">
+                                                                <span class="fake-link" ng-click="setDraftSortTypeAndReverse('actual')">
                                                                     Actual Pts
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link" ng-click="sortTypeDraft = 'validTeam'; sortReverseDraft = !sortReverseDraft">
-                                                                    Teams Valid
-                                                              </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link" ng-click="sortTypeDraft = 'validSalary'; sortReverseDraft = !sortReverseDraft">
-                                                                    Salary Valid
                                                                 </span>
                                                             </th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody ng-repeat="draft in _AllDraftData | orderBy:sortTypeDraft:sortReverseDraft | checkValidOnly:SelectedValidDrafts">
+                                                    <tbody ng-repeat="draft in _AllDisplayedDraftData | orderBy:sortTypeDraft:sortReverseDraft | checkValidOnly:SelectedValidDrafts">
                                                         <tr ng-click="openCloseDraftDetails(draft);">
                                                             <td>@{{$index + 1}}</td>
                                                             <td>@{{draft.projection}}</td>
                                                             <td>@{{draft.actual}}</td>
-                                                            <td>@{{draft.validTeam}}</td>
-                                                            <td>@{{draft.validSalary}}</td>
                                                         </tr>
 
                                                     </tbody>
@@ -362,17 +357,14 @@
                             </div>
                         </div>
                     </uib-tab>
-                    <uib-tab index="1" heading="DataBase" ng-click="loadSavedSettingsDetails()">
+                    <uib-tab index="1" heading="DataBase"  ng-click="loadHistory()">
                       <div class="row">
                           <div class="col-xs-offset-1 col-xs-11 col-sm-offset-0 col-sm-12 col-lg-offset-0 col-lg-12">
                             <div class="panel panel-default" >
                                 <div class="panel-heading">
                                   <div class='btn-toolbar pull-right'>
                                     <label class="btn btn-primary btn-file btn-xs">
-                                        Load Fanduel Results CSV File <input type="file" multiple style="display: none;" onchange="angular.element(this).scope().loadActual(this.files)">
-                                    </label>
-                                    <label class="btn btn-primary btn-file btn-xs">
-                                        Add Fanduel Player CSV File <input type="file" multiple style="display: none;" onchange="angular.element(this).scope().loadPlayers(this.files)">
+                                        Add Fanduel Player CSV File <input type="file" multiple style="display: none;" custom-on-change="loadPlayers">
                                     </label>
                                   </div>
                                     <h3 class="panel-title">Load Saved History</h3>
@@ -385,7 +377,7 @@
                                           <thead>
                                               <tr>
                                                   <th>Draft #</th>
-                                                  <th>Title (Optional)</th>
+                                                  <th>Title</th>
                                                   <th>Draft Created Date</th>
                                                   <th>Load</th>
                                               </tr>
@@ -393,9 +385,16 @@
                                           <tbody ng-repeat="savedSettings in savedPastSettings">
                                             <tr>
                                               <td>@{{$index+1}}</td>
-                                              <td>@{{savedSettings.title}}</td>
+                                              <td><input class="form-control" type="text" ng-model="savedSettings.title"></td>
                                               <td>@{{savedSettings.created_at}}</td>
-                                              <td><button class="btn btn-sm btn-primary" ng-click="loadSavedSettings(savedSettings.id)">Load Settings</button></td>
+                                              <td class="col-md-4">
+                                                <button class="btn btn-sm btn-primary" ng-click="read(savedSettings.id)">Load</button>
+                                                <button class="btn btn-sm btn-info" ng-click="updateTitle(savedSettings.id, savedSettings.title)">Update</button>
+                                                -
+                                                <button class="btn btn-sm btn-danger"  ng-show="!showDeleteConfirmation(savedSettings.id)" ng-click="setDeleteConfirmation(savedSettings.id)">Delete</button>
+                                                <button class="btn btn-sm btn-primary" ng-show="showDeleteConfirmation(savedSettings.id)" ng-click="delete(savedSettings.id)">Yes</button>
+                                                <button class="btn btn-sm btn-default" ng-show="showDeleteConfirmation(savedSettings.id)" ng-click="unsetDeleteConfirmation()">No</button>
+                                              </td>
                                             </tr>
                                           </tbody>
                                         </table>
@@ -403,7 +402,7 @@
                                   </div>
                                   <div class="row">
                                     <div class="col-sm-12">
-                                      <button class="btn btn-info" ng-click="loadNBASavedSettingsDetails()" ng-disabled="savedPastSettings.length % 10 != 0">Load More</button>
+                                      <button class="btn btn-info" ng-click="loadHistory()" ng-disabled="savedPastSettings.length % 10 != 0">Load More</button>
                                     </div>
                                   </div>
                                 </div>

@@ -1,3 +1,4 @@
+"use strict";
 var NBAApp = angular.module('NBAApp', ['ui.bootstrap']);
 
 NBAApp.filter('position', function () {
