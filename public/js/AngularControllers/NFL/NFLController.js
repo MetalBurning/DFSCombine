@@ -29,6 +29,7 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
     $scope._KPlayerPool = [];
     $scope._DSTPlayerPool = [];
 
+    $scope.sortTypeDraft = 'FPPG';
     $scope._AllDisplayedDraftData = [];
     $scope._AllDraftData = [];
     $scope.TotalPossibleDrafts = 0;
@@ -44,8 +45,8 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
     $scope.SelectedDraft = null;
 
     $scope.savedPastSettings = [];
-    $scope.AVERAGE = parseFloat(-1);
-    $scope.STDEVIATION = parseFloat(-1);
+    nfl.TopRange = parseFloat(-1);
+    nfl.BottomRange = parseFloat(-1);
 
     $scope.DeleteConfirmationID = -1;
     $scope.currentRead = null;
@@ -104,109 +105,49 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
       $scope.currentRead = null;
       $scope.mainTabHeading = "Players";
 
-      var file = event.target.files[0];
+      var formData = new FormData();
+      formData.append('csvFile', event.target.files[0]);
 
-        var allText = "";
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            allText = reader.result;
-
-            var allTextLines = allText.split(/\r\n|\n/);
-            var headers = allTextLines[0].split(',');
-
-
-            for (var i = 1; i < allTextLines.length; i++) {
-                var data = allTextLines[i].split(',');
-
-                var playerID = "";
-                var playerPosition = "";
-                var playerFName = "";
-                var playerLName = "";
-                var playerTeam = "";
-                var playerOpponent = "";
-                var playerFPPG = 0;
-                var playerSalary = 0;
-                var playerInjury = false;
-                var playerInjuryDetails = "";
-                var playerGame = "";
-                for (var j = 0; j < data.length; j++) {
-                    switch (j) {
-                        case 0:
-                            playerID = data[j].replace('"', '').replace('"', '').trim();
-                            break;
-                        case 1:
-                            playerPosition = data[j].replace('"', '').replace('"', '').trim();
-                            if(playerPosition == 'D') {
-                              playerPosition = 'DST';
-                            }
-                            break;
-                        case 2:
-                            playerFName = data[j].replace('"', '').replace('"', '').replace('Jr.', '').replace('Sr.', '').trim();
-                            break;
-                        case 4:
-                            playerLName = data[j].replace('"', '').replace('"', '').replace('Jr.', '').replace('Sr.', '').trim();
-                            break;
-                        case 5:
-                            playerFPPG = parseFloat(data[j].replace('"', '').replace('"', '').trim());
-                            playerFPPG = parseFloat(playerFPPG.toFixed(2));
-                            break;
-                        case 7:
-                            playerSalary = parseInt(data[j].replace('"', '').replace('"', '').trim());
-                            break;
-                        case 8:
-                            playerGame = data[j].replace('"', '').replace('"', '').trim();
-                            break;
-                        case 9:
-                            playerTeam = data[j].replace('"', '').replace('"', '').trim();
-                            break;
-                        case 10:
-                            playerOpponent = data[j].replace('"', '').replace('"', '').trim();
-                            break;
-                        case 11:
-                            if (data[j].replace('"', '').replace('"', '').trim().length > 0) {
-                                playerInjury = data[j].replace('"', '').replace('"', '').trim();
-                                if (playerInjury == 'IR' || playerInjury == 'O' || playerInjury == 'NA') {
-                                    playerInjury = 'danger';
-                                } else if(playerInjury == 'Q' || playerInjury == 'D') {
-                                    playerInjury = 'warning';
-                                }
-                            }
-                            break;
-                        case 12:
-                            playerInjuryDetails = data[j].replace('"', '').replace('"', '').trim();
-                            break;
-                    }
-                }
-                var pointsPerDollar = parseFloat((playerFPPG / playerSalary).toFixed(5));
-                var playerRead = {
-                  playerID: playerID,
-                  _Position: playerPosition,
-                  _Name: playerFName + " " + playerLName,
-                  _FPPG: playerFPPG, _ActualFantasyPoints: -1,
-                  _Team: playerTeam, _Opponent: playerOpponent,
-                  _Salary: playerSalary,
-                  _ProjectedPointsPerDollar: pointsPerDollar,
-                  _playerInjured: playerInjury,
-                  _playerInjuryDetails: playerInjuryDetails,
-                  _Game: playerGame, _PercentInDrafts: -1,
-                  _TimesInDrafts: 0,
-                  _TimesInValidDrafts: 0
-                };
-                $scope._AllPlayers.push(playerRead);
-                $scope._AllPlayersMASTER.push(playerRead);
-
-                //add team data
-                if ($scope._AllTeams.length == 0) {
-                    $scope._AllTeams.push(playerRead._Team);
-                } else if ($scope._AllTeams.indexOf(playerRead._Team) == -1) {
-                    $scope._AllTeams.push(playerRead._Team);
-                }
-
+      $http.post("/NFL/loadFanDuelPlayers", formData, {
+          headers: {
+              "Content-Type": undefined,
+              transformRequest: angular.identity
+          }
+      }).then(function successCallBack(response) {
+          console.log(response);
+          response.data.forEach(function(player) {
+            player._Salary = parseFloat(player._Salary);
+            player._FPPG = parseFloat(player._FPPG);
+            player._FPPG = player._FPPG.toFixed(2);
+            player._FPPG = parseFloat(player._FPPG);
+            var pointsPerDollar = parseFloat((player._FPPG / player._Salary).toFixed(5));
+            player._ProjectedPointsPerDollar = pointsPerDollar;
+            if (player._playerInjured == 'IR' || player._playerInjured == 'O' || player._playerInjured == 'NA') {
+                player._playerInjured = 'danger';
+            } else if(player._playerInjured == 'Q' || player._playerInjured == 'D') {
+                player._playerInjured = 'warning';
             }
+            //position data
+            if($scope._Positions.indexOf(player._Position) === -1) {
+              $scope._Positions.push(player._Position);
+            }
+            //add team data
+            if ($scope._AllTeams.length == 0) {
+                $scope._AllTeams.push(player._Team);
+            } else if ($scope._AllTeams.indexOf(player._Team) == -1) {
+                $scope._AllTeams.push(player._Team);
+            }
+            $scope._AllPlayers.push(player);
+            $scope._AllPlayersMASTER.push(player);
+          });
+          if($scope._AllPlayers.length > 0) {
+            $scope.displayNewMessage("success", "Players have been successfully loaded");
+          }
+      }, function errorCallBack(response) {
+          console.log(response);
+          $scope.displayNewMessage("danger", "Error: Players could not be loaded.");
+      });
 
-            $scope.displayNewMessage("info", "Players have been successfully loaded");
-        }
-        reader.readAsText(file);
     }
 
     $scope.loadActual = function (file) {
@@ -729,7 +670,7 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
                                 tempDraft.push(DST[0]);
 
                                 if($scope.isDraftTeamValid(tempDraft) && $scope.isDraftSalaryValid(tempDraft)) {
-                                  var tempDataObj = { projection: parseFloat($scope.getDraftProjection(tempDraft)), actual: parseFloat($scope.getDraftActual(tempDraft)), validTeam: $scope.isDraftTeamValid(tempDraft), validSalary: $scope.isDraftSalaryValid(tempDraft), players: tempDraft, displayDetails: false };
+                                  var tempDataObj = { FPPG: parseFloat($scope.getDraftFPPG(tempDraft)), Actual: parseFloat($scope.getDraftActual(tempDraft)), validTeam: $scope.isDraftTeamValid(tempDraft), validSalary: $scope.isDraftSalaryValid(tempDraft), players: tempDraft, displayDetails: false };
                                   $scope._AllDraftData.push(tempDataObj);
                                   tempDraft.forEach(function (player) {
                                       var playerIndexInGlobal = $scope._AllPlayers.indexOf(player);
@@ -813,7 +754,76 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         }
       }
     }
+    $scope.selectTopActualPlayers = function() {
+      $scope.clearPlayerPools();
+      if($scope._AllPlayers.length === 0) {
+        return;
+      }
+      var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_ActualFantasyPoints', true);
+      var allQBs = $filter('position')(orderedPlayers, 'QB');
+      var allRBs = $filter('position')(orderedPlayers, 'RB');
+      var allWRs = $filter('position')(orderedPlayers, 'WR');
+      var allTEs = $filter('position')(orderedPlayers, 'TE');
+      var allKs = $filter('position')(orderedPlayers, 'K');
+      var allDSTs = $filter('position')(orderedPlayers, 'DST');
 
+      for(var j = 0; j < 11; j++) {
+        if(allQBs.length >= j && j < 4) {
+          $scope.addPlayerToPool(allQBs[j]);
+        }
+        if(allRBs.length >= j && j < 7) {
+          $scope.addPlayerToPool(allRBs[j]);
+        }
+        if(allWRs.length >= j) {
+          $scope.addPlayerToPool(allWRs[j]);
+        }
+        if(allTEs.length >= j && j < 4) {
+          $scope.addPlayerToPool(allTEs[j]);
+        }
+        if(allKs.length >= j && j < 4) {
+          $scope.addPlayerToPool(allKs[j]);
+        }
+        if(allDSTs.length >= j && j < 4) {
+          $scope.addPlayerToPool(allDSTs[j]);
+        }
+      }
+
+    }
+    $scope.selectTopFPPGPlayers = function() {
+      $scope.clearPlayerPools();
+      if($scope._AllPlayers.length === 0) {
+        return;
+      }
+      var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
+      var NonInjuredPlayers =  $filter('removeInjured')(orderedPlayers);
+      var allQBs = $filter('position')(NonInjuredPlayers, 'QB');
+      var allRBs = $filter('position')(NonInjuredPlayers, 'RB');
+      var allWRs = $filter('position')(NonInjuredPlayers, 'WR');
+      var allTEs = $filter('position')(NonInjuredPlayers, 'TE');
+      var allKs = $filter('position')(NonInjuredPlayers, 'K');
+      var allDSTs = $filter('position')(NonInjuredPlayers, 'DST');
+
+      for(var j = 0; j < 11; j++) {
+        if(allQBs.length >= j && j < 4) {
+          $scope.addPlayerToPool(allQBs[j]);
+        }
+        if(allRBs.length >= j && j < 7) {
+          $scope.addPlayerToPool(allRBs[j]);
+        }
+        if(allWRs.length >= j) {
+          $scope.addPlayerToPool(allWRs[j]);
+        }
+        if(allTEs.length >= j && j < 4) {
+          $scope.addPlayerToPool(allTEs[j]);
+        }
+        if(allKs.length >= j && j < 4) {
+          $scope.addPlayerToPool(allKs[j]);
+        }
+        if(allDSTs.length >= j && j < 4) {
+          $scope.addPlayerToPool(allDSTs[j]);
+        }
+      }
+    }
     $scope.setDraftSortTypeAndReverse = function (sortType) {
         $scope.sortTypeDraft = sortType;
         $scope.sortReverseDraft = !$scope.sortReverseDraft;
@@ -843,13 +853,13 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         }
     }
 
-    $scope.getDraftProjection = function (draft) {
-        var totalProjection = 0;
+    $scope.getDraftFPPG = function (draft) {
+        var totalFPPG = 0;
         draft.forEach(function (player) {
-            totalProjection = totalProjection + player._FPPG;
+            totalFPPG = totalFPPG + player._FPPG;
         });
-        totalProjection = parseFloat(totalProjection);
-        return totalProjection.toFixed(2);
+        totalFPPG = parseFloat(totalFPPG);
+        return totalFPPG.toFixed(2);
     }
     $scope.getDraftActual = function (draft) {
         var totalActual = 0;
@@ -889,11 +899,8 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
     }
 
 
-    $scope.removeCalcDrafts = function (AVERAGE, STDEVIATION) {
-        var calcRemovedDrafts = $filter('removeCalcDraft')($scope._AllDraftData, parseFloat(AVERAGE), parseFloat(STDEVIATION));
-
-        $scope.AVERAGE = parseFloat(AVERAGE);
-        $scope.STDEVIATION = parseFloat(STDEVIATION);
+    $scope.removeCalcDrafts = function () {
+        var calcRemovedDrafts = $filter('removeCalcDraft')($scope._AllDraftData, nfl.TopRange, nfl.BottomRange, $scope.sortTypeDraft);
 
         $scope._AllDraftData = calcRemovedDrafts;
 
@@ -1137,8 +1144,8 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
 
       $scope._AllPlayers = savedData._AllPlayers;
       $scope._AllPlayersMASTER = savedData._AllPlayers;
-      $scope.AVERAGE = parseFloat(savedData.AVERAGE);
-      $scope.STDEVIATION = parseFloat(savedData.STDEVIATION);
+      nfl.TopRange = parseFloat(savedData.TopRange);
+      nfl.BottomRange = parseFloat(savedData.BottomRange);
       $scope._AllPlayers.forEach(function(singlePlayer) {
 
         //add team data
@@ -1189,8 +1196,8 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
             _TEPlayerPool : $scope._TEPlayerPool,
             _KPlayerPool : $scope._KPlayerPool,
             _DSTPlayerPool : $scope._DSTPlayerPool,
-            AVERAGE : $scope.AVERAGE,
-            STDEVIATION : $scope.STDEVIATION
+            TopRange : nfl.TopRange,
+            BottomRange : nfl.BottomRange
     		};
         var modalInstance = $uibModal.open({
             templateUrl: '/js/AngularControllers/saveDialog.html',

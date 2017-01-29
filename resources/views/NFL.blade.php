@@ -27,7 +27,9 @@
                                             <button type="button" class="btn btn-xs btn-primary" ng-disabled="_AllPlayers.length == 0" ng-click="openSaveDialog()"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></button>
                                           </div>
                                             <div class='btn-group'>
-                                                <button type="button" class="btn btn-xs btn-default" ng-click="clearAllPlayerFilters()">Clear Filters</button>
+                                              <button type="button" class="btn btn-xs btn-info" ng-click="selectTopActualPlayers()" >Top Actual</button>
+                                              <button type="button" class="btn btn-xs btn-info" ng-click="selectTopFPPGPlayers()" >Top FPPG</button>
+                                              <button type="button" class="btn btn-xs btn-default" ng-click="clearAllPlayerFilters()">Clear Filters</button>
                                             </div>
                                         </div>
                                         <h3 class="panel-title">Select Players</h3>
@@ -49,12 +51,12 @@
                                                           <button type="button" class="btn btn-primary" ng-click="SelectedPosition = 'DST';" ng-class="{true: 'active', false: ''}[SelectedPosition === 'DST']">DST</button>
                                                       </div>
                                                   </div>
-                                                    <div class="col-xs-6">
-                                                      <h4>Filter Teams</h4>
-                                                        <div class="btn-group">
-                                                            <button type="button" class="btn btn-primary" ng-repeat="team in _AllTeams" ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeams.indexOf(team) > -1]">@{{team}}</button>
-                                                        </div>
-                                                    </div>
+                                                  <div class="col-xs-6">
+                                                    <h4>Filter Teams</h4>
+                                                      <div class="btn-group">
+                                                          <button type="button" class="btn btn-primary" ng-repeat="team in _AllTeams" ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeams.indexOf(team) > -1]">@{{team}}</button>
+                                                      </div>
+                                                  </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -269,11 +271,11 @@
                                                 <button type="button" class="btn btn-xs btn-default" ng-click="clearDrafts()">Clear Drafts</button>
                                             </div>
                                         </div>
-                                        <h3 class="panel-title">Generated Drafts</h3>
+                                        <h3 class="panel-title">Generated Drafts (150 Display Cap)</h3>
                                     </div>
                                     <div class="panel-body" set-height id="generatedDrafts">
                                       <div class="row">
-                                          <div class="col-md-3">
+                                          <div class="col-sm-3">
                                             <div class="row">
                                               <div class="col-xs-12">
                                                 <h4>Build Drafts</h4>
@@ -286,37 +288,48 @@
                                               </div>
                                             </div>
                                           </div>
-                                          <div class="col-md-6">
+                                          <div class="col-sm-2">
                                             <div class="row">
                                               <div class="col-xs-12">
-                                                <h4>@{{ (parseFloat(AVERAGE) + parseFloat(STDEVIATION)).toFixed(2) }} => Drafts <= @{{ (parseFloat(AVERAGE) - parseFloat(STDEVIATION)).toFixed(2) }}</h4>
+                                                <h4>Selected Sort</h4>
                                               </div>
                                             </div>
                                             <div class="row">
-                                              <div class="col-xs-4">
-                                                <button type="button" class="btn btn-primary" ng-click="removeCalcDrafts(AVERAGE, STDEVIATION)" ng-disabled="STDEVIATION == -1 || AVERAGE == -1">Remove Range</button>
-
-                                              </div>
-                                              <div class="col-xs-4">
-                                                  <input type="text" class="form-control" ng-model="AVERAGE"   >
-                                              </div>
-                                              <div class="col-xs-4">
-                                                  <input type="text" class="form-control" ng-model="STDEVIATION"  >
+                                              <div class="col-xs-12">
+                                                @{{sortTypeDraft}}
                                               </div>
                                             </div>
                                           </div>
-                                          <div class="col-md-3">
+                                          <div class="col-sm-4">
+                                            <div class="row">
+                                              <div class="col-xs-12">
+                                                <h4><abbr title="Top range to keep.">@{{ (parseFloat(nfl.TopRange)).toFixed(2) }}</abbr> => Drafts <= <abbr title="Bottom range to keep.">@{{ (parseFloat(nfl.BottomRange)).toFixed(2) }}</abbr></h4>
+                                              </div>
+                                            </div>
+                                            <div class="row">
+                                              <div class="col-xs-4">
+                                                <button type="button" class="btn btn-primary" ng-click="removeCalcDrafts()" ng-disabled="nfl.TopRange === -1 || nfl.BottomRange === -1">Select Range</button>
+                                              </div>
+                                              <div class="col-xs-4">
+                                                  <input type="number" class="form-control" ng-model="nfl.TopRange" >
+                                              </div>
+                                              <div class="col-xs-4">
+                                                  <input type="number" class="form-control" ng-model="nfl.BottomRange">
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="col-sm-3">
                                             <div class="row">
                                               <div class="col-xs-12">
                                                 <h4>Draft Options</h4>
                                               </div>
                                             </div>
                                             <div class="row">
-                                              <div class="col-xs-3">
-                                                <button type="button" class="btn btn-primary" ng-click="removeAllButTopN()">Top</button>
+                                              <div class="col-xs-5">
+                                                <button type="button" class="btn btn-primary" ng-click="removeAllButTopN()">Select Top</button>
                                               </div>
-                                              <div class="col-xs-9">
-                                                <input type="number" class="form-control" ng-model="nfl.TopLimit"  >
+                                              <div class="col-xs-7">
+                                                <input type="number" class="form-control" ng-model="nfl.TopLimit" >
                                               </div>
                                             </div>
 
@@ -329,12 +342,12 @@
                                                         <tr>
                                                             <th>Draft</th>
                                                             <th>
-                                                                <span class="fake-link" ng-click="setDraftSortTypeAndReverse('projection')">
+                                                                <span class="fake-link" ng-click="setDraftSortTypeAndReverse('FPPG')">
                                                                     FPPG
                                                                 </span>
                                                             </th>
                                                             <th>
-                                                                <span class="fake-link" ng-click="setDraftSortTypeAndReverse('actual')">
+                                                                <span class="fake-link" ng-click="setDraftSortTypeAndReverse('Actual')">
                                                                     Actual Pts
                                                                 </span>
                                                             </th>
@@ -343,8 +356,8 @@
                                                     <tbody ng-repeat="draft in _AllDisplayedDraftData | orderBy:sortTypeDraft:sortReverseDraft | checkValidOnly:SelectedValidDrafts">
                                                         <tr ng-click="openCloseDraftDetails(draft);">
                                                             <td>@{{$index + 1}}</td>
-                                                            <td>@{{draft.projection}}</td>
-                                                            <td>@{{draft.actual}}</td>
+                                                            <td>@{{draft.FPPG}}</td>
+                                                            <td>@{{draft.Actual}}</td>
                                                         </tr>
 
                                                     </tbody>

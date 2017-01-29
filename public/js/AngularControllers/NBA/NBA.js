@@ -1,6 +1,24 @@
 "use strict";
 var NBAApp = angular.module('NBAApp', ['ui.bootstrap']);
 
+NBAApp.filter('positionDK', function () {
+    return function (allPlayers, searchPosition) {
+        var filteredPlayers = [];
+        if(searchPosition === 'UTIL') {
+          return allPlayers;
+        }
+        allPlayers.forEach(function (player) {
+            if (searchPosition == '' || searchPosition == undefined) {
+              filteredPlayers.push(player);
+            } else if (player._Position.indexOf(searchPosition) !== -1) {
+              filteredPlayers.push(player);
+            }
+        });
+        return filteredPlayers;
+    };
+})
+
+
 NBAApp.filter('position', function () {
     return function (allPlayers, input) {
         var filteredPlayers = [];
@@ -117,15 +135,22 @@ NBAApp.filter('checkValidOnly', function () {
     };
 })
 NBAApp.filter('removeCalcDraft', function () {
-    return function (drafts, AVERAGE, STDEVIATION) {
-        var maxProjectionDraft = parseFloat(AVERAGE + STDEVIATION);
-        var minProjectionDraft = parseFloat(AVERAGE - STDEVIATION);
+    return function (drafts, topRange, bottomRange, sortType ) {
+        var max = parseFloat(topRange);
+        var min = parseFloat(bottomRange);
 
         var filteredDrafts = [];
         drafts.forEach(function (draft) {
-            if (minProjectionDraft <= draft.projection && draft.projection <= maxProjectionDraft) {
-                filteredDrafts.push(draft);
+          if(sortType === 'FPPG') {
+            if (max >= draft.FPPG && draft.FPPG >= min) {
+              filteredDrafts.push(draft);
             }
+          } else if(sortType === 'Actual') {
+            if (max >= draft.Actual && draft.Actual >= min) {
+              filteredDrafts.push(draft);
+            }
+          }
+
         });
         return filteredDrafts;
     };

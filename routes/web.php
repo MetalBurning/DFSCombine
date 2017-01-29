@@ -18,30 +18,38 @@ Route::get('/', 'WelcomeController@index');
 Auth::routes();
 
 //NFL
-Route::get('/NFL', 'ApplicationController@NFL');
-Route::post('/NFL/loadHistory', 'ApplicationController@loadNFLHistory');
+Route::get('/NFL', 'NFLController@NFL');
+Route::post('/NFL/loadFanDuelPlayers', 'NFLController@loadFanDuelPlayers');
+Route::post('/NFL/loadHistory', 'NFLController@loadHistory');
 
-Route::post('/NFL/buildDraft', 'ApplicationController@buildDraftNFL');
+Route::post('/NFL/buildDraft', 'NFLController@buildDraft');
+Route::post('/NFL/downloadDrafts', 'NFLController@downloadDrafts');
 
-Route::post('/NFL/create', 'ApplicationController@createNFL');
-Route::post('/NFL/read', 'ApplicationController@readNFL');
-Route::post('/NFL/update', 'ApplicationController@updateNFL');
-Route::post('/NFL/delete', 'ApplicationController@deleteNFL');
+Route::post('/NFL/create', 'NFLController@create');
+Route::post('/NFL/read', 'NFLController@read');
+Route::post('/NFL/update', 'NFLController@update');
+Route::post('/NFL/delete', 'NFLController@delete');
 
-Route::post('/NFL/updateTitle', 'ApplicationController@updateTitleNFL');
+Route::post('/NFL/updateTitle', 'NFLController@updateTitle');
 
 //NBA
-Route::get('/NBA', 'ApplicationController@NBA');
-Route::post('/NBA/loadHistory', 'ApplicationController@loadNBAHistory');
+Route::get('/NBA', 'NBAController@NBA');
+Route::post('/NBA/loadFanDuelPlayers', 'NBAController@loadFanDuelPlayers');
+Route::post('/NBA/loadHistory', 'NBAController@loadHistory');
 
-Route::post('/NBA/buildDraft', 'ApplicationController@buildDraftNBA');
+Route::post('/NBA/buildDraft', 'NBAController@buildDraft');
+Route::post('/NBA/downloadDrafts', 'NBAController@downloadDrafts');
 
-Route::post('/NBA/create', 'ApplicationController@createNBA');
-Route::post('/NBA/read', 'ApplicationController@readNBA');
-Route::post('/NBA/update', 'ApplicationController@updateNBA');
-Route::post('/NBA/delete', 'ApplicationController@deleteNBA');
+Route::post('/NBA/create', 'NBAController@create');
+Route::post('/NBA/read', 'NBAController@read');
+Route::post('/NBA/update', 'NBAController@update');
+Route::post('/NBA/delete', 'NBAController@delete');
 
-Route::post('/NBA/updateTitle', 'ApplicationController@updateTitleNBA');
+Route::post('/NBA/updateTitle', 'NBAController@updateTitle');
+
+
+//NBA DK
+Route::get('/NBADK', 'NBAController@NBADK');
 
 //NHL
 Route::get('/NHL', 'ApplicationController@NHL');

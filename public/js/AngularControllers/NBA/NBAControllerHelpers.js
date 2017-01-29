@@ -32,7 +32,39 @@ angular.module('NBAApp').controller('DraftModalController', function ($scope, $u
         return totalActual.toFixed(2);
     }
 });
+angular.module('NBAApp').controller('DKDraftModalController', function ($scope, $uibModalInstance, draft) {
 
+    $scope.draft = draft;
+
+    $scope.ok = function () {
+        $uibModalInstance.close();
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+    $scope.getDraftSalaryLeft = function (draft) {
+        var startingSalary = 50000;
+        draft.players.forEach(function (player) {
+            startingSalary = startingSalary - player._Salary;
+        });
+        return startingSalary;
+    }
+    $scope.getDraftProjection = function (draft) {
+        var totalProjection = 0;
+        draft.players.forEach(function (player) {
+            totalProjection = totalProjection + player._FPPG;
+        });
+        return totalProjection.toFixed(2);
+    }
+    $scope.getDraftActual = function (draft) {
+        var totalActual = 0;
+        draft.players.forEach(function (player) {
+            totalActual = totalActual + player._ActualFantasyPoints;
+        });
+        return totalActual.toFixed(2);
+    }
+});
 angular.module('NBAApp').controller('SaveModalController', function ($scope, $uibModalInstance, $http, postObject, currentRead, $timeout) {
 
   $scope.postObject = postObject;

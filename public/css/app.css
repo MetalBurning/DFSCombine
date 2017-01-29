@@ -1,4 +1,5 @@
 body {
+  overflow-y:scroll;
     padding-top: 50px;
     padding-bottom: 20px;
 }
@@ -67,7 +68,7 @@ textarea {
 }
 .actualPoints {
   height: 22px;
-  max-width:50px;
+  max-width:55px;
  padding: 2px 5px;
  font-size: 12px;
  line-height: 1.5; /* If Placeholder of the input is moved up, rem/modify this. */

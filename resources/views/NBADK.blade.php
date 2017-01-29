@@ -2,7 +2,7 @@
 
 @section('content')
 <script src="/js/AngularControllers/NBA/NBA.js"></script>
-<script src="/js/AngularControllers/NBA/NBAController.js"></script>
+<script src="/js/AngularControllers/NBA/NBADraftKingsController.js"></script>
 <script src="/js/AngularControllers/NBA/NBAControllerHelpers.js"></script>
 <div  ng-app="NBAApp">
     <div class="container" ng-controller="NBAController as nba">
@@ -39,12 +39,14 @@
                                             <div class="col-xs-5">
                                                 <h4>Filter Positions</h4>
                                                 <div class="btn-group">
-                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('')" ng-class="{true: 'active', false: ''}[SelectedPosition === '']">All</button>
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('PG')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'PG']">PG</button>
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('SG')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'SG']">SG</button>
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('SF')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'SF']">SF</button>
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('PF')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'PF']">PF</button>
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('C')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'C']">C</button>
+                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('G')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'G']">G</button>
+                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('F')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'F']">F</button>
+                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('UTIL')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'UTIL']">UTIL</button>
                                                 </div>
                                             </div>
                                             <div class="col-xs-7">
@@ -136,9 +138,9 @@
                                                             </th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody ng-repeat="player in _AllPlayers | orderBy:sortType:sortReverse | position:SelectedPosition | team:SelectedTeams">
+                                                    <tbody ng-repeat="player in _AllPlayers | orderBy:sortType:sortReverse | positionDK:SelectedPosition | team:SelectedTeams">
                                                         <tr class="@{{player._playerInjured}} visible-md visible-lg">
-                                                            <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player)" ng-click="addPlayerToPool(player)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player)" ng-click="removePlayerFromPool(player)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player, SelectedPosition)" ng-click="addPlayerToPool(player, SelectedPosition)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player, SelectedPosition)" ng-click="removePlayerFromPool(player, SelectedPosition)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Team}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Opponent}}</td>
@@ -150,7 +152,7 @@
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._ProjectedPointsPerDollar}}</td>
                                                         </tr>
                                                         <tr class="@{{player._playerInjured}} visible-xs  visible-sm">
-                                                            <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player)" ng-click="addPlayerToPool(player)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player)" ng-click="removePlayerFromPool(player)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player, SelectedPosition )" ng-click="addPlayerToPool(player, SelectedPosition)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player, SelectedPosition)" ng-click="removePlayerFromPool(player, SelectedPosition)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Game}}</td>
                                                             <td><input class="form-control actualPoints"  ng-model="player._FPPG" type="number" ></td>
@@ -194,7 +196,7 @@
                                                     </thead>
                                                     <tbody ng-repeat="PGPlayers in _PGPlayerPool">
                                                         <tr>
-                                                            <td><button class="btn btn-xs btn-success" ng-click="lockAndUnLockPlayer(PGPlayers)"><span class="glyphicon" ng-class="{true: 'glyphicon-floppy-saved', false: 'glyphicon-floppy-remove'}[_PGPlayerLocked.indexOf(PGPlayers) > -1]"></span></button><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(PGPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(PGPlayers, 'PG')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(PGPlayers)">@{{PGPlayers._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(PGPlayers)"><abbr title="Percentage in total generated drafts">@{{PGPlayers._PercentInDrafts}}%</abbr></td>
                                                             <td ng-click="openClosePlayerDetails(PGPlayers)">@{{PGPlayers._Team}}<br /><abbr title="Player FPPG">@{{PGPlayers._FPPG}}</abbr></td>
@@ -211,7 +213,7 @@
                                                     </thead>
                                                     <tbody ng-repeat="SGPlayers in _SGPlayerPool">
                                                         <tr>
-                                                            <td><button class="btn btn-xs btn-success" ng-click="lockAndUnLockPlayer(SGPlayers)"><span class="glyphicon" ng-class="{true: 'glyphicon-floppy-saved', false: 'glyphicon-floppy-remove'}[_SGPlayerLocked.indexOf(SGPlayers) > -1]"></span></button><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(SGPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(SGPlayers, 'SG')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(SGPlayers)">@{{SGPlayers._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(SGPlayers)"><abbr title="Percentage in total generated drafts">@{{SGPlayers._PercentInDrafts}}%</abbr></td>
                                                             <td ng-click="openClosePlayerDetails(SGPlayers)">@{{SGPlayers._Team}}<br /><abbr title="Player FPPG">@{{SGPlayers._FPPG}}</abbr></td>
@@ -228,7 +230,7 @@
                                                     </thead>
                                                     <tbody ng-repeat="SFPlayers in _SFPlayerPool">
                                                         <tr>
-                                                            <td><button class="btn btn-xs btn-success" ng-click="lockAndUnLockPlayer(SFPlayers)"><span class="glyphicon" ng-class="{true: 'glyphicon-floppy-saved', false: 'glyphicon-floppy-remove'}[_SFPlayerLocked.indexOf(SFPlayers) > -1]"></span></button><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(SFPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(SFPlayers, 'SF')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(SFPlayers)">@{{SFPlayers._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(SFPlayers)"><abbr title="Percentage in total generated drafts">@{{SFPlayers._PercentInDrafts}}%</abbr></td>
                                                             <td ng-click="openClosePlayerDetails(SFPlayers)">@{{SFPlayers._Team}}<br /><abbr title="Player FPPG">@{{SFPlayers._FPPG}}</abbr></td>
@@ -245,7 +247,7 @@
                                                     </thead>
                                                     <tbody ng-repeat="PFPlayers in _PFPlayerPool">
                                                         <tr>
-                                                            <td><button class="btn btn-xs btn-success" ng-click="lockAndUnLockPlayer(PFPlayers)"><span class="glyphicon" ng-class="{true: 'glyphicon-floppy-saved', false: 'glyphicon-floppy-remove'}[_PFPlayerLocked.indexOf(PFPlayers) > -1]"></span></button><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(PFPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(PFPlayers, 'PF')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(PFPlayers)">@{{PFPlayers._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(PFPlayers)"><abbr title="Percentage in total generated drafts">@{{PFPlayers._PercentInDrafts}}%</abbr></td>
                                                             <td ng-click="openClosePlayerDetails(PFPlayers)">@{{PFPlayers._Team}}<br /><abbr title="Player FPPG">@{{PFPlayers._FPPG}}</abbr></td>
@@ -262,7 +264,7 @@
                                                     </thead>
                                                     <tbody ng-repeat="CPlayers in _CPlayerPool">
                                                         <tr>
-                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(CPlayers)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(CPlayers, 'C')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(CPlayers)">@{{CPlayers._Name}}</td>
                                                             <td ng-click="openClosePlayerDetails(CPlayers)"><abbr title="Percentage in total generated drafts">@{{CPlayers._PercentInDrafts}}%</abbr></td>
                                                             <td ng-click="openClosePlayerDetails(CPlayers)">@{{CPlayers._Team}}<br /><abbr title="Player FPPG">@{{CPlayers._FPPG}}</abbr></td>
@@ -270,7 +272,57 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-
+                                            <div class="col-xs-12">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan="4">G <abbr title="Salary average for this pool">(@{{averagePlayerPoolSalary(_GPlayerPool)}})</abbr></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody ng-repeat="GPlayers in _GPlayerPool">
+                                                        <tr>
+                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(GPlayers, 'G')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td ng-click="openClosePlayerDetails(GPlayers)">@{{GPlayers._Name}}</td>
+                                                            <td ng-click="openClosePlayerDetails(GPlayers)"><abbr title="Percentage in total generated drafts">@{{GPlayers._PercentInDrafts}}%</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(GPlayers)">@{{GPlayers._Team}}<br /><abbr title="Player FPPG">@{{GPlayers._FPPG}}</abbr></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="col-xs-12">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan="4">F <abbr title="Salary average for this pool">(@{{averagePlayerPoolSalary(_FPlayerPool)}})</abbr></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody ng-repeat="FPlayers in _FPlayerPool">
+                                                        <tr>
+                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(FPlayers, 'F')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td ng-click="openClosePlayerDetails(FPlayers)">@{{FPlayers._Name}}</td>
+                                                            <td ng-click="openClosePlayerDetails(FPlayers)"><abbr title="Percentage in total generated drafts">@{{FPlayers._PercentInDrafts}}%</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(FPlayers)">@{{FPlayers._Team}}<br /><abbr title="Player FPPG">@{{FPlayers._FPPG}}</abbr></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="col-xs-12">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan="4">UTIL <abbr title="Salary average for this pool">(@{{averagePlayerPoolSalary(_UTILPlayerPool)}})</abbr></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody ng-repeat="UTILPlayers in _UTILPlayerPool">
+                                                        <tr>
+                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(UTILPlayers, 'UTIL')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td ng-click="openClosePlayerDetails(UTILPlayers)">@{{UTILPlayers._Name}}</td>
+                                                            <td ng-click="openClosePlayerDetails(UTILPlayers)"><abbr title="Percentage in total generated drafts">@{{UTILPlayers._PercentInDrafts}}%</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(UTILPlayers)">@{{UTILPlayers._Team}}<br /><abbr title="Player FPPG">@{{UTILPlayers._FPPG}}</abbr></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -318,7 +370,7 @@
                                             <div class="col-sm-4">
                                               <div class="row">
                                                 <div class="col-xs-12">
-                                                  <h4><abbr title="Top range to keep.">@{{ (parseFloat(nba.TopRange)).toFixed(2) }}</abbr> => Drafts => <abbr title="Bottom range to keep.">@{{ (parseFloat(nba.BottomRange)).toFixed(2) }}</abbr></h4>
+                                                  <h4><abbr title="Top range to keep.">@{{ (parseFloat(nba.TopRange)).toFixed(2) }}</abbr> => Drafts <= <abbr title="Bottom range to keep.">@{{ (parseFloat(nba.BottomRange)).toFixed(2) }}</abbr></h4>
                                                 </div>
                                               </div>
                                               <div class="row">
@@ -392,7 +444,7 @@
                                   <div class="panel-heading">
                                     <div class='btn-toolbar pull-right'>
                                       <label class="btn btn-primary btn-file btn-xs">
-                                          Add Fanduel Player CSV File <input type="file" style="display: none;" custom-on-change="loadPlayers">
+                                          Add Fanduel Player CSV File <input type="file" style="display: none;" custom-on-change="loadDKPlayers">
                                       </label>
                                     </div>
                                       <h3 class="panel-title">Load Saved History</h3>

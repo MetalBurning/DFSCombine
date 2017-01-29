@@ -16,7 +16,17 @@ NFLApp.filter('position', function () {
         return filteredPlayers;
     };
 })
-
+NFLApp.filter('removeInjured', function () {
+    return function (allPlayers) {
+        var filteredPlayers = [];
+        allPlayers.forEach(function (element) {
+            if (element._playerInjured != 'danger' && element._playerInjured != 'warning') {
+                filteredPlayers.push(element);
+            }
+        });
+        return filteredPlayers;
+    };
+})
 NFLApp.filter('team', function () {
     return function (allPlayers, input) {
         var filteredPlayers = [];
@@ -140,15 +150,22 @@ NFLApp.filter('randomize', function () {
     };
 })
 NFLApp.filter('removeCalcDraft', function () {
-    return function (drafts, AVERAGE, STDEVIATION) {
-        var maxProjectionDraft = parseFloat(AVERAGE + STDEVIATION);
-        var minProjectionDraft = parseFloat(AVERAGE - STDEVIATION);
+    return function (drafts, topRange, bottomRange, sortType ) {
+        var maxProjectionDraft = parseFloat(topRange);
+        var minProjectionDraft = parseFloat(bottomRange);
 
         var filteredDrafts = [];
         drafts.forEach(function (draft) {
-            if (minProjectionDraft <= draft.projection && draft.projection <= maxProjectionDraft) {
-                filteredDrafts.push(draft);
+          if(sortType === 'FPPG') {
+            if (minProjectionDraft <= draft.FPPG && draft.FPPG <= maxProjectionDraft) {
+              filteredDrafts.push(draft);
             }
+          } else if(sortType === 'Actual') {
+            if (minProjectionDraft <= draft.Actual && draft.Actual <= maxProjectionDraft) {
+              filteredDrafts.push(draft);
+            }
+          }
+
         });
         return filteredDrafts;
     };
