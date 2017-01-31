@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<script src="/js/AngularControllers/NBA/NBA.js"></script>
-<script src="/js/AngularControllers/NBA/NBAController.js"></script>
-<script src="/js/AngularControllers/NBA/NBAControllerHelpers.js"></script>
+<script src="/js/AngularControllers/NBA/NBA.js?v={{str_random(40)}}"></script>
+<script src="/js/AngularControllers/NBA/NBAController.js?v={{str_random(40)}}"></script>
+<script src="/js/AngularControllers/NBA/NBAControllerHelpers.js?v={{str_random(40)}}"></script>
 <div  ng-app="NBAApp">
     <div class="container" ng-controller="NBAController as nba">
 
@@ -392,8 +392,12 @@
                                   <div class="panel-heading">
                                     <div class='btn-toolbar pull-right'>
                                       <label class="btn btn-primary btn-file btn-xs">
+                                          Add Actual CSV File <input type="file" style="display: none;" custom-on-change="loadActual">
+                                      </label>
+                                      <label class="btn btn-primary btn-file btn-xs">
                                           Add Fanduel Player CSV File <input type="file" style="display: none;" custom-on-change="loadPlayers">
                                       </label>
+
                                     </div>
                                       <h3 class="panel-title">Load Saved History</h3>
 

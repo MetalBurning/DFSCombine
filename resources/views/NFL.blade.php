@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<script src="/js/AngularControllers/NFL/NFL.js"></script>
-<script src="/js/AngularControllers/NFL/NFLController.js"></script>
-<script src="/js/AngularControllers/NFL/NFLControllerHelpers.js"></script>
+<script src="/js/AngularControllers/NFL/NFL.js?v={{str_random(40)}}"></script>
+<script src="/js/AngularControllers/NFL/NFLController.js?v={{str_random(40)}}"></script>
+<script src="/js/AngularControllers/NFL/NFLControllerHelpers.js?v={{str_random(40)}}"></script>
 <div  ng-app="NFLApp">
     <div class="container" ng-controller="NFLController as nfl">
 
