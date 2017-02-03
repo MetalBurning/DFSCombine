@@ -20,15 +20,17 @@ NBAApp.filter('positionDK', function () {
 
 
 NBAApp.filter('position', function () {
-    return function (allPlayers, input) {
+    return function (allPlayers, searchPosition) {
         var filteredPlayers = [];
-        allPlayers.forEach(function (element) {
-            if (input == '' || input == undefined) {
-                filteredPlayers.push(element);
-            }
-            if (element._Position == input) {
-                filteredPlayers.push(element);
-            }
+        if(searchPosition === '') {
+          return allPlayers;
+        }
+        allPlayers.forEach(function (player) {
+          if (searchPosition == '' || searchPosition == undefined) {
+            filteredPlayers.push(player);
+          } else if (searchPosition.indexOf(player._Position) !== -1) {
+            filteredPlayers.push(player);
+          }
         });
         return filteredPlayers;
     };

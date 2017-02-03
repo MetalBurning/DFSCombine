@@ -13,16 +13,14 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     $scope._AllReadPlayerIDs = [];
     $scope._AllStacks = [];
 
-    $scope._PGPlayerLocked = [];
-    $scope._SGPlayerLocked = [];
-    $scope._SFPlayerLocked = [];
-    $scope._PFPlayerLocked = [];
-    $scope._CPlayerLocked = [];
-
-    $scope._PGPlayerPool = [];
-    $scope._SGPlayerPool = [];
-    $scope._SFPlayerPool = [];
-    $scope._PFPlayerPool = [];
+    $scope._PG1PlayerPool = [];
+    $scope._PG2PlayerPool = [];
+    $scope._SG1PlayerPool = [];
+    $scope._SG2PlayerPool = [];
+    $scope._SF1PlayerPool = [];
+    $scope._SF2PlayerPool = [];
+    $scope._PF1PlayerPool = [];
+    $scope._PF2PlayerPool = [];
     $scope._CPlayerPool = [];
 
     $scope._AllDisplayedDraftData = [];
@@ -155,14 +153,8 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                   if((player._Name.includes(playerFName) && player._Name.includes(playerLName)) && player._Position == playerPosition) {
                       player._ActualFantasyPoints = playerPoints;
                   }
-                  if($scope._Positions.indexOf(player._Postion) === -1) {
-                    $scope._Positions.push(player._Position);
-                  }
               });
-              $scope._Positions.sort();
             }
-
-
         }
 
         $scope.$apply(function() {
@@ -173,7 +165,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     }
 
     $scope.loadActual = function (event) {
-
 
 
       var file = event.target.files[0];
@@ -272,10 +263,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             } else if(player._playerInjured == 'GTD') {
               player._playerInjured = 'warning';
             }
-            //position data
-            if($scope._Positions.indexOf(player._Position) === -1) {
-              $scope._Positions.push(player._Position);
-            }
+
             //add team data
             if ($scope._AllTeams.length == 0) {
                 $scope._AllTeams.push(player._Team);
@@ -327,51 +315,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
       }
 
-    }
-
-    $scope.addTopTeamPlayers = function() {
-
-      $scope.clearPlayerPools();
-
-      var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
-      var NonInjuredPlayers =  $filter('removeInjured')(orderedPlayers);
-      var allPGs = $filter('position')(NonInjuredPlayers, 'PG');
-      var allSGs = $filter('position')(NonInjuredPlayers, 'SG');
-      var allSFs = $filter('position')(NonInjuredPlayers, 'SF');
-      var allPFs = $filter('position')(NonInjuredPlayers, 'PF');
-      var allCs = $filter('position')(NonInjuredPlayers, 'C');
-
-      var PGTeams = [];
-      allPGs.forEach(function(PG) {
-        if(PGTeams.length <= $scope._AllTeams.length && PGTeams.indexOf(PG._Team) == -1) {
-          $scope.addPlayerToPool(PG);
-          PGTeams.push(PG._Team);
-        }
-      });
-
-      var SGTeams = [];
-      allSGs.forEach(function(SG) {
-        if(SGTeams.length <= $scope._AllTeams.length && SGTeams.indexOf(SG._Team) == -1) {
-          $scope.addPlayerToPool(SG);
-          SGTeams.push(SG._Team);
-        }
-      });
-
-      var SFTeams = [];
-      allSFs.forEach(function(SF) {
-        if(SFTeams.length <= $scope._AllTeams.length && SFTeams.indexOf(SF._Team) == -1) {
-          $scope.addPlayerToPool(SF);
-          SFTeams.push(SF._Team);
-        }
-      });
-
-      var PFTeams = [];
-      allPFs.forEach(function(PF) {
-        if(PFTeams.length <= $scope._AllTeams.length && PFTeams.indexOf(PF._Team) == -1) {
-          $scope.addPlayerToPool(PF);
-          PFTeams.push(PF._Team);
-        }
-      });
     }
 
     $scope.teamRemovalFormularHelpers = function(PGPlayersToAdd, PGPlayersToLock) {
@@ -610,143 +553,77 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
         anchor.remove(); // Clean it up afterwards
 
-
-        //window.open(encodedUri);
     }
-
-    $scope.lockAndUnLockPlayer = function (player)
+    $scope.removePlayerFromPool = function (player, position)
     {
-        if ($scope.playerInPool(player)) {
-            switch (player._Position) {
-                case 'PG':
-                    if ($scope._PGPlayerLocked.indexOf(player) == -1)
-                    {
-                        if ($scope._PGPlayerLocked.length >= 2) {
-                            $scope.displayNewMessage("danger", "Error: _PGPlayerLocked.length >= 2, cannot lock more than 2 PGs");
-                            return;
-                        }
-                        $scope._PGPlayerLocked.push(player);
-                    }
-                    else
-                    {
-                        $scope._PGPlayerLocked.splice($scope._PGPlayerLocked.indexOf(player), 1);
-                    }
-                    break;
-                case 'SG':
-                    if ($scope._SGPlayerLocked.indexOf(player) == -1) {
-                        if ($scope._SGPlayerLocked.length >= 2) {
-                            $scope.displayNewMessage("danger", "Error: _SGPlayerLocked.length >= 2, cannot lock more than 2 SGs");
-                            return;
-                        }
-                        $scope._SGPlayerLocked.push(player);
-                    } else {
-                        $scope._SGPlayerLocked.splice($scope._SGPlayerLocked.indexOf(player), 1);
-                    }
-                    break;
-                case 'SF':
-                    if ($scope._SFPlayerLocked.indexOf(player) == -1) {
-                        if ($scope._SFPlayerLocked.length >= 2) {
-                            $scope.displayNewMessage("danger", "Error: _SFPlayerLocked.length >= 2, cannot lock more than 3 SFs");
-                            return;
-                        }
-                        $scope._SFPlayerLocked.push(player);
-                    } else {
-                        $scope._SFPlayerLocked.splice($scope._SFPlayerLocked.indexOf(player), 1);
-                    }
-                    break;
-                case 'PF':
-                    if ($scope._PFPlayerLocked.indexOf(player) == -1) {
-                        if ($scope._PFPlayerLocked.length >= 2) {
-                            $scope.displayNewMessage("danger", "Error: _PFPlayerLocked.length >= 2, cannot lock more than 3 PFs");
-                            return;
-                        }
-                        $scope._PFPlayerLocked.push(player);
-                    } else {
-                        $scope._PFPlayerLocked.splice($scope._PFPlayerLocked.indexOf(player), 1);
-                    }
-                    break;
-                case 'C':
-                    if ($scope._CPlayerLocked.indexOf(player) == -1) {
-                        $scope._CPlayerLocked.push(player);
-                    } else {
-                        $scope._CPlayerLocked.splice($scope._CPlayerLocked.indexOf(player), 1);
-                    }
-                    break;
-            }
-        }
-    }
-    $scope.unLockPlayer = function (player) {
-        switch (player._Position) {
-            case 'PG':
-                if ($scope._PGPlayerLocked.indexOf(player) > -1) {
-                    $scope._PGPlayerLocked.splice($scope._PGPlayerLocked.indexOf(player), 1);
-                }
-                break;
-            case 'SG':
-                if ($scope._SGPlayerLocked.indexOf(player) > -1) {
-                    $scope._SGPlayerLocked.splice($scope._SGPlayerLocked.indexOf(player), 1);
-                }
-                break;
-            case 'SF':
-                if ($scope._SFPlayerLocked.indexOf(player) > -1) {
-                    $scope._SFPlayerLocked.splice($scope._SFPlayerLocked.indexOf(player), 1);
-                }
-                break;
-            case 'PF':
-                if ($scope._PFPlayerLocked.indexOf(player) > -1) {
-                    $scope._PFPlayerLocked.splice($scope._PFPlayerLocked.indexOf(player), 1);
-                }
-                break;
-            case 'C':
-                if ($scope._CPlayerLocked.indexOf(player) > -1) {
-                    $scope._CPlayerLocked.splice($scope._CPlayerLocked.indexOf(player), 1);
-                }
-                break;
-        }
-    }
-    $scope.removePlayerFromPool = function (player)
-    {
-        switch (player._Position)
+      if($scope.playerInPool(player, position))
+      {
+        switch (position)
         {
-            case 'PG':
-                $scope.unLockPlayer(player);
-                $scope._PGPlayerPool.splice($scope._PGPlayerPool.indexOf(player), 1);
+            case 'PG1':
+                $scope._PG1PlayerPool.splice($scope._PG1PlayerPool.indexOf(player), 1);
                 break;
-            case 'SG':
-                $scope.unLockPlayer(player);
-                $scope._SGPlayerPool.splice($scope._SGPlayerPool.indexOf(player), 1);
+            case 'PG2':
+                $scope._PG2PlayerPool.splice($scope._PG2PlayerPool.indexOf(player), 1);
                 break;
-            case 'SF':
-                $scope.unLockPlayer(player);
-                $scope._SFPlayerPool.splice($scope._SFPlayerPool.indexOf(player), 1);
+            case 'SG1':
+                $scope._SG1PlayerPool.splice($scope._SG1PlayerPool.indexOf(player), 1);
                 break;
-            case 'PF':
-                $scope.unLockPlayer(player);
-                $scope._PFPlayerPool.splice($scope._PFPlayerPool.indexOf(player), 1);
+            case 'SG2':
+                $scope._SG2PlayerPool.splice($scope._SG2PlayerPool.indexOf(player), 1);
+                break;
+            case 'SF1':
+                $scope._SF1PlayerPool.splice($scope._SF1PlayerPool.indexOf(player), 1);
+                break;
+            case 'SF2':
+                $scope._SF2PlayerPool.splice($scope._SF2PlayerPool.indexOf(player), 1);
+                break;
+            case 'PF1':
+                $scope._PF1PlayerPool.splice($scope._PF1PlayerPool.indexOf(player), 1);
+                break;
+            case 'PF2':
+                $scope._PF2PlayerPool.splice($scope._PF2PlayerPool.indexOf(player), 1);
                 break;
             case 'C':
                 $scope._CPlayerPool.splice($scope._CPlayerPool.indexOf(player), 1);
                 break;
         }
+      }
+
     }
 
-    $scope.addPlayerToPool = function (player)
+    $scope.addPlayerToPool = function (player, position)
     {
-        if (!$scope.playerInPool(player))
+      if($scope.SelectedPosition === '') {
+        $scope.displayNewMessage('danger', 'Please select a position');
+      }
+        if (!$scope.playerInPool(player, position))
         {
-            switch (player._Position)
+            switch (position)
             {
-                case 'PG':
-                    $scope._PGPlayerPool.push(player);
+                case 'PG1':
+                    $scope._PG1PlayerPool.push(player);
                     break;
-                case 'SG':
-                    $scope._SGPlayerPool.push(player);
+                case 'PG2':
+                    $scope._PG2PlayerPool.push(player);
                     break;
-                case 'SF':
-                    $scope._SFPlayerPool.push(player);
+                case 'SG1':
+                    $scope._SG1PlayerPool.push(player);
                     break;
-                case 'PF':
-                    $scope._PFPlayerPool.push(player);
+                case 'SG2':
+                    $scope._SG2PlayerPool.push(player);
+                    break;
+                case 'SF1':
+                    $scope._SF1PlayerPool.push(player);
+                    break;
+                case 'SF2':
+                    $scope._SF2PlayerPool.push(player);
+                    break;
+                case 'PF1':
+                    $scope._PF1PlayerPool.push(player);
+                    break;
+                case 'PF2':
+                    $scope._PF2PlayerPool.push(player);
                     break;
                 case 'C':
                     $scope._CPlayerPool.push(player);
@@ -755,30 +632,54 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
 
     }
-    $scope.playerInPool = function (player)
+    $scope.playerInPool = function (player, position)
     {
-        switch (player._Position)
+        switch (position)
         {
-            case 'PG':
-                if ($scope._PGPlayerPool.indexOf(player) > -1)
+            case 'PG1':
+                if ($scope._PG1PlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'SG':
-                if ($scope._SGPlayerPool.indexOf(player) > -1)
+            case 'PG2':
+                if ($scope._PG2PlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'SF':
-                if ($scope._SFPlayerPool.indexOf(player) > -1)
+            case 'SG1':
+                if ($scope._SG1PlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'PF':
-                if ($scope._PFPlayerPool.indexOf(player) > -1)
+            case 'SG2':
+                if ($scope._SG2PlayerPool.indexOf(player) > -1)
+                {
+                    return true;
+                }
+                break;
+            case 'SF1':
+                if ($scope._SF1PlayerPool.indexOf(player) > -1)
+                {
+                    return true;
+                }
+                break;
+            case 'SF2':
+                if ($scope._SF2PlayerPool.indexOf(player) > -1)
+                {
+                    return true;
+                }
+                break;
+            case 'PF1':
+                if ($scope._PF1PlayerPool.indexOf(player) > -1)
+                {
+                    return true;
+                }
+                break;
+            case 'PF2':
+                if ($scope._PF2PlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
@@ -793,17 +694,16 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         return false;
     }
     $scope.clearPlayerPools = function () {
-        $scope._PGPlayerPool = [];
-        $scope._SGPlayerPool = [];
-        $scope._SFPlayerPool = [];
-        $scope._PFPlayerPool = [];
+        $scope._PG1PlayerPool = [];
+        $scope._PG2PlayerPool = [];
+        $scope._SG1PlayerPool = [];
+        $scope._SG2PlayerPool = [];
+        $scope._SF1PlayerPool = [];
+        $scope._SF2PlayerPool = [];
+        $scope._PF1PlayerPool = [];
+        $scope._PF2PlayerPool = [];
         $scope._CPlayerPool = [];
 
-        $scope._PGPlayerLocked = [];
-        $scope._SGPlayerLocked = [];
-        $scope._SFPlayerLocked = [];
-        $scope._PFPlayerLocked = [];
-        $scope._CPlayerLocked = [];
     }
 
     $scope.averagePlayerPoolSalary = function (playerPool) {
@@ -868,16 +768,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
       }
     }
-    // $scope.loadMoreDrafts = function() {
-    //   console.log('ad');
-    //   if($scope._AllDraftData.length > 0) {
-    //     var length = $scope._AllDisplayedDraftData.length - 1;
-    //     for(var i = 1; i <= 10; i++) {
-    //       $scope._AllDisplayedDraftData.push($scope._AllDraftData[length + i]);
-    //     }
-    //   }
-    //
-    // }
     $scope.clearDrafts = function () {
         $scope._AllDraftData = [];
         $scope.TotalPossibleDrafts = 0;
@@ -893,7 +783,16 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     $scope.buildDrafts = function () {
 
         //check if all pools have at least 1 player
-        if ( $scope._PGPlayerPool.length == 0 || $scope._SGPlayerPool.length == 0 || $scope._SFPlayerPool.length == 0 || $scope._PFPlayerPool.length == 0 || $scope._CPlayerPool.length == 0 ) {
+        if ($scope._PG1PlayerPool.length == 0 ||
+            $scope._PG2PlayerPool.length == 0 ||
+            $scope._SG1PlayerPool.length == 0 ||
+            $scope._SG2PlayerPool.length == 0 ||
+            $scope._SF1PlayerPool.length == 0 ||
+            $scope._SF2PlayerPool.length == 0 ||
+            $scope._PF1PlayerPool.length == 0 ||
+            $scope._PF2PlayerPool.length == 0 ||
+            $scope._CPlayerPool.length == 0 )
+        {
             $scope.displayNewMessage("danger", "Error: One or more player pools contain zero players");
             return;
         }
@@ -901,234 +800,62 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         //before, make sure data is cleared
         $scope.clearDrafts();
 
-        //PG
-        var PGCombinations = [];
-        if ($scope._PGPlayerLocked.length > 0) {
-            //player locked, must modify input
-            var unLockedPlayersInPool = [];
-            $scope._PGPlayerPool.forEach(function (player) {
-                if ($scope._PGPlayerLocked.indexOf(player) == -1) {
-                    unLockedPlayersInPool.push(player);
-                }
-            });
-            switch ($scope._PGPlayerLocked.length) {
-                case 0:
-                    PGCombinations = $scope.getCombinations($scope._PGPlayerPool, 2);
-                    break;
-                case 1:
-                    PGCombinations = $scope.getCombinations(unLockedPlayersInPool, 1);
-                    break;
-                case 2:
-                    PGCombinations = $scope.getCombinations($scope._PGPlayerLocked, 2);//full locked
-                    break;
-                default:
-                    $scope.displayNewMessage("danger", "Error: Cannot lock > 2 PGs");
-                    return;
-                    //console.log("Error: _RBPlayerLocked.length > 2 || null, cannot create combinations");
-            }
-        }
-        else {
-            //no locked players
-            PGCombinations = $scope.getCombinations($scope._PGPlayerPool, 2);
-            // console.log("RB Combos: ", RBCombinations);
-        }
-
-        //SG
-        var SGCombinations = [];
-        if ($scope._SGPlayerLocked.length > 0)
-        {
-            //player locked, must modify input
-            var unLockedPlayersInPool = [];
-            $scope._SGPlayerPool.forEach(function (player) {
-                if ($scope._SGPlayerLocked.indexOf(player) == -1) {
-                    unLockedPlayersInPool.push(player);
-                }
-            });
-            switch ($scope._SGPlayerLocked.length) {
-                case 0:
-                    SGCombinations = $scope.getCombinations($scope._SGPlayerPool, 2);
-                    break;
-                case 1:
-                    SGCombinations = $scope.getCombinations(unLockedPlayersInPool, 1);
-                    break;
-                case 2:
-                    SGCombinations = $scope.getCombinations($scope._SGPlayerLocked, 2);//full locked
-                    break;
-                default:
-                    $scope.displayNewMessage("danger", "Error: Cannot lock > 2 SGs");
-                    return;
-                    //console.log("Error: _RBPlayerLocked.length > 2 || null, cannot create combinations");
-            }
-        }
-        else
-        {
-            //no locked players
-            SGCombinations = $scope.getCombinations($scope._SGPlayerPool, 2);
-           // console.log("RB Combos: ", RBCombinations);
-        }
-
-        //SF
-        var SFCombinations = [];
-        if ($scope._SFPlayerLocked.length > 0) {
-            //player locked, must modify input
-            var unLockedPlayersInPool = [];
-            $scope._SFPlayerPool.forEach(function (player) {
-                if ($scope._SFPlayerLocked.indexOf(player) == -1) {
-                    unLockedPlayersInPool.push(player);
-                }
-            });
-            switch ($scope._SFPlayerLocked.length) {
-                case 0:
-                    SFCombinations = $scope.getCombinations($scope._SFPlayerPool, 2);
-                    break;
-                case 1:
-                    SFCombinations = $scope.getCombinations(unLockedPlayersInPool, 1);
-                    break;
-                case 2:
-                    SFCombinations = $scope.getCombinations($scope._SFPlayerLocked, 2);//full locked
-                    break;
-                default:
-                    $scope.displayNewMessage("danger", "Error: Cannot lock > 2 SFs");
-                    return;
-                    //console.log("Error: _RBPlayerLocked.length > 2 || null, cannot create combinations");
-            }
-        }
-        else {
-            //no locked players
-            SFCombinations = $scope.getCombinations($scope._SFPlayerPool, 2);
-            // console.log("RB Combos: ", RBCombinations);
-        }
-
-
-        //PF
-        var PFCombinations = [];
-        if ($scope._PFPlayerLocked.length > 0) {
-            //player locked, must modify input
-            var unLockedPlayersInPool = [];
-            $scope._PFPlayerPool.forEach(function (player) {
-                if ($scope._PFPlayerLocked.indexOf(player) == -1) {
-                    unLockedPlayersInPool.push(player);
-                }
-            });
-            switch ($scope._PFPlayerLocked.length) {
-                case 0:
-                    PFCombinations = $scope.getCombinations($scope._PFPlayerPool, 2);
-                    break;
-                case 1:
-                    PFCombinations = $scope.getCombinations(unLockedPlayersInPool, 1);
-                    break;
-                case 2:
-                    PFCombinations = $scope.getCombinations($scope._PFPlayerLocked, 2);//full locked
-                    break;
-                default:
-                    $scope.displayNewMessage("danger", "Error: Cannot lock > 2 PFs");
-                    return;
-                    //console.log("Error: _RBPlayerLocked.length > 2 || null, cannot create combinations");
-            }
-        }
-        else {
-            //no locked players
-            PFCombinations = $scope.getCombinations($scope._PFPlayerPool, 2);
-            // console.log("RB Combos: ", RBCombinations);
-        }
-
-        //C
-        var CCombinations = [];
-        CCombinations = $scope.getCombinations($scope._CPlayerPool, 1);
 
         //start draft building
-        PGCombinations.forEach(function (PGCombo) {
-            var tempDraft = [];
-            switch ($scope._PGPlayerLocked.length) {
-                case 0:
-                    tempDraft.push(PGCombo[0]);
-                    tempDraft.push(PGCombo[1]);
-                    break;
-                case 1:
-                    tempDraft.push($scope._PGPlayerLocked[0]);
-                    tempDraft.push(PGCombo[0]);
-                    break;
-                case 2:
-                    tempDraft.push($scope._PGPlayerLocked[0]);
-                    tempDraft.push($scope._PGPlayerLocked[1]);
-                    break;
-            }
+        $scope._PG1PlayerPool.forEach(function(PG1Player) {
+            var tempDraft = {};
+            tempDraft['PG1'] = PG1Player;
+            $scope._PG2PlayerPool.forEach(function(PG2Player) {
+              tempDraft['PG2'] = PG2Player;
+              $scope._SG1PlayerPool.forEach(function(SG1Player) {
+                tempDraft['SG1'] = SG1Player;
+                $scope._SG2PlayerPool.forEach(function(SG2Player) {
+                  tempDraft['SG2'] = SG2Player;
+                  $scope._SF1PlayerPool.forEach(function(SF1Player) {
+                    tempDraft['SF1'] = SF1Player;
+                    $scope._SF2PlayerPool.forEach(function(SF2Player) {
+                      tempDraft['SF2'] = SF2Player;
+                      $scope._PF1PlayerPool.forEach(function(PF1Player) {
+                        tempDraft['PF1'] = PF1Player;
+                        $scope._PF2PlayerPool.forEach(function(PF2Player) {
+                          tempDraft['PF2'] = PF2Player;
+                          $scope._CPlayerPool.forEach(function(CPlayer) {
+                            tempDraft['C'] = CPlayer;
+                            var finalPlayerList = [];
+                            finalPlayerList.push(tempDraft['PG1']);
+                            finalPlayerList.push(tempDraft['PG2']);
+                            finalPlayerList.push(tempDraft['SG1']);
+                            finalPlayerList.push(tempDraft['SG2']);
+                            finalPlayerList.push(tempDraft['SF1']);
+                            finalPlayerList.push(tempDraft['SF2']);
+                            finalPlayerList.push(tempDraft['PF1']);
+                            finalPlayerList.push(tempDraft['PF2']);
+                            finalPlayerList.push(tempDraft['C']);
 
-            //SG
-            SGCombinations.forEach(function (SGCombo) {
-                tempDraft = $filter('removePosition')(tempDraft, 'SG');
-                switch ($scope._SGPlayerLocked.length) {
-                    case 0:
-                        tempDraft.push(SGCombo[0]);
-                        tempDraft.push(SGCombo[1]);
-                        break;
-                    case 1:
-                        tempDraft.push($scope._SGPlayerLocked[0]);
-                        tempDraft.push(SGCombo[0]);
-                        break;
-                    case 2:
-                        tempDraft.push($scope._SGPlayerLocked[0]);
-                        tempDraft.push($scope._SGPlayerLocked[1]);
-                        break;
-                }
-                //SF
-                SFCombinations.forEach(function (SFCombo) {
-                    tempDraft = $filter('removePosition')(tempDraft, 'SF');
-                    switch ($scope._SFPlayerLocked.length) {
-                        case 0:
-                            tempDraft.push(SFCombo[0]);
-                            tempDraft.push(SFCombo[1]);
-                            break;
-                        case 1:
-                            tempDraft.push($scope._SFPlayerLocked[0]);
-                            tempDraft.push(SFCombo[0]);
-                            break;
-                        case 2:
-                            tempDraft.push($scope._SFPlayerLocked[0]);
-                            tempDraft.push($scope._SFPlayerLocked[1]);
-                            break;
-                    }
-                    //PF
-                    PFCombinations.forEach(function (PFCombo) {
-                        tempDraft = $filter('removePosition')(tempDraft, 'PF');
-                        switch ($scope._PFPlayerLocked.length) {
-                            case 0:
-                                tempDraft.push(PFCombo[0]);
-                                tempDraft.push(PFCombo[1]);
-                                break;
-                            case 1:
-                                tempDraft.push($scope._PFPlayerLocked[0]);
-                                tempDraft.push(PFCombo[0]);
-                                break;
-                            case 2:
-                                tempDraft.push($scope._PFPlayerLocked[0]);
-                                tempDraft.push($scope._PFPlayerLocked[1]);
-                                break;
-                        }
-
-                        //C
-                        CCombinations.forEach(function (C) {
-                            tempDraft = $filter('removePosition')(tempDraft, 'C');
-                            tempDraft.push(C[0]);
                             //add only valid drafts
-                            if($scope.isDraftTeamValid(tempDraft) && $scope.isDraftSalaryValid(tempDraft)) {
+                            if($scope.isDraftTeamValid(finalPlayerList) && $scope.isDraftSalaryValid(finalPlayerList) && !$scope.doesDraftHaveDupPlayers(finalPlayerList)) {
                               //$scope._AllDrafts.push(tempDraft);
-                              var tempDataObj = { FPPG: parseFloat($scope.getDraftFPPG(tempDraft)), Actual: parseFloat($scope.getDraftActual(tempDraft)), validTeam: $scope.isDraftTeamValid(tempDraft), validSalary: $scope.isDraftSalaryValid(tempDraft), players: tempDraft, displayDetails: false };
+                              var tempDataObj = { FPPG: parseFloat($scope.getDraftFPPG(finalPlayerList)), Actual: parseFloat($scope.getDraftActual(finalPlayerList)), validTeam: $scope.isDraftTeamValid(finalPlayerList), validSalary: $scope.isDraftSalaryValid(finalPlayerList), players: finalPlayerList, displayDetails: false };
                               $scope._AllDraftData.push(tempDataObj);//store valid only
-                              tempDraft.forEach(function (player) {
+                              finalPlayerList.forEach(function (player) {
                                   var playerIndexInGlobal = $scope._AllPlayers.indexOf(player);
                                   $scope._AllPlayers[playerIndexInGlobal]._TimesInDrafts += 1;
                                   $scope._AllPlayers[playerIndexInGlobal]._TimesInValidDrafts += 1;
                               });
                             }
+
+                          });
                         });
+                      });
                     });
+                  });
                 });
+              });
             });
         });
 
         $http.post('/NBA/buildDraft', {'builtDrafts':$scope._AllDraftData.length}).then(function successCallback(response) {
-
+          
         }, function errorCallBack(response) {
           if(response.data.error !== undefined) {
             $scope._AllDisplayedDraftData = [];
@@ -1164,11 +891,18 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         });
 
     }
-
-    // $scope.switchValidDraftSelector = function () {
-    //     $scope.SelectedValidDrafts = !$scope.SelectedValidDrafts;
-    //     $scope.buildDrafts();
-    // }
+    $scope.doesDraftHaveDupPlayers = function(draft) {
+      var players = [];
+      var hasDups = false;
+      draft.forEach(function (player) {
+          if(players.indexOf(player._Name) > -1) {
+            hasDups = true;
+          } else {
+            players.push(player._Name);
+          }
+      });
+      return hasDups;
+    }
 
     $scope.setPlayerPercentInDraft = function (player) {
         if ($scope.SelectedValidDrafts) {
@@ -1220,312 +954,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         });
         return startingSalary;
     }
-    $scope.removeDraftsWithBadPlayerSetups = function() {
-
-      var rawLineupData = [];
-      var draftsToKeep = [];
-
-      var AllPGPlayers =  $filter('orderBy')($scope._PGPlayerPool, '_FPPG', true);
-      var AllSGPlayers =  $filter('orderBy')($scope._SGPlayerPool, '_FPPG', true);
-      var AllSFPlayers =  $filter('orderBy')($scope._SFPlayerPool, '_FPPG', true);
-      var AllPFPlayers =  $filter('orderBy')($scope._PFPlayerPool, '_FPPG', true);
-      var AllCPlayers =  $filter('orderBy')($scope._CPlayerPool, '_FPPG', true);
-
-      for(var j = 0; j < $scope._AllDraftData.length; j++) {
-          var PGPlayers = $filter('position')($scope._AllDraftData[j].players, 'PG');
-          var SGPlayers = $filter('position')($scope._AllDraftData[j].players, 'SG');
-          var SFPlayers = $filter('position')($scope._AllDraftData[j].players, 'SF');
-          var PFPlayers = $filter('position')($scope._AllDraftData[j].players, 'PF');
-          var CPlayers = $filter('position')($scope._AllDraftData[j].players, 'C');
-
-          var PG1Value = AllPGPlayers.indexOf(PGPlayers[0]) + 1;
-          if($scope._PGPlayerLocked.indexOf(PGPlayers[0]) !== -1) {
-            PG1Value = 1;
-          }
-          var PG2Value = AllPGPlayers.indexOf(PGPlayers[1]) + 1;
-          if($scope._PGPlayerLocked.indexOf(PGPlayers[1]) !== -1) {
-            PG2Value = 1;
-          }
-
-          var SG1Value = AllSGPlayers.indexOf(SGPlayers[0]) + 1;
-          if($scope._SGPlayerLocked.indexOf(SGPlayers[0]) !== -1) {
-            SG1Value = 1;
-          }
-          var SG2Value = AllSGPlayers.indexOf(SGPlayers[1]) + 1;
-          if($scope._SGPlayerLocked.indexOf(SGPlayers[1]) !== -1) {
-            SG2Value = 1;
-          }
-
-          var SF1Value = AllSFPlayers.indexOf(SFPlayers[0]) + 1;
-          if($scope._SFPlayerLocked.indexOf(SFPlayers[0]) !== -1) {
-            SF1Value = 1;
-          }
-          var SF2Value = AllSFPlayers.indexOf(SFPlayers[1]) + 1;
-          if($scope._SFPlayerLocked.indexOf(SFPlayers[1]) !== -1) {
-            SF2Value = 1;
-          }
-
-          var PF1Value = AllPFPlayers.indexOf(PFPlayers[0]) + 1;
-          if($scope._PFPlayerLocked.indexOf(PFPlayers[0]) !== -1) {
-            PF1Value = 1;
-          }
-          var PF2Value = AllPFPlayers.indexOf(PFPlayers[1]) + 1;
-          if($scope._PFPlayerLocked.indexOf(PFPlayers[1]) !== -1) {
-            PF2Value = 1;
-          }
-
-
-          if (PG1Value < 3 && SG1Value < 3 && PF1Value < 4 && SF1Value < 3) {
-            draftsToKeep.push($scope._AllDraftData[j]);
-          }
-
-
-
-      }
-
-
-
-      $scope._AllDraftData = draftsToKeep;
-
-      $scope.TotalPossibleDrafts = $scope._AllDraftData.length;
-      $scope.TotalValidDrafts = $scope._AllDraftData.length;
-
-      $scope._AllPlayers.forEach(function (player) {
-          player._TimesInDrafts = 0;
-          player._TimesInValidDrafts = 0;
-      });
-      $scope._AllDraftData.forEach(function (draftData) {
-          draftData.players.forEach(function (player) {
-              var playerIndexInGlobal = $scope._AllPlayers.indexOf(player);
-              $scope._AllPlayers[playerIndexInGlobal]._TimesInValidDrafts += 1;
-          });
-      });
-
-      $scope._AllPlayers.forEach(function (player) {
-          $scope.setPlayerPercentInDraft(player);
-      });
-      //cap gUI to 150 to displayed
-      $scope._AllDisplayedDraftData = [];
-      if($scope._AllDraftData.length > 150) {
-        for(var i = 0; i < 150; i++) {
-          $scope._AllDisplayedDraftData.push($scope._AllDraftData[i]);
-        }
-      } else {
-        for(var i = 0; i < $scope._AllDraftData.length; i++) {
-          $scope._AllDisplayedDraftData.push($scope._AllDraftData[i]);
-        }
-      }
-
-    }
-    $scope.keepThisDraftSalary = function(rawLineupData, AllPGPlayers, AllSGPlayers, AllSFPlayers, AllPFPlayers, AllCPlayers, inputDraft) {
-      var errorRateToUse = 1300;
-      var orderedDraftPlayers =  $filter('orderBy')(inputDraft.players, '_FPPG', true);
-      var PGPlayers = $filter('position')(orderedDraftPlayers, 'PG');
-      var SGPlayers = $filter('position')(orderedDraftPlayers, 'SG');
-      var SFPlayers = $filter('position')(orderedDraftPlayers, 'SF');
-      var PFPlayers = $filter('position')(orderedDraftPlayers, 'PF');
-      var CPlayers = $filter('position')(orderedDraftPlayers, 'C');
-
-      var PG1Value = PGPlayers[0]._Salary;
-      var PG2Value = PGPlayers[1]._Salary;
-
-      var SG1Value = SGPlayers[0]._Salary;
-      var SG2Value = SGPlayers[1]._Salary;
-
-      var SF1Value = SFPlayers[0]._Salary;
-      var SF2Value = SFPlayers[1]._Salary;
-
-      var PF1Value = PFPlayers[0]._Salary;
-      var PF2Value = PFPlayers[1]._Salary;
-
-      var CValue = CPlayers[0]._Salary;
-
-      for(var k = 0; k < rawLineupData.length; k++) {
-        var flagDraftBad = false;
-        var PG1Diff = Math.abs(rawLineupData[k].PG1 - PG1Value);
-        if(PG1Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var PG2Diff = Math.abs(rawLineupData[k].PG2 - PG2Value);
-        if(PG2Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SG1Diff = Math.abs(rawLineupData[k].SG1 - SG1Value);
-        if(SG1Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SG2Diff = Math.abs(rawLineupData[k].SG2 - SG2Value);
-        if(SG2Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SF1Diff = Math.abs(rawLineupData[k].SF1 - SF1Value);
-        if(SF1Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SF2Diff = Math.abs(rawLineupData[k].SF2 - SF2Value);
-        if(SF2Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var PF1Diff = Math.abs(rawLineupData[k].PF1 - PF1Value);
-        if(PF1Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var PF2Diff = Math.abs(rawLineupData[k].PF2 - PF2Value);
-        if(PF2Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var CDiff = Math.abs(rawLineupData[k].C - CValue);
-        if(CDiff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-
-        if(!flagDraftBad) {
-          return true;
-        }
-      }
-      return false;
-    }
-    $scope.keepThisDraftFPPG = function(rawLineupData, AllPGPlayers, AllSGPlayers, AllSFPlayers, AllPFPlayers, AllCPlayers, inputDraft) {
-      var errorRateToUse = 5;
-      var orderedDraftPlayers =  $filter('orderBy')(inputDraft.players, '_FPPG', true);
-      var PGPlayers = $filter('position')(orderedDraftPlayers, 'PG');
-      var SGPlayers = $filter('position')(orderedDraftPlayers, 'SG');
-      var SFPlayers = $filter('position')(orderedDraftPlayers, 'SF');
-      var PFPlayers = $filter('position')(orderedDraftPlayers, 'PF');
-      var CPlayers = $filter('position')(orderedDraftPlayers, 'C');
-
-      var PG1Value = PGPlayers[0]._FPPG;
-      var PG2Value = PGPlayers[1]._FPPG;
-
-      var SG1Value = SGPlayers[0]._FPPG;
-      var SG2Value = SGPlayers[1]._FPPG;
-
-      var SF1Value = SFPlayers[0]._FPPG;
-      var SF2Value = SFPlayers[1]._FPPG;
-
-      var PF1Value = PFPlayers[0]._FPPG;
-      var PF2Value = PFPlayers[1]._FPPG;
-
-      var CValue = CPlayers[0]._FPPG;
-
-      for(var k = 0; k < rawLineupData.length; k++) {
-        var flagDraftBad = false;
-        var PG1Diff = Math.abs(rawLineupData[k].PG1 - PG1Value);
-        if(PG1Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var PG2Diff = Math.abs(rawLineupData[k].PG2 - PG2Value);
-        if(PG2Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SG1Diff = Math.abs(rawLineupData[k].SG1 - SG1Value);
-        if(SG1Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SG2Diff = Math.abs(rawLineupData[k].SG2 - SG2Value);
-        if(SG2Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SF1Diff = Math.abs(rawLineupData[k].SF1 - SF1Value);
-        if(SF1Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SF2Diff = Math.abs(rawLineupData[k].SF2 - SF2Value);
-        if(SF2Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var PF1Diff = Math.abs(rawLineupData[k].PF1 - PF1Value);
-        if(PF1Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var PF2Diff = Math.abs(rawLineupData[k].PF2 - PF2Value);
-        if(PF2Diff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var CDiff = Math.abs(rawLineupData[k].C - CValue);
-        if(CDiff > errorRateToUse) {
-          flagDraftBad = true;
-        }
-
-        if(!flagDraftBad) {
-          return true;
-        }
-      }
-      return false;
-    }
-    $scope.keepThisDraft = function(rawLineupData, AllPGPlayers, AllSGPlayers, AllSFPlayers, AllPFPlayers, AllCPlayers, inputDraft) {
-
-
-      var errorRateToUse = 0;
-      var orderedDraftPlayers =  $filter('orderBy')(inputDraft.players, '_FPPG', true);
-      var PGPlayers = $filter('position')(orderedDraftPlayers, 'PG');
-      var SGPlayers = $filter('position')(orderedDraftPlayers, 'SG');
-      var SFPlayers = $filter('position')(orderedDraftPlayers, 'SF');
-      var PFPlayers = $filter('position')(orderedDraftPlayers, 'PF');
-      var CPlayers = $filter('position')(orderedDraftPlayers, 'C');
-
-      var PG1Value = AllPGPlayers.indexOf(PGPlayers[0]) + 1;
-      var PG2Value = AllPGPlayers.indexOf(PGPlayers[1]) + 1;
-
-      var SG1Value = AllSGPlayers.indexOf(SGPlayers[0]) + 1;
-      var SG2Value = AllSGPlayers.indexOf(SGPlayers[1]) + 1;
-
-      var SF1Value = AllSFPlayers.indexOf(SFPlayers[0]) + 1;
-      var SF2Value = AllSFPlayers.indexOf(SFPlayers[1]) + 1;
-
-      var PF1Value = AllPFPlayers.indexOf(PFPlayers[0]) + 1;
-      var PF2Value = AllPFPlayers.indexOf(PFPlayers[1]) + 1;
-
-      var CValue = AllCPlayers.indexOf(CPlayers[0]) + 1;
-
-
-
-      for(var k = 0; k < rawLineupData.length; k++) {
-        var flagDraftBad = false;
-        var PG1Diff = Math.abs(rawLineupData[k].PG1 - PG1Value);
-        if(PG1Diff != errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var PG2Diff = Math.abs(rawLineupData[k].PG2 - PG2Value);
-        if(PG2Diff != errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SG1Diff = Math.abs(rawLineupData[k].SG1 - SG1Value);
-        if(SG1Diff != errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SG2Diff = Math.abs(rawLineupData[k].SG2 - SG2Value);
-        if(SG2Diff != errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SF1Diff = Math.abs(rawLineupData[k].SF1 - SF1Value);
-        if(SF1Diff != errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var SF2Diff = Math.abs(rawLineupData[k].SF2 - SF2Value);
-        if(SF2Diff != errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var PF1Diff = Math.abs(rawLineupData[k].PF1 - PF1Value);
-        if(PF1Diff != errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var PF2Diff = Math.abs(rawLineupData[k].PF2 - PF2Value);
-        if(PF2Diff != errorRateToUse) {
-          flagDraftBad = true;
-        }
-        var CDiff = Math.abs(rawLineupData[k].C - CValue);
-        if(CDiff != errorRateToUse) {
-          flagDraftBad = true;
-        }
-
-        if(!flagDraftBad) {
-          return true;
-        }
-      }
-      return false;
-    }
-
 
     $scope.getDraftFPPG = function (draft) {
         var totalFPPG = 0;
@@ -1573,9 +1001,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     }
 
 
-
-
-
     $scope.isDraftSalaryValid = function (draft) {
         var startingSalary = 60000;
         draft.forEach(function (player) {
@@ -1604,32 +1029,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
         return true;
     }
-    $scope.getCombinations = function(players, min) {
-        var fn = function(n, src, got, all) {
-            if (n == 0) {
-                if (got.length > 0) {
-                    all[all.length] = got;
-                }
-                return;
-            }
-            for (var j = 0; j < src.length; j++) {
-                fn(n - 1, src.slice(j + 1), got.concat([src[j]]), all);
-            }
-            return;
-        }
-        var all = [];
-        for (var i = min; i < players.length; i++) {
-            fn(i, players, [], all);
-        }
-        all.push(players);
 
-        for (var j = 0; j < all.length; j++) {
-            if(all[j].length > min) {
-                all.splice(j);
-            }
-        }
-        return all;
-    }
     $scope.clearAllPlayerFilters = function () {
         $scope.SelectedTeams = [];
         $scope.SelectedWeeks = [];
@@ -1644,15 +1044,14 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
         var postObject = {
             _AllPlayers : $scope._AllPlayers,
-            _PGPlayerLocked : $scope._PGPlayerLocked,
-            _SGPlayerLocked : $scope._SGPlayerLocked,
-            _SFPlayerLocked : $scope._SFPlayerLocked,
-            _PFPlayerLocked : $scope._PFPlayerLocked,
-            _CPlayerLocked : $scope._CPlayerLocked,
-            _PGPlayerPool : $scope._PGPlayerPool,
-            _SGPlayerPool : $scope._SGPlayerPool,
-            _SFPlayerPool : $scope._SFPlayerPool,
-            _PFPlayerPool : $scope._PFPlayerPool,
+            _PG1PlayerPool : $scope._PG1PlayerPool,
+            _PG2PlayerPool : $scope._PG2PlayerPool,
+            _SG1PlayerPool : $scope._SG1PlayerPool,
+            _SG2PlayerPool : $scope._SG2PlayerPool,
+            _SF1PlayerPool : $scope._SF1PlayerPool,
+            _SF2PlayerPool : $scope._SF2PlayerPool,
+            _PF1PlayerPool : $scope._PF1PlayerPool,
+            _PF2PlayerPool : $scope._PF2PlayerPool,
             _CPlayerPool : $scope._CPlayerPool,
             TopRange : nba.TopRange,
             BottomRange : nba.BottomRange,
@@ -1758,17 +1157,10 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
       });
     }
-    $scope.loadPlayerInPool = function(playerPool, singlePlayer) {
+    $scope.loadPlayerInPool = function(playerPool, singlePlayer, position) {
       playerPool.forEach(function(singlePlayerInPool) {
         if(singlePlayerInPool._Name == singlePlayer._Name && singlePlayerInPool._Position == singlePlayer._Position && singlePlayerInPool._Team == singlePlayer._Team) {
-            $scope.addPlayerToPool(singlePlayer);
-        }
-      });
-    }
-    $scope.loadPlayerInLocked = function(playerPool, singlePlayer) {
-      playerPool.forEach(function(singlePlayerInPool) {
-        if(singlePlayerInPool._Name == singlePlayer._Name && singlePlayerInPool._Position == singlePlayer._Position && singlePlayerInPool._Team == singlePlayer._Team) {
-            $scope.lockAndUnLockPlayer(singlePlayer);
+            $scope.addPlayerToPool(singlePlayer, position);
         }
       });
     }
@@ -1781,16 +1173,12 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
       $scope._AllPlayers = savedData._AllPlayers;
       $scope._AllPlayersMASTER = savedData._AllPlayers;
+
       nba.TopRange = parseFloat(savedData.TopRange);
       nba.BottomRange = parseFloat(savedData.BottomRange);
-      if(savedData.TopLimit != undefined) {
-        nba.TopLimit = parseInt(savedData.TopLimit);
-      }
-      $scope._AllPlayers.forEach(function(singlePlayer) {
+      nba.TopLimit = parseInt(savedData.TopLimit);
 
-        if($scope._Positions.indexOf(singlePlayer._Position) === -1) {
-          $scope._Positions.push(singlePlayer._Position);
-        }
+      $scope._AllPlayers.forEach(function(singlePlayer) {
 
         //add team data
         if ($scope._AllTeams.length == 0) {
@@ -1799,19 +1187,17 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             $scope._AllTeams.push(singlePlayer._Team);
         }
 
-        $scope.loadPlayerInPool(savedData._PGPlayerPool, singlePlayer);
-        $scope.loadPlayerInPool(savedData._SGPlayerPool, singlePlayer);
-        $scope.loadPlayerInPool(savedData._SFPlayerPool, singlePlayer);
-        $scope.loadPlayerInPool(savedData._PFPlayerPool, singlePlayer);
-        $scope.loadPlayerInPool(savedData._CPlayerPool, singlePlayer);
-
-        $scope.loadPlayerInLocked(savedData._PGPlayerLocked, singlePlayer);
-        $scope.loadPlayerInLocked(savedData._SGPlayerLocked, singlePlayer);
-        $scope.loadPlayerInLocked(savedData._SFPlayerLocked, singlePlayer);
-        $scope.loadPlayerInLocked(savedData._PFPlayerLocked, singlePlayer);
-        $scope.loadPlayerInLocked(savedData._CPlayerLocked, singlePlayer);
+        $scope.loadPlayerInPool(savedData._PG1PlayerPool, singlePlayer, 'PG1');
+        $scope.loadPlayerInPool(savedData._PG2PlayerPool, singlePlayer, 'PG2');
+        $scope.loadPlayerInPool(savedData._SG1PlayerPool, singlePlayer, 'SG1');
+        $scope.loadPlayerInPool(savedData._SG2PlayerPool, singlePlayer, 'SG2');
+        $scope.loadPlayerInPool(savedData._SF1PlayerPool, singlePlayer, 'SF1');
+        $scope.loadPlayerInPool(savedData._SF2PlayerPool, singlePlayer, 'SF2');
+        $scope.loadPlayerInPool(savedData._PF1PlayerPool, singlePlayer, 'PF1');
+        $scope.loadPlayerInPool(savedData._PF2PlayerPool, singlePlayer, 'PF2');
+        $scope.loadPlayerInPool(savedData._CPlayerPool, singlePlayer, 'C');
       });
-      $scope._Positions.sort();
+
       $scope.displayNewMessage("success", "Previous save loaded successfully.");
 
     }
