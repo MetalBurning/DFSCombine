@@ -721,16 +721,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         $scope._AllDisplayedDraftData.splice($scope._AllDisplayedDraftData.indexOf(draft), 1);
 
         var indexOfDraftToRemove = $scope._AllDraftData.indexOf(draft);
-        $scope._AllDraftData[indexOfDraftToRemove].players.forEach(function (player) {
-            var playerIndexInGlobal = $scope._AllPlayers.indexOf(player);
-            $scope._AllPlayers[playerIndexInGlobal]._TimesInDrafts -= 1;
-            $scope._AllPlayers[playerIndexInGlobal]._TimesInValidDrafts -= 1;
-        });
+
         $scope._AllDraftData.splice(indexOfDraftToRemove, 1);
 
-        $scope._AllPlayers.forEach(function (player) {
-            $scope.setPlayerPercentInDraft(player);
-        });
         $scope.TotalPossibleDrafts = $scope._AllDraftData.length;
         $scope.TotalValidDrafts = $scope.TotalPossibleDrafts;
     }
@@ -742,26 +735,10 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         for(var j = 0; j < nba.TopLimit; j++) {
           tempDraftData.push($scope._AllDraftData[j]);
 
-          if(j === 0) {
-            //reset player %
-            for(var k = 0; k < $scope._AllPlayers.length; k++) {
-              $scope._AllPlayers[k]._TimesInDrafts = 0;
-              $scope._AllPlayers[k]._TimesInValidDrafts = 0;
-            }
-          }
-
-          $scope._AllDraftData[j].players.forEach(function (player) {
-              var playerIndexInGlobal = $scope._AllPlayers.indexOf(player);
-              $scope._AllPlayers[playerIndexInGlobal]._TimesInDrafts += 1;
-              $scope._AllPlayers[playerIndexInGlobal]._TimesInValidDrafts += 1;
-          });
         }
         $scope._AllDraftData = tempDraftData;
         $scope.TotalPossibleDrafts = $scope._AllDraftData.length;
         $scope.TotalValidDrafts = $scope.TotalPossibleDrafts;
-        $scope._AllPlayers.forEach(function (player) {
-            $scope.setPlayerPercentInDraft(player);
-        });
         //add top TopLimit to displayed
         $scope._AllDisplayedDraftData = [];
         for(var i = 0; i < nba.TopLimit; i++) {
@@ -773,12 +750,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         $scope._AllDraftData = [];
         $scope.TotalPossibleDrafts = 0;
         $scope.TotalValidDrafts = 0;
-
-        $scope._AllPlayers.forEach(function (player) {
-            player._TimesInDrafts = 0;
-            player._TimesInValidDrafts = 0;
-        });
-
     }
 
     $scope.buildDrafts = function () {
@@ -846,14 +817,10 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                                  validSalary: $scope.isDraftSalaryValid(finalPlayerList),
                                  players: finalPlayerList,
                                  playerNames: tempPlayerNames,
+                                 playersPositionData: angular.copy(tempDraft),
                                  displayDetails: false
                                };
                               $scope._AllDraftData.push(tempDataObj);//store valid only
-                              finalPlayerList.forEach(function (player) {
-                                  var playerIndexInGlobal = $scope._AllPlayers.indexOf(player);
-                                  $scope._AllPlayers[playerIndexInGlobal]._TimesInDrafts += 1;
-                                  $scope._AllPlayers[playerIndexInGlobal]._TimesInValidDrafts += 1;
-                              });
                             }
                           });
                         });
@@ -901,21 +868,15 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 }
               }
             }
-          }
-          for(var j = 0; j < $scope._AllDraftData.length; j++) {
             if(indexsToRemove.indexOf(j) === -1) {
               draftDataToKeep.push($scope._AllDraftData[j]);
             }
           }
-          $scope.clearDrafts();
-          draftDataToKeep.forEach(function(draftToKeep) {
-            $scope._AllDraftData.push(draftToKeep);
-            draftToKeep.players.forEach(function (player) {
-                var playerIndexInGlobal = $scope._AllPlayers.indexOf(player);
-                $scope._AllPlayers[playerIndexInGlobal]._TimesInDrafts += 1;
-                $scope._AllPlayers[playerIndexInGlobal]._TimesInValidDrafts += 1;
-            });
-          });
+          $scope._AllDraftData = draftDataToKeep;
+          // $scope.clearDrafts();
+          // draftDataToKeep.forEach(function(draftToKeep) {
+          //   $scope._AllDraftData.push(draftToKeep);
+          // });
 
         }
 
@@ -937,10 +898,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
           }
         }
 
-        $scope._AllPlayers.forEach(function (player) {
-            $scope.setPlayerPercentInDraft(player);
-        });
-
     }
     $scope.doesDraftHaveDupPlayers = function(draft) {
       var players = [];
@@ -955,13 +912,19 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       return hasDups;
     }
 
-    $scope.setPlayerPercentInDraft = function (player) {
-        if ($scope.SelectedValidDrafts) {
-            player._PercentInDrafts = ((player._TimesInValidDrafts / $scope.TotalValidDrafts) * 100 ).toFixed(0);
-        } else {
-            player._PercentInDrafts = ((player._TimesInDrafts / $scope.TotalPossibleDrafts) * 100 ).toFixed(0);
-        }
+    $scope.getPlayerPercentInPosition = function(player, position) {
+      if($scope.TotalValidDrafts > 0) {
+        var playerTimesInDrafts = 0;
+        $scope._AllDraftData.forEach(function(draft) {
+          if(draft.playersPositionData[position]._Name === player._Name) {
+            playerTimesInDrafts++;
+          }
+        });
+        return ((playerTimesInDrafts / $scope.TotalValidDrafts) * 100 ).toFixed(0);
+      }
+      return 0;
     }
+
 
     $scope.removeCalcDrafts = function () {
         var calcRemovedDrafts = $filter('removeCalcDraft')($scope._AllDraftData, parseFloat(nba.TopRange), parseFloat(nba.BottomRange), $scope.sortTypeDraft);
@@ -972,20 +935,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         var validDraftData = $filter('checkValidOnly')($scope._AllDraftData, true);
         $scope.TotalValidDrafts = validDraftData.length;
 
-        $scope._AllPlayers.forEach(function (player) {
-            player._TimesInDrafts = 0;
-            player._TimesInValidDrafts = 0;
-        });
-        validDraftData.forEach(function (draftData) {
-            draftData.players.forEach(function (player) {
-                var playerIndexInGlobal = $scope._AllPlayers.indexOf(player);
-                $scope._AllPlayers[playerIndexInGlobal]._TimesInValidDrafts += 1;
-            });
-        });
 
-        $scope._AllPlayers.forEach(function (player) {
-            $scope.setPlayerPercentInDraft(player);
-        });
         //cap gUI to 150 to displayed
         $scope._AllDisplayedDraftData = [];
         if($scope._AllDraftData.length > 150) {
