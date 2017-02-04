@@ -38,17 +38,36 @@
                                         <div class="row">
                                             <div class="col-xs-5">
                                                 <h4>Filter Positions</h4>
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('')" ng-class="{true: 'active', false: ''}[SelectedPosition === '']">All</button>
+                                                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                                  <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('PG1')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'PG1']">PG1</button>
+                                                  </div>
+                                                  <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('PG2')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'PG2']">PG2</button>
+                                                  </div>
+                                                  <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('SG1')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'SG1']">SG1</button>
+                                                  </div>
+                                                  <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('SG2')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'SG2']">SG2</button>
+                                                  </div>
+                                                </div>
+                                                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                                  <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('SF1')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'SF1']">SF1</button>
+                                                  </div>
+                                                  <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('SF2')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'SF2']">SF2</button>
+                                                  </div>
+                                                  <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('PF1')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'PF1']">PF1</button>
+                                                  </div>
+                                                  <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('PF2')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'PF2']">PF2</button>
+                                                  </div>
+                                                  <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('C')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'C']">C</button>
+                                                  </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-7">
@@ -365,7 +384,7 @@
                                             <div class="col-sm-3">
                                               <div class="row">
                                                 <div class="col-xs-12">
-                                                  <h4>Build Drafts</h4>
+                                                  <h4>Build Drafts - Remove Dups: <input type="checkbox" class="form-inline" ng-model="nba.removeDups"></h4>
                                                 </div>
                                               </div>
                                               <div class="row">

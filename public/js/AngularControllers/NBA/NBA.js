@@ -18,6 +18,12 @@ NBAApp.filter('positionDK', function () {
     };
 })
 
+NBAApp.filter('removeDupDrafts', function() {
+  return function(allDrafts) {
+    var tempDrafts = allDrafts;
+  }
+
+});
 
 NBAApp.filter('position', function () {
     return function (allPlayers, searchPosition) {

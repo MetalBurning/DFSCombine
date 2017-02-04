@@ -54,6 +54,7 @@ class NBAController extends Controller
                 $player->_Position = $data[1];
                 $player->_Name = $data[2] . " " . $data[4];
                 $player->_FPPG = $data[5];
+                $player->_ActualFantasyPoints = -1;
                 $player->_GamesPlayed = $data[6];
                 $player->_Salary = $data[7];
                 $player->_Game = $data[8];
