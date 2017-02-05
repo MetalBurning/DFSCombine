@@ -768,10 +768,21 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             return;
         }
 
+        var totalPossibleDraftsToBeCreated = $scope._PG1PlayerPool.length * $scope._PG2PlayerPool.length *
+        $scope._SG1PlayerPool.length * $scope._SG2PlayerPool.length *
+        $scope._SF1PlayerPool.length * $scope._SF2PlayerPool.length *
+        $scope._PF1PlayerPool.length * $scope._PF2PlayerPool.length *
+        $scope._CPlayerPool.length;
+
+        if(totalPossibleDraftsToBeCreated > 10000) {
+          $window.alert('Creating more than 10,000 drafts can take a few minutes');
+        }
+
         //before, make sure data is cleared
         $scope.clearDrafts();
 
         var tempDrafts = [];
+        var tempPlayerNamesList = [];
         //start draft building
         $scope._PG1PlayerPool.forEach(function(PG1Player) {
             var tempDraft = {};
@@ -803,10 +814,16 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                             finalPlayerList.push(tempDraft['PF2']);
                             finalPlayerList.push(tempDraft['C']);
                             //player name list
-                            var tempPlayerNames = [];
+                            var tempPlayerNames = {};
+                            tempPlayerNames['PG'] = [];
+                            tempPlayerNames['SG'] = [];
+                            tempPlayerNames['SF'] = [];
+                            tempPlayerNames['PF'] = [];
+                            tempPlayerNames['C'] = [];
                             finalPlayerList.forEach(function(player) {
-                              tempPlayerNames.push(player._Name);
+                              tempPlayerNames[player._Position].push(player);
                             });
+
                             //add only valid drafts
                             if($scope.isDraftTeamValid(finalPlayerList) && $scope.isDraftSalaryValid(finalPlayerList) && !$scope.doesDraftHaveDupPlayers(finalPlayerList)) {
                               //$scope._AllDrafts.push(tempDraft);
@@ -822,31 +839,55 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                                if(nba.removeDups)
                                {
                                  var sameDraft = false;
-                                 if($scope._AllDraftData.length > 0) {
-                                   for(var j = $scope._AllDraftData.length-1; j >= 0; j--) {
+                                 if(tempPlayerNamesList.length > 0) {
+                                   for(var j = tempPlayerNamesList.length-1; j >= 0; j--) {
                                      var playersInDraft = 0;
-                                     $scope._AllDraftData[j].playerNames.forEach(function(playerName) {
-                                       if(tempDataObj.playerNames.indexOf(playerName) !== -1) {
-                                         //existing J player exists in tempDraft
-                                         playersInDraft++;
-                                       }
-                                     });
+                                     if(tempPlayerNames['PG'].indexOf(tempPlayerNamesList[j]['PG'][0]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['PG'].indexOf(tempPlayerNamesList[j]['PG'][1]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['SG'].indexOf(tempPlayerNamesList[j]['SG'][0]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['SG'].indexOf(tempPlayerNamesList[j]['SG'][1]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['SF'].indexOf(tempPlayerNamesList[j]['SF'][0]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['SF'].indexOf(tempPlayerNamesList[j]['SF'][1]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['PF'].indexOf(tempPlayerNamesList[j]['PF'][0]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['PF'].indexOf(tempPlayerNamesList[j]['PF'][1]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['C'].indexOf(tempPlayerNamesList[j]['C'][0]) !== -1) {
+                                       playersInDraft++;
+                                     }
                                      if(playersInDraft === 9) {
                                        //same draft, dont add tempDraft
                                        sameDraft = true;
-                                       j = -1;
+                                       break;
                                      }
                                    }
                                    if(!sameDraft) {
                                      $scope._AllDraftData.push(tempDataObj);//store valid only
+                                     tempPlayerNamesList.push(tempPlayerNames);
                                    }
                                  } else {
                                     $scope._AllDraftData.push(tempDataObj);//store valid only
+                                    tempPlayerNamesList.push(tempPlayerNames);
                                  }
                                }
                                else
                                {
                                   $scope._AllDraftData.push(tempDataObj);//store valid only
+                                  tempPlayerNamesList.push(tempPlayerNames);
                                }
                               //$scope._AllDraftData.push(tempDataObj);//store valid only
                             }
