@@ -50,7 +50,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     nba.TopRange = -1;
     nba.BottomRange = -1;
 
-    nba.removeDups = false;
+    nba.removeDups = true;
 
     //database
     $scope.savedPastSettings = [];
@@ -251,7 +251,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
               transformRequest: angular.identity
           }
       }).then(function successCallBack(response) {
-          console.log(response);
           response.data.forEach(function(player) {
             player._Salary = parseFloat(player._Salary);
             player._FPPG = parseFloat(player._FPPG);
@@ -820,7 +819,36 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                                  playersPositionData: angular.copy(tempDraft),
                                  displayDetails: false
                                };
-                              $scope._AllDraftData.push(tempDataObj);//store valid only
+                               if(nba.removeDups)
+                               {
+                                 var sameDraft = false;
+                                 if($scope._AllDraftData.length > 0) {
+                                   for(var j = $scope._AllDraftData.length-1; j >= 0; j--) {
+                                     var playersInDraft = 0;
+                                     $scope._AllDraftData[j].playerNames.forEach(function(playerName) {
+                                       if(tempDataObj.playerNames.indexOf(playerName) !== -1) {
+                                         //existing J player exists in tempDraft
+                                         playersInDraft++;
+                                       }
+                                     });
+                                     if(playersInDraft === 9) {
+                                       //same draft, dont add tempDraft
+                                       sameDraft = true;
+                                       j = -1;
+                                     }
+                                   }
+                                   if(!sameDraft) {
+                                     $scope._AllDraftData.push(tempDataObj);//store valid only
+                                   }
+                                 } else {
+                                    $scope._AllDraftData.push(tempDataObj);//store valid only
+                                 }
+                               }
+                               else
+                               {
+                                  $scope._AllDraftData.push(tempDataObj);//store valid only
+                               }
+                              //$scope._AllDraftData.push(tempDataObj);//store valid only
                             }
                           });
                         });
@@ -845,40 +873,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             return;
           }
         });
-
-        if(nba.removeDups)
-        {
-          //$scope.clearDrafts();
-          var indexsToRemove = [];
-          var draftDataToKeep = [];
-          for(var j = 0; j < $scope._AllDraftData.length; j++) {
-            for(var k = j+1; k < $scope._AllDraftData.length; k++) {
-              if(j !== k && indexsToRemove.indexOf(k) === -1) {
-                var allSameKPlayersInJ = true;
-                $scope._AllDraftData[j].playerNames.forEach(function(JPlayer) {
-                  if($scope._AllDraftData[k].playerNames.indexOf(JPlayer) !== -1) {
-                    //K player exists in J
-                  } else {
-                    allSameKPlayersInJ = false;
-                    return;
-                  }
-                });
-                if(allSameKPlayersInJ) {
-                  indexsToRemove.push(k);
-                }
-              }
-            }
-            if(indexsToRemove.indexOf(j) === -1) {
-              draftDataToKeep.push($scope._AllDraftData[j]);
-            }
-          }
-          $scope._AllDraftData = draftDataToKeep;
-          // $scope.clearDrafts();
-          // draftDataToKeep.forEach(function(draftToKeep) {
-          //   $scope._AllDraftData.push(draftToKeep);
-          // });
-
-        }
 
 
         $scope.TotalPossibleDrafts = $scope._AllDraftData.length;
