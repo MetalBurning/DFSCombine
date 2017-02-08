@@ -66,6 +66,7 @@
                   <td>{{player._FPPG}}</td>
                   <td>{{player._ActualFantasyPoints}}</td>
                   <td>{{player._Salary}}</td>
+                  <td>{{player._ProjectedPointsPerDollar}}</td>
                   <td>{{player._playerInjuryDetails}}</td>
               </tr>
           </tbody>
@@ -96,174 +97,16 @@
               <tr>
                 <td>Salary: {{player._Salary}}</td>
               </tr>
+              <tr>
+                <td>Pts / Salary: {{player._ProjectedPointsPerDollar}}</td>
+              </tr>
               <tr class="{{player._playerInjured}}">
                 <td>Injury: {{player._playerInjuryDetails}}</td>
               </tr>
           </tbody>
       </table>
-        <!-- <uib-tabset active="activeJustified" justified="true">
-            <uib-tab index="0" heading="History">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                <a href="#" ng-click="sortType = '_Name'; sortReverse = !sortReverse">
-                                    Name
-                                    <span ng-show="sortType == '_Name' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_Name' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_Team'; sortReverse = !sortReverse">
-                                    Team
-                                    <span ng-show="sortType == '_Team' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_Team' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_Opponent'; sortReverse = !sortReverse">
-                                    Opponent
-                                    <span ng-show="sortType == '_Opponent' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_Opponent' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_Game'; sortReverse = !sortReverse">
-                                    Game
-                                    <span ng-show="sortType == '_Opponent' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_Opponent' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_Position'; sortReverse = !sortReverse">
-                                    Position
-                                    <span ng-show="sortType == '_Position' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_Position' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_FPPG'; sortReverse = !sortReverse">
-                                    FPPG
-                                    <span ng-show="sortType == '_FPPG' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_FPPG' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_ActualFantasyPoints'; sortReverse = !sortReverse">
-                                    Actual
-                                    <span ng-show="sortType == '_ActualFantasyPoints' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_ActualFantasyPoints' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_Salary'; sortReverse = !sortReverse">
-                                    Salary
-                                    <span ng-show="sortType == '_Salary' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_Salary' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_playerInjuryDetails'; sortReverse = !sortReverse">
-                                    Injury
-                                    <span ng-show="sortType == '_playerInjuryDetails' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_playerInjuryDetails' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody ng-repeat="player in playerPastData | orderBy:sortType:sortReverse">
-                        <tr class="{{player._playerInjured}}">
-                            <td>{{player._Name}}</td>
-                            <td>{{player._Team}}</td>
-                            <td>{{player._Opponent}}</td>
-                            <td>{{player._Game}}</td>
-                            <td>{{player._Position}}</td>
-                            <td>{{player._FPPG}}</td>
-                            <td>{{player._ActualFantasyPoints}}</td>
-                            <td>{{player._Salary}}</td>
-                            <td>{{player._playerInjuryDetails}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </uib-tab>
-            <uib-tab index="1" heading="Opponent History Vs. Postion">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                <a href="#" ng-click="sortType = '_Name'; sortReverse = !sortReverse">
-                                    Name
-                                    <span ng-show="sortType == '_Name' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_Name' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_Team'; sortReverse = !sortReverse">
-                                    Team
-                                    <span ng-show="sortType == '_Team' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_Team' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_Opponent'; sortReverse = !sortReverse">
-                                    Opponent
-                                    <span ng-show="sortType == '_Opponent' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_Opponent' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_Position'; sortReverse = !sortReverse">
-                                    Position
-                                    <span ng-show="sortType == '_Position' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_Position' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_FPPG'; sortReverse = !sortReverse">
-                                    Projection
-                                    <span ng-show="sortType == '_FPPG' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_FPPG' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_ActualFantasyPoints'; sortReverse = !sortReverse">
-                                    Actual
-                                    <span ng-show="sortType == '_ActualFantasyPoints' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_ActualFantasyPoints' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" ng-click="sortType = '_Salary'; sortReverse = !sortReverse">
-                                    Salary
-                                    <span ng-show="sortType == '_Salary' && !sortReverse" class="fa fa-caret-down"></span>
-                                    <span ng-show="sortType == '_Salary' && sortReverse" class="fa fa-caret-up"></span>
-                                </a>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat-start="player in OppHistoryVsPostion | orderBy:sortType:sortReverse">
-                            <td>{{player._Name}}</td>
-                            <td>{{player._Team}}</td>
-                            <td>{{player._Opponent}}</td>
-                            <td>{{player._Position}}</td>
-                            <td>{{player._FPPG}}</td>
-                            <td>{{player._ActualFantasyPoints}}</td>
-                            <td>{{player._Salary}}</td>
-                        </tr>
-                        <tr ng-repeat-end="" ng-if="$last">
-                            <td  colspan="5">Averages:</td>
-                            <td>{{OppHistoryVsPostionProjectionAverage}}</td>
-                            <td  colspan="2">{{OppHistoryVsPostionActualAverage}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-            </uib-tab>
-        </uib-tabset> -->
-
 </div>
-    <div class="modal-footer">
-        <button class="btn btn-primary" ng-click="ok()">OK</button>
-        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-    </div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

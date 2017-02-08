@@ -34,7 +34,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     $scope.sortReverse = true;  // set the default sort order
     $scope.sortReverseDraft = true;
     $scope.SelectedPosition = 'PG1';     // set the default search/filter term
-    $scope.SelectedTeams = [];
+    $scope.SelectedTeam = 'All';
     $scope.SelectedStackPositions = [];
     $scope.SelectedDraft = null;
 
@@ -58,7 +58,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
     //$scope._AllPlayers = positionFilter($scope._AllPlayers, $scope.SelectedPosition);
 
-    $scope._AllPlayers = $filter('team')($scope._AllPlayers, $scope.SelectedTeams);
+    $scope._AllPlayers = $filter('team')($scope._AllPlayers, $scope.SelectedTeam);
     $scope._AllPlayers = $filter('position')($scope._AllPlayers, $scope.SelectedPosition);
     //$http.post("/api/NFL/getAllWeeks").then(function successCallback(response) {
     //    $scope._AllWeeks = [];//clear out
@@ -292,26 +292,23 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       var allSGs = $filter('position')(orderedPlayers, 'SG');
       var allSFs = $filter('position')(orderedPlayers, 'SF');
       var allPFs = $filter('position')(orderedPlayers, 'PF');
-      var allPFs = $filter('position')(orderedPlayers, 'PF');
       var allCs = $filter('position')(orderedPlayers, 'C');
 
       var PGTeams = [];
 
       for(var j = 0; j < 5; j++) {
-        if(allPGs.length >= j) {
-          $scope.addPlayerToPool(allPGs[j]);
+        if(j < 3) {
+          $scope.addPlayerToPool(allPGs[j], 'PG1');
+          $scope.addPlayerToPool(allSGs[j], 'SG1');
+          $scope.addPlayerToPool(allSFs[j], 'SF1');
+          $scope.addPlayerToPool(allPFs[j], 'PF1');
+          $scope.addPlayerToPool(allCs[j], 'C');
         }
-        if(allSGs.length >= j) {
-          $scope.addPlayerToPool(allSGs[j]);
-        }
-        if(allSFs.length >= j) {
-          $scope.addPlayerToPool(allSFs[j]);
-        }
-        if(allPFs.length >= j) {
-          $scope.addPlayerToPool(allPFs[j]);
-        }
-        if(allCs.length >= j && j < 3) {
-          $scope.addPlayerToPool(allCs[j]);
+        if(j > 0) {
+          $scope.addPlayerToPool(allPGs[j], 'PG2');
+          $scope.addPlayerToPool(allSGs[j], 'SG2');
+          $scope.addPlayerToPool(allSFs[j], 'SF2');
+          $scope.addPlayerToPool(allPFs[j], 'PF2');
         }
       }
 
@@ -352,7 +349,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
     $scope.setAndUnsetPosition = function(position) {
       if($scope.SelectedPosition === position) {
-          $scope.SelectedPosition = '';
+          //do nothing, cant unset position
       } else {
           $scope.SelectedPosition = position;
       }
@@ -379,36 +376,42 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       var allPFs = $filter('position')(NonInjuredPlayers, 'PF');
       var allCs = $filter('position')(NonInjuredPlayers, 'C');
 
-      //version 1
       for(var j = 0; j < allPGs.length; j++) {
-        if(j == 0 || j == 1 || j == 2 || j == 3) {
-          $scope.addPlayerToPool(allPGs[j]);
+        if(j == 0 || j == 1 ) {
+          $scope.addPlayerToPool(allPGs[j], 'PG1');
+        }
+        if(j == 1 ||j == 2 || j == 3) {
+          $scope.addPlayerToPool(allPGs[j], 'PG2');
         }
       }
-      //$scope.lockAndUnLockPlayer(allPGs[0]);
-
       for(var j = 0; j < allSGs.length; j++) {
-        if(j == 0 || j == 1 || j == 2 || j == 3 ) {
-          $scope.addPlayerToPool(allSGs[j]);
+        if(j == 0 || j == 1 || j == 2 ) {
+          $scope.addPlayerToPool(allSGs[j], 'SG1');
+        }
+        if( j == 1 || j == 2 || j == 3 || j == 4) {
+          $scope.addPlayerToPool(allSGs[j], 'SG2');
         }
       }
 
       for(var j = 0; j < allSFs.length; j++) {
-        if( j == 0 || j == 1 || j == 2 || j == 3) {
-          $scope.addPlayerToPool(allSFs[j]);
+        if( j == 0 || j == 1) {
+          $scope.addPlayerToPool(allSFs[j], 'SF1');
+        }
+        if( j == 1 || j == 2 || j == 3) {
+          $scope.addPlayerToPool(allSFs[j], 'SF2');
         }
       }
-
 
       for(var j = 0; j < allPFs.length; j++) {
-        if( j == 0 || j == 1 || j == 2 || j == 3 ) {
-          $scope.addPlayerToPool(allPFs[j]);
+        if( j == 0 || j == 1 || j == 2 ) {
+          $scope.addPlayerToPool(allPFs[j], 'PF1');
+        }
+        if(j == 1 || j == 2 || j == 3 || j == 4) {
+          $scope.addPlayerToPool(allPFs[j], 'PF2');
         }
       }
-
-      $scope.addPlayerToPool(allCs[0]);
-      $scope.addPlayerToPool(allCs[1]);
-      $scope.addPlayerToPool(allCs[2]);
+      $scope.addPlayerToPool(allCs[0], 'C');
+      $scope.addPlayerToPool(allCs[1], 'C');
     }
     $scope.parseFloat = function(value)
     {
@@ -452,18 +455,11 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         $scope._Message.messageType = "info";
         $scope._Message.message = "";
     }
-
-    $scope.addTeam = function (team) {
-        if(SelectedTeams.indexOf(team) == -1) {
-            SelectedTeams.push(team);
-        }
-    }
     $scope.addRemoveTeam = function (team) {
-        var playerIndex = $scope.SelectedTeams.indexOf(team);
-        if (playerIndex > -1) {
-            $scope.SelectedTeams.splice(playerIndex, 1);
+        if ($scope.SelectedTeam === team) {
+            $scope.SelectedTeam = 'All';
         } else {
-            $scope.SelectedTeams.push(team);
+            $scope.SelectedTeam = team;
         }
     }
     $scope.addRemoveWeek= function (week) {
@@ -774,8 +770,8 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         $scope._PF1PlayerPool.length * $scope._PF2PlayerPool.length *
         $scope._CPlayerPool.length;
 
-        if(totalPossibleDraftsToBeCreated > 10000) {
-          $window.alert('Creating more than 10,000 drafts can take a few minutes');
+        if(totalPossibleDraftsToBeCreated > 15000) {
+          $window.alert('Creating more than 10,000 drafts can take longer than expected');
         }
 
         //before, make sure data is cleared
@@ -1027,7 +1023,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             size: 'lg',
             resolve: {
                 allPlayers: function () {
-                    return $scope._AllPlayersMASTER;
+                    return $scope._AllPlayers;
                 },
                 selectedPlayer: function () {
                     return player;
@@ -1067,7 +1063,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     }
 
     $scope.clearAllPlayerFilters = function () {
-        $scope.SelectedTeams = [];
+        $scope.SelectedTeam = 'All';
         $scope.SelectedWeeks = [];
     }
 

@@ -36,7 +36,7 @@
                                     </div>
                                     <div class="panel-body" set-height id="players">
                                         <div class="row">
-                                            <div class="col-xs-5">
+                                            <div class="col-md-5 visible-md visible-lg">
                                                 <h4>Filter Positions</h4>
                                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                   <div class="btn-group" role="group">
@@ -70,40 +70,62 @@
                                                   </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-7">
+                                            <div class="col-sm-6 visible-sm visible-xs">
+                                              <h4>Filter Positions</h4>
+                                              <select class="form-control" ng-model="SelectedPosition" >
+                                                <option value="PG1">PG1</option>
+                                                <option value="PG2">PG2</option>
+                                                <option value="SG1">SG1</option>
+                                                <option value="SG2">SG2</option>
+                                                <option value="SF1">SF1</option>
+                                                <option value="SF2">SF2</option>
+                                                <option value="PF1">PF1</option>
+                                                <option value="PF2">PF2</option>
+                                                <option value="C">C</option>
+                                              </select>
+                                            </div>
+                                            <div class="col-md-7 visible-md visible-lg">
                                                 <h4>Filter Teams</h4>
                                                 <div ng-if="_AllTeams.length >= 12">
                                                   <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                     <div class="btn-group" ng-repeat="team in _AllTeams|limitTo:(_AllTeams.length / 2)"  role="group">
-                                                        <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeams.indexOf(team) > -1]">@{{team}}</button>
+                                                        <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam === team]">@{{team}}</button>
                                                     </div>
                                                   </div>
                                                   <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                     <div class="btn-group" ng-repeat="team in _AllTeams| limitTo: ((_AllTeams.length / 2) - _AllTeams.length)"  role="group">
-                                                        <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeams.indexOf(team) > -1]">@{{team}}</button>
+                                                        <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam === team]">@{{team}}</button>
                                                     </div>
                                                   </div>
                                               </div>
                                               <div ng-if="_AllTeams.length < 12 && _AllTeams.length > 8">
                                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                   <div class="btn-group" ng-repeat="team in _AllTeams|limitTo:(_AllTeams.length / 2)"  role="group">
-                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeams.indexOf(team) > -1]">@{{team}}</button>
+                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam === team]">@{{team}}</button>
                                                   </div>
                                                 </div>
                                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                   <div class="btn-group" ng-repeat="team in _AllTeams|limitTo: ((_AllTeams.length / 2) - _AllTeams.length)"  role="group">
-                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeams.indexOf(team) > -1]">@{{team}}</button>
+                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam === team]">@{{team}}</button>
                                                   </div>
                                                 </div>
                                               </div>
                                               <div ng-if="_AllTeams.length < 8 ">
                                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                   <div class="btn-group" ng-repeat="team in _AllTeams|limitTo:8"  role="group">
-                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeams.indexOf(team) > -1]">@{{team}}</button>
+                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam === team]">@{{team}}</button>
                                                   </div>
                                                 </div>
                                               </div>
                                             </div>
+                                            <div class="col-sm-6 visible-sm visible-xs">
+                                              <h4>Filter Teams</h4>
+                                              <select class="form-control" ng-model="SelectedTeam"  >
+                                                <option value="All">All</option>
+                                                <option ng-repeat="team in _AllTeams" ng-value="team">@{{team}}</option>
+                                              </select>
+                                            </div>
+
                                           </div>
 
                                         <div class="row">
@@ -187,7 +209,7 @@
                                                             </th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody ng-repeat="player in _AllPlayers | orderBy:sortType:sortReverse | position:SelectedPosition | team:SelectedTeams">
+                                                    <tbody ng-repeat="player in _AllPlayers | orderBy:sortType:sortReverse | position:SelectedPosition | team:SelectedTeam">
                                                         <tr class="@{{player._playerInjured}} visible-md visible-lg">
                                                             <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player, SelectedPosition)" ng-click="addPlayerToPool(player, SelectedPosition)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player, SelectedPosition)" ng-click="removePlayerFromPool(player, SelectedPosition)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
@@ -418,19 +440,19 @@
                                               <div class="row">
                                                 <div class="col-xs-12">
                                                   <button type="button" class="btn btn-primary" ng-click="buildDrafts()" >ReBuild Drafts</button>
-                                                  <abbr title="Total possible valid draft combinations, only valid combinations are displayed">Total: @{{TotalValidDrafts}}</abbr>
+                                                  <strong><abbr title="Total possible valid draft combinations, only valid combinations are displayed">Total: @{{TotalValidDrafts}}</abbr></strong>
                                                 </div>
                                               </div>
                                             </div>
                                             <div class="col-sm-2">
                                               <div class="row">
                                                 <div class="col-xs-12">
-                                                  <h4>Selected Sort</h4>
+                                                  <h4>Selected Sort:</h4>
                                                 </div>
                                               </div>
                                               <div class="row">
                                                 <div class="col-xs-12">
-                                                  @{{sortTypeDraft}}
+                                                  <strong>@{{sortTypeDraft}}</strong>
                                                 </div>
                                               </div>
                                             </div>
@@ -441,14 +463,17 @@
                                                 </div>
                                               </div>
                                               <div class="row">
-                                                <div class="col-xs-4">
-                                                  <button type="button" class="btn btn-primary" ng-click="removeCalcDrafts()" ng-disabled="nba.TopRange === -1 || nba.BottomRange === -1">Select Range</button>
-                                                </div>
-                                                <div class="col-xs-4">
-                                                    <input type="number" class="form-control" ng-model="nba.TopRange"   >
-                                                </div>
-                                                <div class="col-xs-4">
-                                                    <input type="number" class="form-control" ng-model="nba.BottomRange"  >
+                                                <div class="col-xs-12">
+                                                  <form class="form-inline">
+                                                    <div class="input-group">
+                                                      <span class="input-group-btn">
+                                                        <button class="btn btn-primary" type="button" ng-click="removeCalcDrafts()" ng-disabled="nba.TopRange === -1 || nba.BottomRange === -1">Select Range</button>
+                                                      </span>
+                                                      <input type="number" class="form-control input" ng-model="nba.TopRange">
+                                                      <span class="input-group-btn" style="width:0px;"></span>
+                                                      <input type="number" class="form-control input" ng-model="nba.BottomRange">
+                                                    </div>
+                                                  </form>
                                                 </div>
                                               </div>
                                             </div>
@@ -459,14 +484,15 @@
                                                 </div>
                                               </div>
                                               <div class="row">
-                                                <div class="col-xs-5">
-                                                  <button type="button" class="btn btn-primary" ng-click="removeAllButTopN()">Select Top</button>
-                                                </div>
-                                                <div class="col-xs-7">
-                                                  <input type="number" class="form-control" ng-model="nba.TopLimit"  >
+                                                <div class="col-xs-12">
+                                                  <div class="input-group">
+                                                    <span class="input-group-btn">
+                                                      <button class="btn btn-primary" type="button" ng-click="removeAllButTopN()">Select Top</button>
+                                                    </span>
+                                                    <input type="number" class="form-control" ng-model="nba.TopLimit"  >
+                                                  </div>
                                                 </div>
                                               </div>
-
                                             </div>
                                         </div>
                                         <div class="row" >

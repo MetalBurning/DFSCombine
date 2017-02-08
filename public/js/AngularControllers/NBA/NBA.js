@@ -21,6 +21,13 @@ NBAApp.filter('positionDK', function () {
 NBAApp.filter('removeDupDrafts', function() {
   return function(allDrafts) {
     var tempDrafts = allDrafts;
+    allDrafts.foreach(function(draft) {
+      draft.players.forEach(function(player) {
+        switch(player.Pos) {
+
+        }
+      });
+    });
   }
 
 });
@@ -28,7 +35,7 @@ NBAApp.filter('removeDupDrafts', function() {
 NBAApp.filter('position', function () {
     return function (allPlayers, searchPosition) {
         var filteredPlayers = [];
-        if(searchPosition === '') {
+        if(searchPosition === '' || searchPosition === null || searchPosition === undefined) {
           return allPlayers;
         }
         allPlayers.forEach(function (player) {
@@ -55,15 +62,15 @@ NBAApp.filter('removeInjured', function () {
 })
 
 NBAApp.filter('team', function () {
-    return function (allPlayers, input) {
+    return function (allPlayers, team) {
         var filteredPlayers = [];
-        allPlayers.forEach(function (element) {
-            if (input.length == 0 || input == undefined) {
-                filteredPlayers.push(element);
-            }
-            if (input.indexOf(element._Team) > -1) {
-                filteredPlayers.push(element);
-            }
+        if(team === 'All' || team === undefined || team === '' || team === null) {
+          return allPlayers;
+        }
+        allPlayers.forEach(function (player) {
+          if (team === player._Team) {
+            filteredPlayers.push(player);
+          }
         });
         return filteredPlayers;
     };
