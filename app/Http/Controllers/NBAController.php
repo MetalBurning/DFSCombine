@@ -84,7 +84,82 @@ class NBAController extends Controller
             return Response::json($errorMessage, 500);
           }
           DB::table('UserActions')->insert(
-              ['userID' => Auth::user()->id, 'sport' => 'NBA', 'action' => 'playerLoad', 'actionDetails' =>  count($players), 'actionDetailsLarge' => json_encode($players)]
+              ['userID' => Auth::user()->id, 'sport' => 'NBA', 'action' => 'playerLoad', 'actionDetails' =>  'FanDuel', 'actionDetailsLarge' => json_encode($players)]
+          );
+          return Response::json($players, 200);
+      }
+      else
+      {
+        $errorMessage = array('error' => 'Unauthenticated.');
+        return Response::json($errorMessage, 500);
+      }
+    }
+    public function loadDraftKingsPlayers(Request $request)
+    {
+      if(Auth::check()) {
+          $userID = Auth::user()->id;
+
+          $this->validate($request, [
+            'csvFile' => 'required|file|mimes:csv,txt'
+          ]);
+
+          $file = $request->file('csvFile');
+
+          $lineCount = 0;
+          $players = [];
+          try {
+            $fileRead = fopen($file,"r");
+            while(!feof($fileRead))
+            {
+              if($lineCount > 8) {
+                $data = fgetcsv($fileRead);
+                if(count($data) > 1) {
+                  $player = new stdClass();
+                  $player->playerID = $data[12];
+                  $player->_Position = $data[9];
+
+                  $playerName = $data[11];
+
+                  $playerNames = explode(" ", $playerName);
+                  $player->_Name = trim($playerNames[0]) . " " . trim($playerNames[1]);
+
+                  $player->_FPPG = -1;
+                  $player->_ActualFantasyPoints = -1;
+                  $player->_GamesPlayed = -1;
+                  $player->_Salary = $data[13];
+
+                  $gameData = explode(" ", $data[14]);
+                  $player->_Game = trim($gameData[0]);
+
+                  $player->_Team = $data[15];
+
+                  $playerOpp = explode("@", $gameData[0]);
+                  if(trim($playerOpp[0]) == $player->_Team) {
+                    $player->_Opponent = $playerOpp[1];
+                  } else {
+                    $player->_Opponent = $playerOpp[0];
+                  }
+
+                  $player->_playerInjured = '';
+                  $player->_playerInjuryDetails = '';
+                  $player->_TimesInValidDrafts = 0;
+                  $player->_TimesInDrafts = 0;
+                  $player->_PercentInDrafts = -1;
+
+                  $players[] = $player;
+                }
+              } else {
+                fgetcsv($fileRead);
+              }
+              $lineCount++;
+            }
+            fclose($fileRead);
+          } catch(\Exception $e) {
+            $errorMessage = array('error' => 'Incorrect file structure.');
+            return Response::json($errorMessage, 500);
+          }
+          DB::table('UserActions')->insert(
+              ['userID' => Auth::user()->id, 'sport' => 'NBA', 'action' => 'playerLoad', 'actionDetails' => 'DraftKings', 'actionDetailsLarge' => json_encode($players)]
           );
           return Response::json($players, 200);
       }
