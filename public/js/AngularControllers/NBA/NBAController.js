@@ -1063,8 +1063,13 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
           }
         }
       }
-      $scope.addPlayerToPool(allCs[0], 'C');
-      $scope.addPlayerToPool(allCs[1], 'C');
+      if(allCs[0]._FPPG > (allCs[1]._FPPG  + 10)) {
+        $scope.addPlayerToPool(allCs[0], 'C');
+      } else {
+        $scope.addPlayerToPool(allCs[0], 'C');
+        $scope.addPlayerToPool(allCs[1], 'C');
+      }
+
     }
 
 
