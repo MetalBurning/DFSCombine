@@ -980,7 +980,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       //PGs
       if(allPGs[0]._FPPG > (allPGs[1]._FPPG  + 13)) {
         $scope.addPlayerToPool(allPGs[0], 'PG1');
-        if(allPGs[1]._FPPG > 29) {
+        if(allPGs[1]._FPPG > 30) {
             $scope.addPlayerToPool(allPGs[1], 'PG1');
         }
         for(var j = 0; j < allPGs.length; j++) {
@@ -1002,7 +1002,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       //SGs
       if(allSGs[0]._FPPG > (allSGs[1]._FPPG  + 13)) {
         $scope.addPlayerToPool(allSGs[0], 'SG1');
-        if(allSGs[1]._FPPG > 29) {
+        if(allSGs[1]._FPPG > 30) {
           $scope.addPlayerToPool(allSGs[1], 'SG1');
         }
         for(var j = 0; j < allSGs.length; j++) {
@@ -1026,7 +1026,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       //SF
       if(allSFs[0]._FPPG > (allSFs[1]._FPPG  + 13)) {
         $scope.addPlayerToPool(allSFs[0], 'SF1');
-        if(allSFs[1]._FPPG > 29) {
+        if(allSFs[1]._FPPG > 30) {
             $scope.addPlayerToPool(allSFs[1], 'SF1');
         }
         for(var j = 0; j < allSFs.length; j++) {
@@ -1048,7 +1048,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       //PF
       if(allPFs[0]._FPPG > (allPFs[1]._FPPG  + 13)) {
         $scope.addPlayerToPool(allPFs[0], 'PF1');
-        if(allPFs[1]._FPPG > 29) {
+        if(allPFs[1]._FPPG > 30) {
             $scope.addPlayerToPool(allPFs[1], 'PF1');
         }
         for(var j = 0; j < allPFs.length; j++) {
