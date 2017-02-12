@@ -111,7 +111,7 @@
                                                   </div>
                                                 </div>
                                               </div>
-                                              <div ng-if="_AllTeams.length < 8 ">
+                                              <div ng-if="_AllTeams.length < 9 ">
                                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                   <div class="btn-group" ng-repeat="team in _AllTeams|limitTo:8"  role="group">
                                                       <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam === team]">@{{team}}</button>
