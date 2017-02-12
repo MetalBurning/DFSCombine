@@ -830,7 +830,8 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                                  players: finalPlayerList,
                                  playerNames: tempPlayerNames,
                                  playersPositionData: angular.copy(tempDraft),
-                                 displayDetails: false
+                                 displayDetails: false,
+                                 pointsPerDollar:  parseFloat($scope.averageValue(finalPlayerList))
                                };
                                if(nba.removeDups)
                                {
@@ -1162,6 +1163,16 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         });
         return (startingSalary >= 0) ? true : false;
     }
+
+    $scope.averageValue = function(draft) {
+      var value = 0;
+      draft.forEach(function (player) {
+          value = parseFloat(value) + parseFloat(player._ProjectedPointsPerDollar);
+      });
+      value = parseFloat(value);
+      return (value / (draft.length)).toFixed(5);
+    }
+
     $scope.isDraftTeamValid = function (draft) {
         var teams = {};
         draft.forEach(function (player) {
