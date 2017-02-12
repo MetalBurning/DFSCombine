@@ -1069,7 +1069,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
           }
         }
       }
-      if(allCs[0]._FPPG > (allCs[1]._FPPG  + 10)) {
+      if(allCs[0]._FPPG > (allCs[1]._FPPG  + 13)) {
         $scope.addPlayerToPool(allCs[0], 'C');
       } else {
         $scope.addPlayerToPool(allCs[0], 'C');
