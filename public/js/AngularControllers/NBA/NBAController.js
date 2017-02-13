@@ -724,7 +724,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     }
 
     $scope.removeAllButTopN = function() {
-      $scope._AllDraftData = $filter('orderBy')($scope._AllDraftData, $scope.sortTypeDraft, true);
+      $scope._AllDraftData = $filter('orderBy')($scope._AllDraftData, $scope.sortTypeDraft, $scope.sortReverseDraft);
       if($scope._AllDraftData.length > nba.TopLimit) {
         var tempDraftData = [];
         for(var j = 0; j < nba.TopLimit; j++) {
