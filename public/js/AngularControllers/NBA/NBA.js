@@ -60,7 +60,17 @@ NBAApp.filter('removeInjured', function () {
         return filteredPlayers;
     };
 })
-
+NBAApp.filter('removeOut', function () {
+    return function (allPlayers) {
+        var filteredPlayers = [];
+        allPlayers.forEach(function (element) {
+            if (element._playerInjured != 'danger') {
+                filteredPlayers.push(element);
+            }
+        });
+        return filteredPlayers;
+    };
+})
 NBAApp.filter('team', function () {
     return function (allPlayers, team) {
         var filteredPlayers = [];
