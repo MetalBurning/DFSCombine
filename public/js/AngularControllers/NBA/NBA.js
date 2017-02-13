@@ -164,6 +164,14 @@ NBAApp.filter('removeCalcDraft', function () {
             if (max >= draft.Actual && draft.Actual >= min) {
               filteredDrafts.push(draft);
             }
+          } else if(sortType === 'salaryLeft') {
+            if (max >= draft.salaryLeft && draft.salaryLeft >= min) {
+              filteredDrafts.push(draft);
+            }
+          } else if(sortType === 'pointsPerDollar') {
+            if (max >= draft.pointsPerDollar && draft.pointsPerDollar >= min) {
+              filteredDrafts.push(draft);
+            }
           }
 
         });
