@@ -172,6 +172,10 @@ NBAApp.filter('removeCalcDraft', function () {
             if (max >= draft.pointsPerDollar && draft.pointsPerDollar >= min) {
               filteredDrafts.push(draft);
             }
+          }else if(sortType === 'averageRank') {
+            if (max >= draft.averageRank && draft.averageRank >= min) {
+              filteredDrafts.push(draft);
+            }
           }
 
         });
