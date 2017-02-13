@@ -513,6 +513,11 @@
                                                                 </span>
                                                             </th>
                                                             <th>
+                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('salaryLeft')">
+                                                                    Salary left
+                                                                </span>
+                                                            </th>
+                                                            <th>
                                                                 <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('pointsPerDollar')">
                                                                     Average Value
                                                                 </span>
@@ -524,6 +529,7 @@
                                                             <td>@{{$index + 1}} <button class="btn btn-xs btn-danger" ng-click="removeDraft(draft)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openCloseDraftDetails(draft);">@{{draft.FPPG}}</td>
                                                             <td ng-click="openCloseDraftDetails(draft);">@{{draft.Actual}}</td>
+                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.salaryLeft}}</td>
                                                             <td ng-click="openCloseDraftDetails(draft);">@{{draft.pointsPerDollar}}</td>
                                                         </tr>
                                                     </tbody>

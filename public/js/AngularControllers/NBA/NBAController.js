@@ -827,6 +827,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                                  Actual: parseFloat($scope.getDraftActual(finalPlayerList)),
                                  validTeam: $scope.isDraftTeamValid(finalPlayerList),
                                  validSalary: $scope.isDraftSalaryValid(finalPlayerList),
+                                 salaryLeft: parseInt($scope.getDraftSalaryLeft(finalPlayerList)),
                                  players: finalPlayerList,
                                  playerNames: tempPlayerNames,
                                  playersPositionData: angular.copy(tempDraft),
@@ -943,7 +944,14 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       });
       return hasDups;
     }
-
+    $scope.getDraftSalaryLeft = function (draft) {
+        var startingSalary = 60000;
+        draft.forEach(function (player) {
+            startingSalary = startingSalary - player._Salary;
+        });
+        startingSalary = parseInt(startingSalary);
+        return startingSalary;
+    }
     $scope.getPlayerPercentInPosition = function(player, position) {
       if($scope.TotalValidDrafts > 0) {
         var playerTimesInDrafts = 0;
