@@ -747,6 +747,45 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         $scope.TotalValidDrafts = 0;
     }
 
+    $scope.setPlayerRanking = function() {
+      var orderedFPPGPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
+      var NonInjuredPlayers =  $filter('removeInjured')(orderedFPPGPlayers);
+      var allPGs = $filter('position')(NonInjuredPlayers, 'PG');
+      var allSGs = $filter('position')(NonInjuredPlayers, 'SG');
+      var allSFs = $filter('position')(NonInjuredPlayers, 'SF');
+      var allPFs = $filter('position')(NonInjuredPlayers, 'PF');
+      var allCs = $filter('position')(NonInjuredPlayers, 'C');
+
+      $scope._AllPlayers.forEach(function(player) {
+        var playerRank = 0;
+        switch(player._Position) {
+          case 'PG':
+            playerRank = allPGs.indexOf(player) + 1;
+            break;
+          case 'SG':
+            playerRank = allSGs.indexOf(player) + 1;
+            break;
+          case 'SF':
+            playerRank = allSFs.indexOf(player) + 1;
+            break;
+          case 'PF':
+            playerRank = allPFs.indexOf(player) + 1;
+            break;
+          case 'C':
+            playerRank = allCs.indexOf(player) + 1;
+            break;
+        }
+        player._Rank = playerRank;
+      });
+    }
+    $scope.averageRank = function(finalPlayerList) {
+      var average = 0;
+      finalPlayerList.forEach(function(player) {
+        average = average + player._Rank;
+      });
+      average = parseFloat(average / finalPlayerList.length);
+      return (average).toFixed(2);
+    }
     $scope.buildDrafts = function () {
 
         //check if all pools have at least 1 player
@@ -763,6 +802,8 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             $scope.displayNewMessage("danger", "Error: One or more player pools contain zero players");
             return;
         }
+
+        $scope.setPlayerRanking();
 
         var totalPossibleDraftsToBeCreated = $scope._PG1PlayerPool.length * $scope._PG2PlayerPool.length *
         $scope._SG1PlayerPool.length * $scope._SG2PlayerPool.length *
@@ -832,7 +873,8 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                                  playerNames: tempPlayerNames,
                                  playersPositionData: angular.copy(tempDraft),
                                  displayDetails: false,
-                                 pointsPerDollar:  parseFloat($scope.averageValue(finalPlayerList))
+                                 pointsPerDollar:  parseFloat($scope.averageValue(finalPlayerList)),
+                                 averageRank: parseFloat($scope.averageRank(finalPlayerList))
                                };
                                if(nba.removeDups)
                                {

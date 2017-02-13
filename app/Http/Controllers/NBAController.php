@@ -70,7 +70,7 @@ class NBAController extends Controller
                 $player->_TimesInValidDrafts = 0;
                 $player->_TimesInDrafts = 0;
                 $player->_PercentInDrafts = -1;
-
+                $player->_Rank = -1;
                 $players[] = $player;
 
               } else {
@@ -145,7 +145,7 @@ class NBAController extends Controller
                   $player->_TimesInValidDrafts = 0;
                   $player->_TimesInDrafts = 0;
                   $player->_PercentInDrafts = -1;
-
+                  $player->_Rank = -1;
                   $players[] = $player;
                 }
               } else {

@@ -522,6 +522,11 @@
                                                                     Average Value
                                                                 </span>
                                                             </th>
+                                                            <th>
+                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('averageRank')">
+                                                                    Average Rank
+                                                                </span>
+                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody >
@@ -531,6 +536,7 @@
                                                             <td ng-click="openCloseDraftDetails(draft);">@{{draft.Actual}}</td>
                                                             <td ng-click="openCloseDraftDetails(draft);">@{{draft.salaryLeft}}</td>
                                                             <td ng-click="openCloseDraftDetails(draft);">@{{draft.pointsPerDollar}}</td>
+                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.averageRank}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
