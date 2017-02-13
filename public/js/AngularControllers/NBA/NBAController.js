@@ -749,31 +749,56 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
     $scope.setPlayerRanking = function() {
       var orderedFPPGPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
-      var NonInjuredPlayers =  $filter('removeOut')(orderedFPPGPlayers);
-      var allPGs = $filter('position')(NonInjuredPlayers, 'PG');
-      var allSGs = $filter('position')(NonInjuredPlayers, 'SG');
-      var allSFs = $filter('position')(NonInjuredPlayers, 'SF');
-      var allPFs = $filter('position')(NonInjuredPlayers, 'PF');
-      var allCs = $filter('position')(NonInjuredPlayers, 'C');
-
+      var injuredPlayers =  $filter('removeInjured')(orderedFPPGPlayers);
+      var allPGs = $filter('position')(injuredPlayers, 'PG');
+      var allSGs = $filter('position')(injuredPlayers, 'SG');
+      var allSFs = $filter('position')(injuredPlayers, 'SF');
+      var allPFs = $filter('position')(injuredPlayers, 'PF');
+      var allCs = $filter('position')(injuredPlayers, 'C');
+      var outPlayers =  $filter('removeOut')(orderedFPPGPlayers);
+      var allInjPGs = $filter('position')(outPlayers, 'PG');
+      var allInjSGs = $filter('position')(outPlayers, 'SG');
+      var allInjSFs = $filter('position')(outPlayers, 'SF');
+      var allInjPFs = $filter('position')(outPlayers, 'PF');
+      var allInjCs = $filter('position')(outPlayers, 'C');
       $scope._AllPlayers.forEach(function(player) {
-        var playerRank = 0;
-        switch(player._Position) {
-          case 'PG':
-            playerRank = allPGs.indexOf(player) + 1;
-            break;
-          case 'SG':
-            playerRank = allSGs.indexOf(player) + 1;
-            break;
-          case 'SF':
-            playerRank = allSFs.indexOf(player) + 1;
-            break;
-          case 'PF':
-            playerRank = allPFs.indexOf(player) + 1;
-            break;
-          case 'C':
-            playerRank = allCs.indexOf(player) + 1;
-            break;
+        var playerRank = 99;
+        if(!player._playerInjured) {
+          switch(player._Position) {
+            case 'PG':
+              playerRank = allPGs.indexOf(player) + 1;
+              break;
+            case 'SG':
+              playerRank = allSGs.indexOf(player) + 1;
+              break;
+            case 'SF':
+              playerRank = allSFs.indexOf(player) + 1;
+              break;
+            case 'PF':
+              playerRank = allPFs.indexOf(player) + 1;
+              break;
+            case 'C':
+              playerRank = allCs.indexOf(player) + 1;
+              break;
+          }
+        } else {
+          switch(player._Position) {
+            case 'PG':
+              playerRank = allInjPGs.indexOf(player) + 1;
+              break;
+            case 'SG':
+              playerRank = allInjSGs.indexOf(player) + 1;
+              break;
+            case 'SF':
+              playerRank = allInjSFs.indexOf(player) + 1;
+              break;
+            case 'PF':
+              playerRank = allInjPFs.indexOf(player) + 1;
+              break;
+            case 'C':
+              playerRank = allInjCs.indexOf(player) + 1;
+              break;
+          }
         }
         player._Rank = playerRank;
       });
