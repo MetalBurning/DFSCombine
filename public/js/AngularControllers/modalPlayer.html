@@ -54,6 +54,16 @@
                           Injury
                       </span>
                   </th>
+                  <th>
+                      <span class="fake-link" ng-click="sortType = '_ProjectedPointsPerDollar'; sortReverse = !sortReverse">
+                          Pts/Sal
+                      </span>
+                  </th>
+                  <th>
+                      <span class="fake-link" ng-click="sortType = '_Rank'; sortReverse = !sortReverse">
+                          Rank
+                      </span>
+                  </th>
               </tr>
           </thead>
           <tbody ng-repeat="player in playerPastData | orderBy:sortType:sortReverse">
@@ -66,8 +76,9 @@
                   <td>{{player._FPPG}}</td>
                   <td>{{player._ActualFantasyPoints}}</td>
                   <td>{{player._Salary}}</td>
-                  <td>{{player._ProjectedPointsPerDollar}}</td>
                   <td>{{player._playerInjuryDetails}}</td>
+                  <td>{{player._ProjectedPointsPerDollar}}</td>
+                  <td>{{player._Rank}}</td>
               </tr>
           </tbody>
       </table>
@@ -102,6 +113,9 @@
               </tr>
               <tr class="{{player._playerInjured}}">
                 <td>Injury: {{player._playerInjuryDetails}}</td>
+              </tr>
+              <tr>
+                <td>Rank: {{player._Rank}}</td>
               </tr>
           </tbody>
       </table>

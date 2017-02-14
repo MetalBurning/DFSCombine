@@ -19,7 +19,7 @@
                     <uib-tab index="0" heading="@{{mainTabHeading}}" >
                         <!-- start player selection -->
                         <div class="row">
-                            <div class="col-xs-12  col-sm-offset-0 col-sm-8 col-lg-offset-0 col-lg-8" >
+                            <div class="col-xs-12 col-sm-offset-0 col-sm-8 col-lg-offset-0 col-lg-8" >
                                 <div class="panel panel-default" >
                                     <div class="panel-heading">
                                         <div class='btn-toolbar pull-right'>
@@ -234,16 +234,11 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-
                                         </div>
-
                                     </div>
-
-
-
                                 </div>
                             </div>
-                            <div class="col-xs-offset-1 col-xs-11 col-sm-offset-0 col-sm-4 col-lg-offset-0 col-lg-4">
+                            <div class="col-xs-12 col-sm-offset-0 col-sm-4 col-lg-offset-0 col-lg-4">
                                 <!-- start Draft selection -->
                                 <div class="panel panel-default" >
                                     <div class="panel-heading">
@@ -419,7 +414,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12  col-sm-offset-0 col-sm-12 col-lg-offset-0 col-lg-12">
+                            <div class="col-xs-12">
                                 <div class="panel panel-default" >
                                     <div class="panel-heading">
                                         <div class='btn-toolbar pull-right'>
@@ -551,7 +546,7 @@
 
                     <uib-tab index="1" heading="DataBase" ng-click="loadHistory()">
                         <div class="row">
-                            <div class="col-xs-12 col-sm-offset-0 col-sm-12 col-lg-offset-0 col-lg-12">
+                            <div class="col-xs-12">
                               <div class="panel panel-default" >
                                   <div class="panel-heading">
                                     <div class='btn-toolbar pull-right'>

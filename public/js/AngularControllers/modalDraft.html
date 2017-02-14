@@ -16,6 +16,7 @@
                       <th>Actual</th>
                       <th>Salary</th>
                       <th>Pts / Sal</th>
+                      <th>Pos Rank</th>
                   </tr>
               </thead>
               <tbody ng-repeat="player in draft.players">
@@ -28,6 +29,7 @@
                       <td>{{player._ActualFantasyPoints}}</td>
                       <td>{{player._Salary}}</td>
                       <td>{{player._ProjectedPointsPerDollar}}</td>
+                      <td>{{player._Rank}}</td>
                   </tr>
               </tbody>
           </table>
@@ -54,14 +56,17 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-xs-4">
+        <div class="col-xs-3">
             FPPG: {{getDraftProjection(draft)}}
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-3">
             Actual Pts: {{getDraftActual(draft)}}
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-3">
             Salary Left: {{getDraftSalaryLeft(draft)}}
+        </div>
+        <div class="col-xs-3">
+            Average Player Rank: {{draft.averageRank}}
         </div>
       </div>
 
