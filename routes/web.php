@@ -14,6 +14,16 @@
 //Default
 Route::get('/', 'WelcomeController@index');
 
+//account
+Route::get('/account', 'UserController@index');
+Route::post('/accountDetails', 'UserController@read');
+
+//BrainTree
+Route::post(
+    'braintree/webhook',
+    '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook'
+);
+
 //Auth
 Auth::routes();
 
@@ -51,6 +61,7 @@ Route::post('/NBA/updateTitle', 'NBAController@updateTitle');
 
 //NBA DK
 Route::get('/NBADK', 'NBAController@NBADK');
+
 
 //NHL
 Route::get('/NHL', 'ApplicationController@NHL');

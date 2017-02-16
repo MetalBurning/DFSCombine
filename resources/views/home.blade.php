@@ -12,7 +12,7 @@
   <hr class="featurette-divider">
   <div class="row featurette">
     <div class="col-sm-7 col-sm-push-5">
-      <h2 class="featurette-heading"> DFS Package: $9.99/month</h2>
+      <h2 class="featurette-heading"> DFS Package: $7.99/month</h2>
         <p>Gain access to the following sports: NBA, NFL, and MLB(coming soon).</p>
         <p>Supported Sites: DraftKings, FanDuel</p>
         <p><a class="btn btn-primary" href="#" role="button">View details »</a></p>

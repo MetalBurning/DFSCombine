@@ -411,7 +411,7 @@
                                           <div class="col-sm-3">
                                             <div class="row">
                                               <div class="col-xs-12">
-                                                <h4>Build Drafts</h4>
+                                                <h4>Build Drafts - Remove Dups: <input type="checkbox" class="form-inline" ng-model="nba.removeDups"></h4>
                                               </div>
                                             </div>
                                             <div class="row">
@@ -488,6 +488,21 @@
                                                                     Actual Pts
                                                                 </span>
                                                             </th>
+                                                            <th>
+                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('salaryLeft')">
+                                                                    Salary left
+                                                                </span>
+                                                            </th>
+                                                            <th>
+                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('pointsPerDollar')">
+                                                                    Average Value
+                                                                </span>
+                                                            </th>
+                                                            <th>
+                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('averageRank')">
+                                                                    Average Rank
+                                                                </span>
+                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody >
@@ -495,6 +510,9 @@
                                                             <td>@{{$index + 1}} <button class="btn btn-xs btn-danger" ng-click="removeDraft(draft)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openCloseDraftDetails(draft);">@{{draft.FPPG}}</td>
                                                             <td ng-click="openCloseDraftDetails(draft);">@{{draft.Actual}}</td>
+                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.salaryLeft}}</td>
+                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.pointsPerDollar}}</td>
+                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.averageRank}}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>

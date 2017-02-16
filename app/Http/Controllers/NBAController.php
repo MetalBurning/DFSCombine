@@ -111,7 +111,7 @@ class NBAController extends Controller
             $fileRead = fopen($file,"r");
             while(!feof($fileRead))
             {
-              if($lineCount > 8) {
+              if($lineCount > 7) {
                 $data = fgetcsv($fileRead);
                 if(count($data) > 1) {
                   $player = new stdClass();

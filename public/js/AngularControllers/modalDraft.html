@@ -56,17 +56,20 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             FPPG: {{getDraftProjection(draft)}}
         </div>
-        <div class="col-xs-3">
-            Actual Pts: {{getDraftActual(draft)}}
+        <div class="col-xs-2">
+            Act Pts: {{getDraftActual(draft)}}
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             Salary Left: {{getDraftSalaryLeft(draft)}}
         </div>
+        <div class="col-xs-2">
+            Avg Rank: {{draft.averageRank}}
+        </div>
         <div class="col-xs-3">
-            Average Player Rank: {{draft.averageRank}}
+            Avg Value: {{draft.pointsPerDollar}}
         </div>
       </div>
 
