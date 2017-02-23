@@ -4,7 +4,7 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
 
     $scope.mainTabHeading = "Players";
     $scope.alerts = [
-      { type: 'info', msg: 'Please Upload/Load Players...', number: 1 }
+      { type: 'info', msg: 'NFL is in an old state, but will work for now. Other in-season sports will take precedence.', number: 1 }
     ];
 
     $scope._Positions = [];

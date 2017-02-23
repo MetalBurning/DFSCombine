@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'DFSCombiner',
+    'name' => 'DFSCombine.com',
 
     /*
     |--------------------------------------------------------------------------
@@ -162,12 +162,11 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
         /*
          * Package Service Providers...
          */
 
-        //
+        Laravel\Cashier\CashierServiceProvider::class,
 
         /*
          * Application Service Providers...

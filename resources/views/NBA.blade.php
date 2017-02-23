@@ -29,7 +29,6 @@
                                             <div class='btn-group'>
                                               <button type="button" class="btn btn-xs btn-info" ng-click="selectTopActualPlayers()" >Top Actual</button>
                                               <button type="button" class="btn btn-xs btn-info" ng-click="selectTopFPPGPlayers()" >Top FPPG</button>
-                                              <button type="button" class="btn btn-xs btn-info" ng-click="topRuleBased()">Top Special</button>
                                               <button type="button" class="btn btn-xs btn-default" ng-click="clearAllPlayerFilters()">Clear Filters</button>
                                             </div>
                                         </div>
@@ -569,6 +568,7 @@
                                                 <tr>
                                                     <th>Draft #</th>
                                                     <th>Title</th>
+                                                    <th>Site</th>
                                                     <th>Draft Created Date</th>
                                                     <th>Load</th>
                                                 </tr>
@@ -576,10 +576,11 @@
                                             <tbody ng-repeat="savedSettings in savedPastSettings">
                                               <tr>
                                                 <td class="col-md-1">@{{$index+1}}</td>
-                                                <td class="col-md-4"><input class="form-control" type="text" ng-model="savedSettings.title"></td>
-                                                <td class="col-md-3">@{{savedSettings.created_at}}</td>
+                                                <td class="col-md-3"><input class="form-control" type="text" ng-model="savedSettings.title"></td>
+                                                <td class="col-md-2">@{{savedSettings.site}}</td>
+                                                <td class="col-md-2">@{{savedSettings.created_at}}</td>
                                                 <td class="col-md-4">
-                                                  <button class="btn btn-sm btn-primary" ng-click="read(savedSettings.id)">Load</button>
+                                                  <button class="btn btn-sm btn-primary" ng-disabled="savedSettings.site === 'DraftKings'" ng-click="read(savedSettings.id)">Load</button>
                                                   <button class="btn btn-sm btn-info" ng-click="updateTitle(savedSettings.id, savedSettings.title)">Update</button>
                                                   -
                                                   <button class="btn btn-sm btn-danger"  ng-show="!showDeleteConfirmation(savedSettings.id)" ng-click="setDeleteConfirmation(savedSettings.id)">Delete</button>

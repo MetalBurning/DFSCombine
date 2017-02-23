@@ -5,22 +5,26 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class RedirectIfAuthenticated
+class Subscribed
 {
     /**
-     * Handle an incoming request.
+     * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  string|null  $guard
+     * @param  string  $role
      * @return mixed
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (Auth::guard($guard)->check()) {
+        if(!Auth::check()){
             return redirect('/login');
         }
 
+        if(!Auth::user()->subscribed('main')){
+            return redirect('/account');
+        }
         return $next($request);
     }
+
 }

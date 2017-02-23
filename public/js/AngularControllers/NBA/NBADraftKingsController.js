@@ -152,26 +152,35 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       var allSGs = $filter('positionDK')(orderedPlayers, 'SG');
       var allSFs = $filter('positionDK')(orderedPlayers, 'SF');
       var allPFs = $filter('positionDK')(orderedPlayers, 'PF');
-      var allPFs = $filter('positionDK')(orderedPlayers, 'PF');
       var allCs = $filter('positionDK')(orderedPlayers, 'C');
+      var allGs = $filter('positionDK')(orderedPlayers, 'G');
+      var allFs = $filter('positionDK')(orderedPlayers, 'F');
+      var allUTILs = $filter('positionDK')(orderedPlayers, 'UTIL');
 
-      var PGTeams = [];
-
-      for(var j = 0; j < 5; j++) {
+      for(var j = 0; j < 4; j++) {
         if(allPGs.length >= j) {
-          $scope.addPlayerToPool(allPGs[j]);
+          $scope.addPlayerToPool(allPGs[j], 'PG');
         }
         if(allSGs.length >= j) {
-          $scope.addPlayerToPool(allSGs[j]);
+          $scope.addPlayerToPool(allSGs[j], 'SG');
         }
         if(allSFs.length >= j) {
-          $scope.addPlayerToPool(allSFs[j]);
+          $scope.addPlayerToPool(allSFs[j], 'SF');
         }
         if(allPFs.length >= j) {
-          $scope.addPlayerToPool(allPFs[j]);
+          $scope.addPlayerToPool(allPFs[j], 'PF');
         }
-        if(allCs.length >= j && j < 3) {
-          $scope.addPlayerToPool(allCs[j]);
+        if(allCs.length >= j) {
+          $scope.addPlayerToPool(allCs[j], 'C');
+        }
+        if(allGs.length >= j) {
+          $scope.addPlayerToPool(allGs[j], 'G');
+        }
+        if(allFs.length >= j) {
+          $scope.addPlayerToPool(allFs[j], 'F');
+        }
+        if(allUTILs.length >= j) {
+          $scope.addPlayerToPool(allUTILs[j], 'UTIL');
         }
       }
 
@@ -201,37 +210,110 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       var allSFs = $filter('positionDK')(NonInjuredPlayers, 'SF');
       var allPFs = $filter('positionDK')(NonInjuredPlayers, 'PF');
       var allCs = $filter('positionDK')(NonInjuredPlayers, 'C');
+      var allGs = $filter('positionDK')(NonInjuredPlayers, 'G');
+      var allFs = $filter('positionDK')(NonInjuredPlayers, 'F');
+      var allUTILs = $filter('positionDK')(NonInjuredPlayers, 'UTIL');
+
+      var orderedValuePlayers =  $filter('orderBy')($scope._AllPlayers, '_ProjectedPointsPerDollar', true);
+      var NonInjuredValuePlayers =  $filter('removeInjured')(orderedValuePlayers);
+      var allValuePGs = $filter('positionDK')(NonInjuredValuePlayers, 'PG');
+      var allValueSGs = $filter('positionDK')(NonInjuredValuePlayers, 'SG');
+      var allValueSFs = $filter('positionDK')(NonInjuredValuePlayers, 'SF');
+      var allValuePFs = $filter('positionDK')(NonInjuredValuePlayers, 'PF');
+      var allValueCs = $filter('positionDK')(NonInjuredValuePlayers, 'C');
+      var allValueGs = $filter('positionDK')(NonInjuredValuePlayers, 'G');
+      var allValueFs = $filter('positionDK')(NonInjuredValuePlayers, 'F');
+      var allValueUTILs = $filter('positionDK')(NonInjuredValuePlayers, 'UTIL');
 
       //version 1
       for(var j = 0; j < allPGs.length; j++) {
         if(j == 0 || j == 1 || j == 2 || j == 3) {
-          $scope.addPlayerToPool(allPGs[j]);
+          $scope.addPlayerToPool(allPGs[j], 'PG');
+        }
+      }
+      for(var j = 0; j < allValuePGs.length; j++) {
+        if(j == 0 ) {
+          $scope.addPlayerToPool(allValuePGs[j], 'PG');
         }
       }
       //$scope.lockAndUnLockPlayer(allPGs[0]);
 
       for(var j = 0; j < allSGs.length; j++) {
         if(j == 0 || j == 1 || j == 2 || j == 3 ) {
-          $scope.addPlayerToPool(allSGs[j]);
+          $scope.addPlayerToPool(allSGs[j], 'SG');
+        }
+      }
+      for(var j = 0; j < allValueSGs.length; j++) {
+        if(j == 0 ) {
+          $scope.addPlayerToPool(allValueSGs[j], 'SG');
         }
       }
 
       for(var j = 0; j < allSFs.length; j++) {
         if( j == 0 || j == 1 || j == 2 || j == 3) {
-          $scope.addPlayerToPool(allSFs[j]);
+          $scope.addPlayerToPool(allSFs[j], 'SF');
+        }
+      }
+      for(var j = 0; j < allValueSFs.length; j++) {
+        if(j == 0 ) {
+          $scope.addPlayerToPool(allValueSFs[j], 'SF');
         }
       }
 
 
       for(var j = 0; j < allPFs.length; j++) {
-        if( j == 0 || j == 1 || j == 2 || j == 3 ) {
-          $scope.addPlayerToPool(allPFs[j]);
+        if( j == 0 || j == 1 || j == 2 || j == 3) {
+          $scope.addPlayerToPool(allPFs[j], 'PF');
+        }
+      }
+      for(var j = 0; j < allValuePFs.length; j++) {
+        if(j == 0 ) {
+          $scope.addPlayerToPool(allValuePFs[j], 'PF');
         }
       }
 
-      $scope.addPlayerToPool(allCs[0]);
-      $scope.addPlayerToPool(allCs[1]);
-      $scope.addPlayerToPool(allCs[2]);
+      for(var j = 0; j < allCs.length; j++) {
+        if( j == 0 || j == 1 || j == 2 || j == 3) {
+          $scope.addPlayerToPool(allCs[j], 'C');
+        }
+      }
+      for(var j = 0; j < allValueCs.length; j++) {
+        if(j == 0 ) {
+          $scope.addPlayerToPool(allValueCs[j], 'C');
+        }
+      }
+
+      for(var j = 0; j < allGs.length; j++) {
+        if( j == 0) {
+          $scope.addPlayerToPool(allGs[j], 'G');
+        }
+      }
+      for(var j = 0; j < allValueGs.length; j++) {
+        if(j == 0 ||j == 1 || j == 3 ) {
+          $scope.addPlayerToPool(allValueGs[j], 'G');
+        }
+      }
+
+      for(var j = 0; j < allFs.length; j++) {
+        if( j == 0) {
+          $scope.addPlayerToPool(allFs[j], 'F');
+        }
+      }
+      for(var j = 0; j < allValueFs.length; j++) {
+        if(j == 0 ||j == 1 || j == 3 ) {
+          $scope.addPlayerToPool(allValueFs[j], 'F');
+        }
+      }
+      for(var j = 0; j < allUTILs.length; j++) {
+        if( j == 0) {
+          $scope.addPlayerToPool(allUTILs[j], 'UTIL');
+        }
+      }
+      for(var j = 0; j < allValueUTILs.length; j++) {
+        if(j == 0 ||j == 1 || j == 3 ) {
+          $scope.addPlayerToPool(allValueUTILs[j], 'UTIL');
+        }
+      }
     }
     $scope.parseFloat = function(value)
     {
@@ -585,8 +667,10 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         $scope._CPlayerPool.length * $scope._GPlayerPool.length *
         $scope._FPlayerPool.length * $scope._UTILPlayerPool.length;
 
-        if(totalPossibleDraftsToBeCreated > 40000) {
-          $window.alert('Creating more than 10,000 drafts can take longer than expected');
+        if(totalPossibleDraftsToBeCreated > 30000) {
+          if (!confirm('Creating '+totalPossibleDraftsToBeCreated+' possible drafts can take longer than expected. It can crash your session if loaded with to much memory, save your data. Are you sure you want to create?')) {
+            return;
+          }
         }
 
         //start draft building
@@ -1218,6 +1302,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 },
                 currentRead: function() {
                   return $scope.currentRead;
+                },
+                site: function() {
+                  return 'DraftKings';
                 }
             }
         });

@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'DFSCombiner') }}</title>
+    <title>{{ config('app.name', 'DFSCombine') }}</title>
 
     <!-- Styles -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -46,14 +46,17 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                      <li><a href="{{ url('/NBA') }}">NBA</a></li>
-                      <li><a href="{{ url('/NFL') }}">NFL</a></li>
-                      <li><a href="{{ url('/NHL') }}">NHL</a></li>
+                      <li><a href="{{ url('/NBA') }}">NBA - FD</a></li>
+                      <li><a href="{{ url('/NBADK') }}">NBA - DK</a></li>
+                      <li><a href="{{ url('/NFL') }}">NFL - FD</a></li>
+                      <li><a href="{{ url('/NHL') }}">NHL - FD</a></li>
                     </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->
                         @if (Auth::guest())
+                            <li><a href="{{ url('/termsofservice') }}">Terms</a></li>
+                            <li><a href="{{ url('/privacypolicy') }}">Privacy</a></li>
                             <li><a href="{{ url('/login') }}">Login</a></li>
                             <li><a href="{{ url('/register') }}">Register</a></li>
                         @else
@@ -63,6 +66,8 @@
                                 </a>
 
                                 <ul class="dropdown-menu" role="menu">
+                                  <li><a href="{{ url('/termsofservice') }}">Terms</a></li>
+                                  <li><a href="{{ url('/privacypolicy') }}">Privacy</a></li>
                                   <li>
                                     <a href="{{ url('/account') }}">Account</a>
                                   </li>
@@ -87,7 +92,6 @@
 
         @yield('content')
     </div>
-
     <!-- Scripts -->
 
     <script src="/js/bootstrap.min.js"></script>

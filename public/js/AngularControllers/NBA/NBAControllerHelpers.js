@@ -65,10 +65,11 @@ angular.module('NBAApp').controller('DKDraftModalController', function ($scope, 
         return totalActual.toFixed(2);
     }
 });
-angular.module('NBAApp').controller('SaveModalController', function ($scope, $uibModalInstance, $http, postObject, currentRead, $timeout) {
+angular.module('NBAApp').controller('SaveModalController', function ($scope, $uibModalInstance, $http, postObject, currentRead, site, $timeout) {
 
   $scope.postObject = postObject;
   $scope.currentRead = currentRead;
+  $scope.site = site;
 
   $scope.readData = undefined;
 
@@ -103,7 +104,7 @@ angular.module('NBAApp').controller('SaveModalController', function ($scope, $ui
 
   $scope.create = function() {
     if($scope.title.length > 0 ) {
-      $http.post('/NBA/create', {'postObject':JSON.stringify($scope.postObject), 'title': $scope.title}).then(function successCallback(response) {
+      $http.post('/NBA/create', {'postObject':JSON.stringify($scope.postObject), 'title': $scope.title, 'site': $scope.site}).then(function successCallback(response) {
          $scope.saved = true;
          $scope.displayNewMessage('success', 'Creating - Success');
          $scope.readData = response.data;

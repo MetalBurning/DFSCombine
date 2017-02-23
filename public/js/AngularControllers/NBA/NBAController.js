@@ -38,7 +38,10 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     $scope.SelectedStackPositions = [];
     $scope.SelectedDraft = null;
 
-
+    $scope.totalPossibleDraftsToBeCreated = 0;
+    $scope.totalPossibleCurrentDraftsCount = 0;
+    $scope.tempDrafts = [];
+    $scope.tempPlayerNamesList = [];
 
     $scope.AVERAGE = parseFloat(-1);
     $scope.STDEVIATION = parseFloat(-1);
@@ -830,14 +833,16 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
         $scope.setPlayerRanking();
 
-        var totalPossibleDraftsToBeCreated = $scope._PG1PlayerPool.length * $scope._PG2PlayerPool.length *
+        $scope.totalPossibleDraftsToBeCreated = $scope._PG1PlayerPool.length * $scope._PG2PlayerPool.length *
         $scope._SG1PlayerPool.length * $scope._SG2PlayerPool.length *
         $scope._SF1PlayerPool.length * $scope._SF2PlayerPool.length *
         $scope._PF1PlayerPool.length * $scope._PF2PlayerPool.length *
         $scope._CPlayerPool.length;
 
-        if(totalPossibleDraftsToBeCreated > 15000) {
-          $window.alert('Creating more than 10,000 drafts can take longer than expected');
+        if($scope.totalPossibleDraftsToBeCreated > 15000) {
+          if (!confirm('Creating '+$scope.totalPossibleDraftsToBeCreated+' possible drafts can take longer than expected. It can crash your session if loaded with to much memory, save your data. Are you sure you want to create?')) {
+            return;
+          }
         }
 
         //before, make sure data is cleared
@@ -864,6 +869,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                         $scope._PF2PlayerPool.forEach(function(PF2Player) {
                           tempDraft['PF2'] = PF2Player;
                           $scope._CPlayerPool.forEach(function(CPlayer) {
+
+                            $scope.totalPossibleCurrentDraftsCount++;
+
                             tempDraft['C'] = CPlayer;
                             var finalPlayerList = [];
                             finalPlayerList.push(tempDraft['PG1']);
@@ -1099,8 +1107,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       }
 
     }
-
-
     $scope.removeCalcDrafts = function () {
         var calcRemovedDrafts = $filter('removeCalcDraft')($scope._AllDraftData, parseFloat(nba.TopRange), parseFloat(nba.BottomRange), $scope.sortTypeDraft);
 
@@ -1254,6 +1260,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 },
                 currentRead: function() {
                   return $scope.currentRead;
+                },
+                site: function() {
+                  return 'FanDuel';
                 }
             }
         });

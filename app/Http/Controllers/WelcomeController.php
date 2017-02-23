@@ -15,4 +15,12 @@ class WelcomeController extends Controller
     {
         return view('home');
     }
+    public function privacypolicy()
+    {
+      return view('privacypolicy');
+    }
+    public function termsofservice()
+    {
+      return view('termsofservice');
+    }
 }

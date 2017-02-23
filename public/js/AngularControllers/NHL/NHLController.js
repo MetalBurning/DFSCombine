@@ -2,7 +2,7 @@
 angular.module('NHLApp').controller('NHLController', ['$http', '$scope', '$filter', '$uibModal', '$window', function ($http, $scope, $filter, $uibModal, $window) {
     var nfl = this;
 
-    $scope._Message = { hasData: true, messageType: "info", message: "Please Upload/Load Players..." };
+    $scope._Message = { hasData: true, messageType: "info", message: "NHL is currently in a very old state, thus not being worked on currently. Want NHL support? email support@dfscombine.com" };
 
     $scope._Positions = [];
     $scope._AllTeams = [];

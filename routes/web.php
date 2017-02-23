@@ -13,11 +13,15 @@
 
 //Default
 Route::get('/', 'WelcomeController@index');
-
+Route::get('/privacypolicy', 'WelcomeController@privacypolicy');
+Route::get('/termsofservice', 'WelcomeController@termsofservice');
 //account
 Route::get('/account', 'UserController@index');
 Route::post('/accountDetails', 'UserController@read');
-
+Route::post('/startSubscription', 'UserController@startSubscription');
+Route::post('/cancelSubscription', 'UserController@cancelSubscription');
+Route::post('/resumeSubscription', 'UserController@resumeSubscription');
+Route::post('/update', 'UserController@update');
 //BrainTree
 Route::post(
     'braintree/webhook',
