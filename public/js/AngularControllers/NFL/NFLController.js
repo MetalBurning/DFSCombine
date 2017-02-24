@@ -4,7 +4,7 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
 
     $scope.mainTabHeading = "Players";
     $scope.alerts = [
-      { type: 'info', msg: 'NFL is in an old state, but will work for now. Other in-season sports will take precedence.', number: 1 }
+      { type: 'info', msg: 'Please Upload/Load Players...', number: 1 }
     ];
 
     $scope._Positions = [];
@@ -15,16 +15,12 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
     $scope._AllReadPlayerIDs = [];
     $scope._AllStacks = [];
 
-    $scope._QBPlayerLocked = [];
-    $scope._WRPlayerLocked = [];
-    $scope._RBPlayerLocked = [];
-    $scope._TEPlayerLocked = [];
-    $scope._KPlayerLocked = [];
-    $scope._DSTPlayerLocked = [];
-
     $scope._QBPlayerPool = [];
-    $scope._WRPlayerPool = [];
-    $scope._RBPlayerPool = [];
+    $scope._RB1PlayerPool = [];
+    $scope._RB2PlayerPool = []
+    $scope._WR1PlayerPool = [];
+    $scope._WR2PlayerPool = [];
+    $scope._WR3PlayerPool = [];
     $scope._TEPlayerPool = [];
     $scope._KPlayerPool = [];
     $scope._DSTPlayerPool = [];
@@ -36,21 +32,23 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
     $scope.TotalValidDrafts = 0;
     $scope.SelectedValidDrafts = false;
 
-    $scope.sortType = 'name'; // set the default sort type
-    $scope.sortReverse = false;  // set the default sort order
-    $scope.SelectedPosition = '';     // set the default search/filter term
+    $scope.sortType = '_Salary'; // set the default sort type
+    $scope.sortReverse = true;  // set the default sort order
+    $scope.SelectedPosition = 'QB';     // set the default search/filter term
     $scope.SelectedTeams = [];
     $scope.SelectedWeeks = [];
     $scope.SelectedStackPositions = [];
     $scope.SelectedDraft = null;
 
     $scope.savedPastSettings = [];
-    nfl.TopRange = parseFloat(-1);
-    nfl.BottomRange = parseFloat(-1);
+
+    nfl.TopLimit = 150;
+    nfl.TopRange = -1;
+    nfl.BottomRange = -1;
+    nfl.removeDups = true;
 
     $scope.DeleteConfirmationID = -1;
     $scope.currentRead = null;
-    nfl.TopLimit = 150;
 
     $scope._AllPlayers = $filter('team')($scope._AllPlayers, $scope.SelectedTeams);
     $scope._AllPlayers = $filter('position')($scope._AllPlayers, $scope.SelectedPosition);
@@ -137,6 +135,7 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
             } else if ($scope._AllTeams.indexOf(player._Team) == -1) {
                 $scope._AllTeams.push(player._Team);
             }
+
             $scope._AllPlayers.push(player);
             $scope._AllPlayersMASTER.push(player);
           });
@@ -215,18 +214,12 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         $scope._Message.message = "";
     }
 
-    $scope.addTeam = function (team) {
-        if(SelectedTeams.indexOf(team) == -1) {
-            SelectedTeams.push(team);
-        }
-    }
     $scope.addRemoveTeam = function (team) {
-        var playerIndex = $scope.SelectedTeams.indexOf(team);
-        if (playerIndex > -1) {
-            $scope.SelectedTeams.splice(playerIndex, 1);
-        } else {
-            $scope.SelectedTeams.push(team);
-        }
+      if ($scope.SelectedTeam === team) {
+          $scope.SelectedTeam = 'All';
+      } else {
+          $scope.SelectedTeam = team;
+      }
     }
     $scope.addRemoveWeek= function (week) {
         var weekIndex = $scope.SelectedWeeks.indexOf(week);
@@ -284,115 +277,30 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         //window.open(encodedUri);
     }
 
-    $scope.lockAndUnLockPlayer = function (player)
-    {
-        if ($scope.playerInPool(player)) {
-            switch (player._Position) {
-                case 'QB':
-                    if ($scope._QBPlayerLocked.indexOf(player) == -1)
-                    {
-                        $scope._QBPlayerLocked.push(player);
-                    }
-                    else
-                    {
-                        $scope._QBPlayerLocked.splice($scope._QBPlayerLocked.indexOf(player), 1);
-                    }
-                    break;
-                case 'RB':
-                    if ($scope._RBPlayerLocked.indexOf(player) == -1) {
-                        if ($scope._RBPlayerLocked.length >= 2) {
-                            $scope.displayNewMessage("danger", "Error: _RBPlayerLocked.length >= 2, cannot lock more than 2 RBs");
-                            return;
-                        }
-                        $scope._RBPlayerLocked.push(player);
-                    } else {
-                        $scope._RBPlayerLocked.splice($scope._RBPlayerLocked.indexOf(player), 1);
-                    }
-                    break;
-                case 'WR':
-                    if ($scope._WRPlayerLocked.indexOf(player) == -1) {
-                        if ($scope._WRPlayerLocked.length >= 3) {
-                            $scope.displayNewMessage("danger", "Error: _WRPlayerLocked.length >= 3, cannot lock more than 3 WRs");
-                            return;
-                        }
-                        $scope._WRPlayerLocked.push(player);
-                    } else {
-                        $scope._WRPlayerLocked.splice($scope._WRPlayerLocked.indexOf(player), 1);
-                    }
-                    break;
-                case 'TE':
-                    if ($scope._TEPlayerLocked.indexOf(player) == -1) {
-                        $scope._TEPlayerLocked.push(player);
-                    } else {
-                        $scope._TEPlayerLocked.splice($scope._TEPlayerLocked.indexOf(player), 1);
-                    }
-                    break;
-                case 'K':
-                    if ($scope._KPlayerLocked.indexOf(player) == -1) {
-                        $scope._KPlayerLocked.push(player);
-                    } else {
-                        $scope._KPlayerLocked.splice($scope._KPlayerLocked.indexOf(player), 1);
-                    }
-                    break;
-                case 'DST':
-                    if ($scope._DSTPlayerPool.indexOf(player) == -1) {
-                        $scope._DSTPlayerPool.push(player);
-                    } else {
-                        $scope._DSTPlayerPool.splice($scope._DSTPlayerPool.indexOf(player), 1);
-                    }
-                    break;
-            }
-        }
-    }
-    $scope.unLockPlayer = function (player) {
-        switch (player._Position) {
-            case 'QB':
-                if ($scope._QBPlayerLocked.indexOf(player) > -1) {
-                    $scope._QBPlayerLocked.splice($scope._QBPlayerLocked.indexOf(player), 1);
-                }
-                break;
-            case 'RB':
-                if ($scope._RBPlayerLocked.indexOf(player) > -1) {
-                    $scope._RBPlayerLocked.splice($scope._RBPlayerLocked.indexOf(player), 1);
-                }
-                break;
-            case 'WR':
-                if ($scope._WRPlayerLocked.indexOf(player) > -1) {
-                    $scope._WRPlayerLocked.splice($scope._WRPlayerLocked.indexOf(player), 1);
-                }
-                break;
-            case 'TE':
-                if ($scope._TEPlayerLocked.indexOf(player) > -1) {
-                    $scope._TEPlayerLocked.splice($scope._TEPlayerLocked.indexOf(player), 1);
-                }
-                break;
-            case 'K':
-                if ($scope._KPlayerLocked.indexOf(player) > -1) {
-                    $scope._KPlayerLocked.splice($scope._KPlayerLocked.indexOf(player), 1);
-                }
-                break;
-            case 'DST':
-                if ($scope._DSTPlayerLocked.indexOf(player) > -1) {
-                    $scope._DSTPlayerLocked.splice($scope._DSTPlayerLocked.indexOf(player), 1);
-                }
-                break;
-        }
-    }
-    $scope.removePlayerFromPool = function (player)
-    {
 
-        switch (player._Position)
+    $scope.removePlayerFromPool = function (player, position)
+    {
+      if($scope.playerInPool(player, position))
+      {
+        switch (position)
         {
             case 'QB':
                 $scope._QBPlayerPool.splice($scope._QBPlayerPool.indexOf(player), 1);
                 break;
-            case 'RB':
-                $scope.unLockPlayer(player);
-                $scope._RBPlayerPool.splice($scope._RBPlayerPool.indexOf(player), 1);
+            case 'RB1':
+                $scope._RB1PlayerPool.splice($scope._RB1PlayerPool.indexOf(player), 1);
                 break;
-            case 'WR':
-                $scope.unLockPlayer(player);
-                $scope._WRPlayerPool.splice($scope._WRPlayerPool.indexOf(player), 1);
+            case 'RB2':
+                $scope._RB2PlayerPool.splice($scope._RB2PlayerPool.indexOf(player), 1);
+                break;
+            case 'WR1':
+                $scope._WR1PlayerPool.splice($scope._WR1PlayerPool.indexOf(player), 1);
+                break;
+            case 'WR2':
+                $scope._WR2PlayerPool.splice($scope._WR2PlayerPool.indexOf(player), 1);
+                break;
+            case 'WR3':
+                $scope._WR3PlayerPool.splice($scope._WR3PlayerPool.indexOf(player), 1);
                 break;
             case 'TE':
                 $scope._TEPlayerPool.splice($scope._TEPlayerPool.indexOf(player), 1);
@@ -404,22 +312,32 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
                 $scope._DSTPlayerPool.splice($scope._DSTPlayerPool.indexOf(player), 1);
                 break;
         }
+      }
     }
 
-    $scope.addPlayerToPool = function (player)
+    $scope.addPlayerToPool = function (player, position)
     {
-        if (!$scope.playerInPool(player))
+        if (!$scope.playerInPool(player, position))
         {
-            switch (player._Position)
+            switch (position)
             {
                 case 'QB':
                     $scope._QBPlayerPool.push(player);
                     break;
-                case 'RB':
-                    $scope._RBPlayerPool.push(player);
+                case 'RB1':
+                    $scope._RB1PlayerPool.push(player);
                     break;
-                case 'WR':
-                    $scope._WRPlayerPool.push(player);
+                case 'RB2':
+                    $scope._RB2PlayerPool.push(player);
+                    break;
+                case 'WR1':
+                    $scope._WR1PlayerPool.push(player);
+                    break;
+                case 'WR2':
+                    $scope._WR2PlayerPool.push(player);
+                    break;
+                case 'WR3':
+                    $scope._WR3PlayerPool.push(player);
                     break;
                 case 'TE':
                     $scope._TEPlayerPool.push(player);
@@ -434,9 +352,9 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         }
 
     }
-    $scope.playerInPool = function (player)
+    $scope.playerInPool = function (player, position)
     {
-        switch (player._Position)
+        switch (position)
         {
             case 'QB':
                 if ($scope._QBPlayerPool.indexOf(player) > -1)
@@ -444,14 +362,32 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
                     return true;
                 }
                 break;
-            case 'RB':
-                if ($scope._RBPlayerPool.indexOf(player) > -1)
+            case 'RB1':
+                if ($scope._RB1PlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'WR':
-                if ($scope._WRPlayerPool.indexOf(player) > -1)
+            case 'RB2':
+                if ($scope._RB2PlayerPool.indexOf(player) > -1)
+                {
+                    return true;
+                }
+                break;
+            case 'WR1':
+                if ($scope._WR1PlayerPool.indexOf(player) > -1)
+                {
+                    return true;
+                }
+                break;
+            case 'WR2':
+                if ($scope._WR2PlayerPool.indexOf(player) > -1)
+                {
+                    return true;
+                }
+                break;
+            case 'WR3':
+                if ($scope._WR3PlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
@@ -479,18 +415,14 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
     }
     $scope.clearPlayerPools = function () {
         $scope._QBPlayerPool = [];
-        $scope._WRPlayerPool = [];
-        $scope._RBPlayerPool = [];
+        $scope._RB1PlayerPool = [];
+        $scope._RB2PlayerPool = [];
+        $scope._WR1PlayerPool = [];
+        $scope._WR2PlayerPool = [];
+        $scope._WR3PlayerPool = [];
         $scope._TEPlayerPool = [];
         $scope._KPlayerPool = [];
         $scope._DSTPlayerPool = [];
-
-        $scope._QBPlayerLocked = [];
-        $scope._WRPlayerLocked = [];
-        $scope._RBPlayerLocked = [];
-        $scope._TEPlayerLocked = [];
-        $scope._KPlayerLocked = [];
-        $scope._DSTPlayerLocked = [];
     }
 
     $scope.averagePlayerPoolSalary = function (playerPool) {
@@ -502,186 +434,262 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         });
         return Math.round(totalSalaries / playerPool.length, 0);
     }
+    $scope.removeAllButTopN = function() {
+      $scope._AllDraftData = $filter('orderBy')($scope._AllDraftData, $scope.sortTypeDraft, $scope.sortReverseDraft);
+      if($scope._AllDraftData.length > nfl.TopLimit) {
+        var tempDraftData = [];
+        for(var j = 0; j < nfl.TopLimit; j++) {
+          tempDraftData.push($scope._AllDraftData[j]);
 
-    $scope.clearDrafts = function () {
-        $scope._AllDrafts = [];
-        $scope._AllDraftData = [];
-        $scope.TotalPossibleDrafts = 0;
-        $scope.TotalValidDrafts = 0;
-
-        $scope._AllPlayers.forEach(function (player) {
-            player._TimesInDrafts = 0;
-            player._TimesInValidDrafts = 0;
-        });
-
+        }
+        $scope._AllDraftData = tempDraftData;
+        $scope.TotalPossibleDrafts = $scope._AllDraftData.length;
+        $scope.TotalValidDrafts = $scope.TotalPossibleDrafts;
+        //add top TopLimit to displayed
+        $scope._AllDisplayedDraftData = [];
+        for(var i = 0; i < nfl.TopLimit; i++) {
+          $scope._AllDisplayedDraftData.push($scope._AllDraftData[i]);
+        }
+      }
     }
+    $scope.clearDrafts = function () {
+      $scope._AllDraftData = [];
+      $scope.TotalPossibleDrafts = 0;
+      $scope.TotalValidDrafts = 0;
+    }
+    $scope.setPlayerRanking = function() {
+      var orderedFPPGPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
+      var injuredPlayers =  $filter('removeInjured')(orderedFPPGPlayers);
+      var allQBs = $filter('position')(injuredPlayers, 'QB');
+      var allRBs = $filter('position')(injuredPlayers, 'RB');
+      var allWRs = $filter('position')(injuredPlayers, 'WR');
+      var allTEs = $filter('position')(injuredPlayers, 'TE');
+      var allKs = $filter('position')(injuredPlayers, 'K');
+      var allDSTs = $filter('position')(injuredPlayers, 'DST');
 
+      var outPlayers =  $filter('removeOut')(orderedFPPGPlayers);
+      var allInjQBs = $filter('position')(outPlayers, 'QB');
+      var allInjRBs = $filter('position')(outPlayers, 'RB');
+      var allInjWRs = $filter('position')(outPlayers, 'WR');
+      var allInjTEs = $filter('position')(outPlayers, 'TE');
+      var allInjKs = $filter('position')(outPlayers, 'K');
+      var allInjDSTs = $filter('position')(outPlayers, 'DST');
+
+      $scope._AllPlayers.forEach(function(player) {
+        var playerRank = 99;
+        if(!player._playerInjured) {
+          switch(player._Position) {
+            case 'QB':
+              playerRank = allQBs.indexOf(player) + 1;
+              break;
+            case 'RB':
+              playerRank = allRBs.indexOf(player) + 1;
+              break;
+            case 'WR':
+              playerRank = allWRs.indexOf(player) + 1;
+              break;
+            case 'TE':
+              playerRank = allTEs.indexOf(player) + 1;
+              break;
+            case 'K':
+              playerRank = allKs.indexOf(player) + 1;
+              break;
+            case 'DST':
+              playerRank = allDSTs.indexOf(player) + 1;
+              break;
+          }
+        } else {
+          switch(player._Position) {
+            case 'QB':
+              playerRank = allInjQBs.indexOf(player) + 1;
+              break;
+            case 'RB':
+              playerRank = allInjRBs.indexOf(player) + 1;
+              break;
+            case 'WR':
+              playerRank = allInjWRs.indexOf(player) + 1;
+              break;
+            case 'TE':
+              playerRank = allInjTEs.indexOf(player) + 1;
+              break;
+            case 'K':
+              playerRank = allInjKs.indexOf(player) + 1;
+              break;
+            case 'DST':
+              playerRank = allInjDSTs.indexOf(player) + 1;
+              break;
+          }
+        }
+        player._Rank = playerRank;
+      });
+    }
+    $scope.averageRank = function(finalPlayerList) {
+      var average = 0;
+      finalPlayerList.forEach(function(player) {
+        average = average + player._Rank;
+      });
+      average = parseFloat(average / finalPlayerList.length);
+      return (average).toFixed(2);
+    }
     $scope.buildDrafts = function () {
 
         //check if all pools have at least 1 player
-        if ( $scope._QBPlayerPool.length == 0 || $scope._RBPlayerPool.length == 0 || $scope._WRPlayerPool.length == 0 || $scope._TEPlayerPool.length == 0 || $scope._KPlayerPool.length == 0 || $scope._DSTPlayerPool.length == 0) {
+        if ( $scope._QBPlayerPool.length == 0 ||
+          $scope._RB1PlayerPool.length == 0 ||
+          $scope._RB2PlayerPool.length == 0 ||
+          $scope._WR1PlayerPool.length == 0 ||
+          $scope._WR2PlayerPool.length == 0 ||
+          $scope._WR3PlayerPool.length == 0 ||
+          $scope._TEPlayerPool.length == 0 ||
+          $scope._KPlayerPool.length == 0 ||
+          $scope._DSTPlayerPool.length == 0) {
             $scope.displayNewMessage("danger", "Error: One or more player pools contain zero players");
             return;
+        }
+
+        $scope.setPlayerRanking();
+
+        $scope.totalPossibleDraftsToBeCreated =
+        $scope._QBPlayerPool.length * $scope._RB1PlayerPool.length *
+        $scope._RB2PlayerPool.length * $scope._WR1PlayerPool.length *
+        $scope._WR2PlayerPool.length * $scope._WR3PlayerPool.length *
+        $scope._TEPlayerPool.length * $scope._KPlayerPool.length *
+        $scope._DSTPlayerPool.length;
+
+        if($scope.totalPossibleDraftsToBeCreated > 10000) {
+          if (!confirm('Creating '+$scope.totalPossibleDraftsToBeCreated+' possible drafts can take longer than expected. It can crash your session if loaded with to much memory, save your data. Are you sure you want to create?')) {
+            return;
+          }
         }
 
         //before, make sure data is cleared
         $scope.clearDrafts();
 
-        //QB
-        var QBCombinations = [];
-        QBCombinations = $scope.getCombinations($scope._QBPlayerPool, 1);
-       // console.log("QB Combos: ", QBCombinations);
-        //RB
-        var RBCombinations = [];
-        if ($scope._RBPlayerLocked.length > 0)
-        {
-            //player locked, must modify input
-            var unLockedPlayersInPool = [];
-            $scope._RBPlayerPool.forEach(function (player) {
-                if ($scope._RBPlayerLocked.indexOf(player) == -1) {
-                    unLockedPlayersInPool.push(player);
-                }
-            });
-            switch ($scope._RBPlayerLocked.length) {
-                case 0:
-                    RBCombinations = $scope.getCombinations($scope._RBPlayerPool, 2);
-                    break;
-                case 1:
-                    RBCombinations = $scope.getCombinations(unLockedPlayersInPool, 1);
-                    break;
-                case 2:
-                    RBCombinations = $scope.getCombinations($scope._RBPlayerLocked, 2);//full locked
-                    break;
-                default:
-                    $scope.displayNewMessage("danger", "Error: Cannot lock > 2 RBs");
-                    return;
-                    //console.log("Error: _RBPlayerLocked.length > 2 || null, cannot create combinations");
-            }
-        }
-        else
-        {
-            //no locked players
-            RBCombinations = $scope.getCombinations($scope._RBPlayerPool, 2);
-           // console.log("RB Combos: ", RBCombinations);
-        }
 
-        //WR
-        var WRCombinations = [];
-        if ($scope._WRPlayerLocked.length > 0)
-        {
-            //player locked, must modify input
-            var unLockedPlayersInPool = [];
-            $scope._WRPlayerPool.forEach(function (player) {
-                if ($scope._WRPlayerLocked.indexOf(player) == -1) {
-                    unLockedPlayersInPool.push(player);
-                }
-            });
-            switch($scope._WRPlayerLocked.length) {
-                case 0:
-                    WRCombinations = $scope.getCombinations($scope._WRPlayerPool, 3);
-                    break;
-                case 1:
-                    WRCombinations = $scope.getCombinations(unLockedPlayersInPool, 2);
-                    break;
-                case 2:
-                    WRCombinations = $scope.getCombinations(unLockedPlayersInPool, 1);
-                    break;
-                case 3:
-                    WRCombinations = $scope.getCombinations($scope._WRPlayerLocked, 3);//fully locked
-                    break;
-                default:
-                    $scope.displayNewMessage("danger", "Error: Cannot lock > 3 WR's");
-                    return;
-                    //console.log("Error: _WRPlayerLocked.length > 3 || null, cannot create combinations");
-            }
-        }
-        else
-        {
-            //no locked players
-            WRCombinations = $scope.getCombinations($scope._WRPlayerPool, 3);
-          //  console.log("WR Combos: ", WRCombinations);
-        }
+        var tempDrafts = [];
+        var tempPlayerNamesList = [];
+        //start draft building
+        $scope._QBPlayerPool.forEach(function(QBPlayer) {
+            var tempDraft = {};
+            tempDraft['QB'] = QBPlayer;
+            $scope._RB1PlayerPool.forEach(function(RB1Player) {
+              tempDraft['RB1'] = RB1Player;
+              $scope._RB2PlayerPool.forEach(function(RB2Player) {
+                tempDraft['RB2'] = RB2Player;
+                $scope._WR1PlayerPool.forEach(function(WR1Player) {
+                  tempDraft['WR1'] = WR1Player;
+                  $scope._WR2PlayerPool.forEach(function(WR2Player) {
+                    tempDraft['WR2'] = WR2Player;
+                    $scope._WR3PlayerPool.forEach(function(WR3Player) {
+                      tempDraft['WR3'] = WR3Player;
+                      $scope._TEPlayerPool.forEach(function(TEPlayer) {
+                        tempDraft['TE'] = TEPlayer;
+                        $scope._KPlayerPool.forEach(function(KPlayer) {
+                          tempDraft['K'] = KPlayer;
+                          $scope._DSTPlayerPool.forEach(function(DSTPlayer) {
 
+                            $scope.totalPossibleCurrentDraftsCount++;
+                            tempDraft['DST'] = DSTPlayer;
 
-        //TE
-        var TECombinations = [];
-        TECombinations = $scope.getCombinations($scope._TEPlayerPool, 1);
-      //  console.log("TE Combos: ", TECombinations);
-        //K
-        var KCombinations = [];
-        KCombinations = $scope.getCombinations($scope._KPlayerPool, 1);
-      //  console.log("K Combos: ", KCombinations);
-        //DST
-        var DSTCombinations = [];
-        DSTCombinations = $scope.getCombinations($scope._DSTPlayerPool, 1);
-       // console.log("DST Combos: ", DSTCombinations);
-
-        QBCombinations.forEach(function (QB) {
-            var tempDraft = [];
-            tempDraft.push(QB[0]);
-            RBCombinations.forEach(function (RBCombo) {
-                tempDraft = $filter('removePosition')(tempDraft, 'RB');
-                switch ($scope._RBPlayerLocked.length) {
-                    case 0:
-                        tempDraft.push(RBCombo[0]);
-                        tempDraft.push(RBCombo[1]);
-                        break;
-                    case 1:
-                        tempDraft.push($scope._RBPlayerLocked[0]);
-                        tempDraft.push(RBCombo[0]);
-                        break;
-                    case 2:
-                        tempDraft.push($scope._RBPlayerLocked[0]);
-                        tempDraft.push($scope._RBPlayerLocked[1]);
-                        break;
-                }
-                WRCombinations.forEach(function (WRCombo) {
-                    tempDraft = $filter('removePosition')(tempDraft, 'WR');
-                    switch ($scope._WRPlayerLocked.length) {
-                        case 0:
-                            tempDraft.push(WRCombo[0]);
-                            tempDraft.push(WRCombo[1]);
-                            tempDraft.push(WRCombo[2]);
-                            break;
-                        case 1:
-                            tempDraft.push($scope._WRPlayerLocked[0]);
-                            tempDraft.push(WRCombo[0]);
-                            tempDraft.push(WRCombo[1]);
-                            break;
-                        case 2:
-                            tempDraft.push($scope._WRPlayerLocked[0]);
-                            tempDraft.push($scope._WRPlayerLocked[1]);
-                            tempDraft.push(WRCombo[0]);
-                            break;
-                        case 3:
-                            tempDraft.push($scope._WRPlayerLocked[0]);
-                            tempDraft.push($scope._WRPlayerLocked[1]);
-                            tempDraft.push($scope._WRPlayerLocked[2]);
-                            break;
-                    }
-                    TECombinations.forEach(function (TE) {
-                        tempDraft = $filter('removePosition')(tempDraft, 'TE');
-                        tempDraft.push(TE[0]);
-                        KCombinations.forEach(function (K) {
-                            tempDraft = $filter('removePosition')(tempDraft, 'K');
-                            tempDraft.push(K[0]);
-                            DSTCombinations.forEach(function (DST) {
-                                tempDraft = $filter('removePosition')(tempDraft, 'DST');
-                                tempDraft.push(DST[0]);
-
-                                if($scope.isDraftTeamValid(tempDraft) && $scope.isDraftSalaryValid(tempDraft)) {
-                                  var tempDataObj = { FPPG: parseFloat($scope.getDraftFPPG(tempDraft)), Actual: parseFloat($scope.getDraftActual(tempDraft)), validTeam: $scope.isDraftTeamValid(tempDraft), validSalary: $scope.isDraftSalaryValid(tempDraft), players: tempDraft, displayDetails: false };
-                                  $scope._AllDraftData.push(tempDataObj);
-                                  tempDraft.forEach(function (player) {
-                                      var playerIndexInGlobal = $scope._AllPlayers.indexOf(player);
-                                      $scope._AllPlayers[playerIndexInGlobal]._TimesInDrafts += 1;
-                                      $scope._AllPlayers[playerIndexInGlobal]._TimesInValidDrafts += 1;
-                                  });
-                                }
+                            var finalPlayerList = [];
+                            finalPlayerList.push(tempDraft['QB']);
+                            finalPlayerList.push(tempDraft['RB1']);
+                            finalPlayerList.push(tempDraft['RB2']);
+                            finalPlayerList.push(tempDraft['WR1']);
+                            finalPlayerList.push(tempDraft['WR2']);
+                            finalPlayerList.push(tempDraft['WR3']);
+                            finalPlayerList.push(tempDraft['TE']);
+                            finalPlayerList.push(tempDraft['K']);
+                            finalPlayerList.push(tempDraft['DST']);
+                            //player name list
+                            var tempPlayerNames = {};
+                            tempPlayerNames['QB'] = [];
+                            tempPlayerNames['RB'] = [];
+                            tempPlayerNames['WR'] = [];
+                            tempPlayerNames['TE'] = [];
+                            tempPlayerNames['K'] = [];
+                            tempPlayerNames['DST'] = [];
+                            finalPlayerList.forEach(function(player) {
+                              tempPlayerNames[player._Position].push(player);
                             });
+
+                            //add only valid drafts
+                            if($scope.isDraftTeamValid(finalPlayerList) && $scope.isDraftSalaryValid(finalPlayerList) && !$scope.doesDraftHaveDupPlayers(finalPlayerList)) {
+                              //$scope._AllDrafts.push(tempDraft);
+                              var tempDataObj = { FPPG: parseFloat($scope.getDraftFPPG(finalPlayerList)),
+                                 Actual: parseFloat($scope.getDraftActual(finalPlayerList)),
+                                 validTeam: $scope.isDraftTeamValid(finalPlayerList),
+                                 validSalary: $scope.isDraftSalaryValid(finalPlayerList),
+                                 salaryLeft: parseInt($scope.getDraftSalaryLeft(finalPlayerList)),
+                                 players: finalPlayerList,
+                                 playerNames: tempPlayerNames,
+                                 playersPositionData: angular.copy(tempDraft),
+                                 displayDetails: false,
+                                 pointsPerDollar:  parseFloat($scope.averageValue(finalPlayerList)),
+                                 averageRank: parseFloat($scope.averageRank(finalPlayerList))
+                               };
+                               if(nfl.removeDups)
+                               {
+                                 var sameDraft = false;
+                                 if(tempPlayerNamesList.length > 0) {
+                                   for(var j = tempPlayerNamesList.length-1; j >= 0; j--) {
+                                     var playersInDraft = 0;
+                                     if(tempPlayerNames['QB'].indexOf(tempPlayerNamesList[j]['QB'][0]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['RB'].indexOf(tempPlayerNamesList[j]['RB'][0]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['RB'].indexOf(tempPlayerNamesList[j]['RB'][1]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['WR'].indexOf(tempPlayerNamesList[j]['WR'][0]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['WR'].indexOf(tempPlayerNamesList[j]['WR'][1]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['WR'].indexOf(tempPlayerNamesList[j]['WR'][2]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['TE'].indexOf(tempPlayerNamesList[j]['TE'][0]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['K'].indexOf(tempPlayerNamesList[j]['K'][0]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(tempPlayerNames['DST'].indexOf(tempPlayerNamesList[j]['DST'][0]) !== -1) {
+                                       playersInDraft++;
+                                     }
+                                     if(playersInDraft === 9) {
+                                       //same draft, dont add tempDraft
+                                       sameDraft = true;
+                                       break;
+                                     }
+                                   }
+                                   if(!sameDraft) {
+                                     $scope._AllDraftData.push(tempDataObj);//store valid only
+                                     tempPlayerNamesList.push(tempPlayerNames);
+                                   }
+                                 } else {
+                                    $scope._AllDraftData.push(tempDataObj);//store valid only
+                                    tempPlayerNamesList.push(tempPlayerNames);
+                                 }
+                               }
+                               else
+                               {
+                                  $scope._AllDraftData.push(tempDataObj);//store valid only
+                                  tempPlayerNamesList.push(tempPlayerNames);
+                               }
+                              //$scope._AllDraftData.push(tempDataObj);//store valid only
+                            }
+                          });
                         });
+                      });
                     });
+                  });
                 });
+              });
             });
         });
 
@@ -699,7 +707,7 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
           }
         });
         $scope.TotalPossibleDrafts = $scope._AllDraftData.length;
-        $scope.TotalValidDrafts = $scope._AllDraftData.length;
+        $scope.TotalValidDrafts = $scope.TotalPossibleDrafts;
 
         $scope._AllDraftData = $filter('orderBy')($scope._AllDraftData, $scope.sortTypeDraft, true);
 
@@ -714,12 +722,39 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
             $scope._AllDisplayedDraftData.push($scope._AllDraftData[i]);
           }
         }
-
-        $scope._AllPlayers.forEach(function (player) {
-            $scope.setPlayerPercentInDraft(player);
-        });
     }
-
+    $scope.doesDraftHaveDupPlayers = function(draft) {
+      var players = [];
+      var hasDups = false;
+      draft.forEach(function (player) {
+          if(players.indexOf(player._Name) > -1) {
+            hasDups = true;
+          } else {
+            players.push(player._Name);
+          }
+      });
+      return hasDups;
+    }
+    $scope.getDraftSalaryLeft = function (draft) {
+        var startingSalary = 60000;
+        draft.forEach(function (player) {
+            startingSalary = startingSalary - player._Salary;
+        });
+        startingSalary = parseInt(startingSalary);
+        return startingSalary;
+    }
+    $scope.getPlayerPercentInPosition = function(player, position) {
+      if($scope.TotalValidDrafts > 0) {
+        var playerTimesInDrafts = 0;
+        $scope._AllDraftData.forEach(function(draft) {
+          if(draft.playersPositionData[position]._Name === player._Name) {
+            playerTimesInDrafts++;
+          }
+        });
+        return ((playerTimesInDrafts / $scope.TotalValidDrafts) * 100 ).toFixed(0);
+      }
+      return 0;
+    }
     $scope.removeAllButTopN = function() {
       $scope._AllDraftData = $filter('orderBy')($scope._AllDraftData, $scope.sortTypeDraft, true);
       if($scope._AllDraftData.length > nfl.TopLimit) {
@@ -760,34 +795,67 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         return;
       }
       var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_ActualFantasyPoints', true);
-      var allQBs = $filter('position')(orderedPlayers, 'QB');
-      var allRBs = $filter('position')(orderedPlayers, 'RB');
-      var allWRs = $filter('position')(orderedPlayers, 'WR');
-      var allTEs = $filter('position')(orderedPlayers, 'TE');
-      var allKs = $filter('position')(orderedPlayers, 'K');
-      var allDSTs = $filter('position')(orderedPlayers, 'DST');
+      var NonInjuredPlayers =  $filter('removeInjured')(orderedPlayers);
+      var allQBs = $filter('position')(NonInjuredPlayers, 'QB');
+      var allRBs = $filter('position')(NonInjuredPlayers, 'RB');
+      var allWRs = $filter('position')(NonInjuredPlayers, 'WR');
+      var allTEs = $filter('position')(NonInjuredPlayers, 'TE');
+      var allKs = $filter('position')(NonInjuredPlayers, 'K');
+      var allDSTs = $filter('position')(NonInjuredPlayers, 'DST');
 
-      for(var j = 0; j < 11; j++) {
-        if(allQBs.length >= j && j < 4) {
-          $scope.addPlayerToPool(allQBs[j]);
-        }
-        if(allRBs.length >= j && j < 7) {
-          $scope.addPlayerToPool(allRBs[j]);
-        }
-        if(allWRs.length >= j) {
-          $scope.addPlayerToPool(allWRs[j]);
-        }
-        if(allTEs.length >= j && j < 4) {
-          $scope.addPlayerToPool(allTEs[j]);
-        }
-        if(allKs.length >= j && j < 4) {
-          $scope.addPlayerToPool(allKs[j]);
-        }
-        if(allDSTs.length >= j && j < 4) {
-          $scope.addPlayerToPool(allDSTs[j]);
+      for(var j = 0; j < allQBs.length; j++) {
+        if(j == 0 || j == 1 ) {
+          $scope.addPlayerToPool(allQBs[j], 'QB');
         }
       }
-
+      for(var j = 0; j < allRBs.length; j++) {
+        if(j == 0 || j == 1) {
+          $scope.addPlayerToPool(allRBs[j], 'RB1');
+        }
+        if( j == 1 || j == 2 || j == 3) {
+          $scope.addPlayerToPool(allRBs[j], 'RB2');
+        }
+      }
+      for(var j = 0; j < allWRs.length; j++) {
+        if(j == 0 || j == 1 || j == 2) {
+          $scope.addPlayerToPool(allWRs[j], 'WR1');
+        }
+        if(j == 1 || j == 2 || j == 3 || j == 4) {
+          $scope.addPlayerToPool(allWRs[j], 'WR2');
+        }
+        if(j == 2 || j == 3|| j == 4|| j == 5) {
+          $scope.addPlayerToPool(allWRs[j], 'WR3');
+        }
+      }
+      for(var j = 0; j < allTEs.length; j++) {
+        if(j == 0 || j == 1) {
+          $scope.addPlayerToPool(allTEs[j], 'TE');
+        }
+      }
+      for(var j = 0; j < allKs.length; j++) {
+        if(j == 0 || j == 1) {
+          $scope.addPlayerToPool(allKs[j], 'K');
+        }
+      }
+      for(var j = 0; j < allDSTs.length; j++) {
+        if(j == 0 || j == 1) {
+          $scope.addPlayerToPool(allDSTs[j], 'DST');
+        }
+      }
+    }
+    $scope.setAndUnsetPosition = function(position) {
+      if($scope.SelectedPosition === position) {
+          //do nothing, cant unset position
+      } else {
+          $scope.SelectedPosition = position;
+      }
+    }
+    $scope.updatePlayerPtsPerDollar = function(player) {
+      var indexOfPlayer = $scope._AllPlayers.indexOf(player);
+      if(indexOfPlayer !== -1) {
+        $scope._AllPlayers[indexOfPlayer]._ProjectedPointsPerDollar = parseFloat(player._FPPG / player._Salary).toFixed(5);
+        player._ProjectedPointsPerDollar = parseFloat(player._FPPG / player._Salary).toFixed(5);
+      }
     }
     $scope.selectTopFPPGPlayers = function() {
       $scope.clearPlayerPools();
@@ -803,24 +871,43 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
       var allKs = $filter('position')(NonInjuredPlayers, 'K');
       var allDSTs = $filter('position')(NonInjuredPlayers, 'DST');
 
-      for(var j = 0; j < 11; j++) {
-        if(allQBs.length >= j && j < 4) {
-          $scope.addPlayerToPool(allQBs[j]);
+      for(var j = 0; j < allQBs.length; j++) {
+        if(j == 0 || j == 1 ) {
+          $scope.addPlayerToPool(allQBs[j], 'QB');
         }
-        if(allRBs.length >= j && j < 7) {
-          $scope.addPlayerToPool(allRBs[j]);
+      }
+      for(var j = 0; j < allRBs.length; j++) {
+        if(j == 0 || j == 1) {
+          $scope.addPlayerToPool(allRBs[j], 'RB1');
         }
-        if(allWRs.length >= j) {
-          $scope.addPlayerToPool(allWRs[j]);
+        if( j == 1 || j == 2 || j == 3) {
+          $scope.addPlayerToPool(allRBs[j], 'RB2');
         }
-        if(allTEs.length >= j && j < 4) {
-          $scope.addPlayerToPool(allTEs[j]);
+      }
+      for(var j = 0; j < allWRs.length; j++) {
+        if(j == 0 || j == 1 || j == 2) {
+          $scope.addPlayerToPool(allWRs[j], 'WR1');
         }
-        if(allKs.length >= j && j < 4) {
-          $scope.addPlayerToPool(allKs[j]);
+        if(j == 1 || j == 2 || j == 3 || j == 4) {
+          $scope.addPlayerToPool(allWRs[j], 'WR2');
         }
-        if(allDSTs.length >= j && j < 4) {
-          $scope.addPlayerToPool(allDSTs[j]);
+        if(j == 3 || j == 4 || j == 5|| j == 6) {
+          $scope.addPlayerToPool(allWRs[j], 'WR3');
+        }
+      }
+      for(var j = 0; j < allTEs.length; j++) {
+        if(j == 0 || j == 1) {
+          $scope.addPlayerToPool(allTEs[j], 'TE');
+        }
+      }
+      for(var j = 0; j < allKs.length; j++) {
+        if(j == 0 || j == 1) {
+          $scope.addPlayerToPool(allKs[j], 'K');
+        }
+      }
+      for(var j = 0; j < allDSTs.length; j++) {
+        if(j == 0 || j == 1) {
+          $scope.addPlayerToPool(allDSTs[j], 'DST');
         }
       }
     }
@@ -898,9 +985,8 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         });
     }
 
-
     $scope.removeCalcDrafts = function () {
-        var calcRemovedDrafts = $filter('removeCalcDraft')($scope._AllDraftData, nfl.TopRange, nfl.BottomRange, $scope.sortTypeDraft);
+        var calcRemovedDrafts = $filter('removeCalcDraft')($scope._AllDraftData, parseFloat(nfl.TopRange), parseFloat(nfl.BottomRange), $scope.sortTypeDraft);
 
         $scope._AllDraftData = calcRemovedDrafts;
 
@@ -908,20 +994,6 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         var validDraftData = $filter('checkValidOnly')($scope._AllDraftData, true);
         $scope.TotalValidDrafts = validDraftData.length;
 
-        $scope._AllPlayers.forEach(function (player) {
-            player._TimesInDrafts = 0;
-            player._TimesInValidDrafts = 0;
-        });
-        validDraftData.forEach(function (draftData) {
-            draftData.players.forEach(function (player) {
-                var playerIndexInGlobal = $scope._AllPlayers.indexOf(player);
-                $scope._AllPlayers[playerIndexInGlobal]._TimesInValidDrafts += 1;
-            });
-        });
-
-        $scope._AllPlayers.forEach(function (player) {
-            $scope.setPlayerPercentInDraft(player);
-        });
 
         //cap gUI to 150 to displayed
         $scope._AllDisplayedDraftData = [];
@@ -934,7 +1006,6 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
             $scope._AllDisplayedDraftData.push($scope._AllDraftData[i]);
           }
         }
-
     }
 
     $scope.isDraftSalaryValid = function (draft) {
@@ -943,6 +1014,14 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
             startingSalary = startingSalary - player._Salary;
         });
         return (startingSalary >= 0) ? true : false;
+    }
+    $scope.averageValue = function(draft) {
+      var value = 0;
+      draft.forEach(function (player) {
+          value = parseFloat(value) + parseFloat(player._ProjectedPointsPerDollar);
+      });
+      value = parseFloat(value);
+      return (value / (draft.length)).toFixed(5);
     }
     $scope.isDraftTeamValid = function (draft) {
         var teams = {};
@@ -965,93 +1044,9 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         }
         return true;
     }
-    $scope.getCombinations = function(players, min) {
-        var fn = function(n, src, got, all) {
-            if (n == 0) {
-                if (got.length > 0) {
-                    all[all.length] = got;
-                }
-                return;
-            }
-            for (var j = 0; j < src.length; j++) {
-                fn(n - 1, src.slice(j + 1), got.concat([src[j]]), all);
-            }
-            return;
-        }
-        var all = [];
-        for (var i = min; i < players.length; i++) {
-            fn(i, players, [], all);
-        }
-        all.push(players);
-
-        for (var j = 0; j < all.length; j++) {
-            if(all[j].length > min) {
-                all.splice(j);
-            }
-        }
-        return all;
-    }
-
-    $scope.buildStacks = function () {
-
-
-        $scope.SelectedTeams.forEach(function (team) {
-            var tempStack = [];
-            $scope.SelectedStackPositions.forEach(function (stackPosition) {
-
-                var stackSubstringPosition = stackPosition.substring(0, 2);
-
-                var tempPlayers = [];
-                tempPlayers = $filter('position')($scope._AllPlayers, stackSubstringPosition);
-                tempPlayers = $filter('team')(tempPlayers, team);
-                tempPlayers = $filter('weeks')(tempPlayers, $scope.SelectedWeeks);
-                tempPlayers = $filter('sort')(tempPlayers);
-                if (tempStack.indexOf(tempPlayers[0]) == -1) {
-                    switch (stackPosition) {
-                        case 'QB':
-                        case 'RB':
-                        case 'WR':
-                        case 'TE':
-                        case 'K':
-                        case 'DST':
-                            tempStack.push(tempPlayers[0]);
-                            return;
-                        case 'RB1':
-                            tempStack.push(tempPlayers[1]);
-                            return;
-                        case 'WR1':
-                            tempStack.push(tempPlayers[1]);
-                            return;
-                        case 'WR2':
-                            tempStack.push(tempPlayers[2]);
-                            return;
-                    }
-                }
-
-            });
-
-            $scope._AllStacks.push(tempStack);
-        });
-    }
-    $scope.addRemovePositionToSelectedStacks = function (position) {
-        var positionIndex = $scope.SelectedStackPositions.indexOf(position);
-        if (positionIndex == -1) {
-            $scope.SelectedStackPositions.push(position);
-        } else {
-            $scope.SelectedStackPositions.splice(positionIndex, 1);
-        }
-
-    }
-    $scope.clearAllStacks = function () {
-        $scope._AllStacks = [];
-    }
-    $scope.clearStackPositions = function () {
-        $scope.SelectedStackPositions = [];
-    }
     $scope.clearAllPlayerFilters = function () {
-        $scope.SelectedTeams = [];
+        $scope.SelectedTeam = 'All';
         $scope.SelectedWeeks = [];
-        $scope.SelectedWeeks.push($scope._AllWeeks[0]);
     }
 
     //#################################################################
@@ -1140,12 +1135,15 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
       $scope.clearPlayerPools();
       $scope.clearDrafts();
       $scope.clearAllPlayers();
-
+      $scope.clearAllPlayerFilters();
 
       $scope._AllPlayers = savedData._AllPlayers;
       $scope._AllPlayersMASTER = savedData._AllPlayers;
+
       nfl.TopRange = parseFloat(savedData.TopRange);
       nfl.BottomRange = parseFloat(savedData.BottomRange);
+      nfl.TopLimit = parseInt(savedData.TopLimit);
+
       $scope._AllPlayers.forEach(function(singlePlayer) {
 
         //add team data
@@ -1154,25 +1152,24 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         } else if ($scope._AllTeams.indexOf(singlePlayer._Team) == -1) {
             $scope._AllTeams.push(singlePlayer._Team);
         }
-
-        $scope.loadPlayerInPool(savedData._QBPlayerPool, singlePlayer);
-        $scope.loadPlayerInPool(savedData._RBPlayerPool, singlePlayer);
-        $scope.loadPlayerInPool(savedData._WRPlayerPool, singlePlayer);
-        $scope.loadPlayerInPool(savedData._TEPlayerPool, singlePlayer);
-        $scope.loadPlayerInPool(savedData._KPlayerPool, singlePlayer);
-        $scope.loadPlayerInPool(savedData._DSTPlayerPool, singlePlayer);
-
-        $scope.loadPlayerInLocked(savedData._RBPlayerLocked, singlePlayer);
-        $scope.loadPlayerInLocked(savedData._WRPlayerLocked, singlePlayer);
+        $scope.loadPlayerInPool(savedData._QBPlayerPool, singlePlayer, 'QB');
+        $scope.loadPlayerInPool(savedData._RB1PlayerPool, singlePlayer, 'RB1');
+        $scope.loadPlayerInPool(savedData._RB2PlayerPool, singlePlayer, 'RB2');
+        $scope.loadPlayerInPool(savedData._WR1PlayerPool, singlePlayer, 'WR1');
+        $scope.loadPlayerInPool(savedData._WR2PlayerPool, singlePlayer, 'WR2');
+        $scope.loadPlayerInPool(savedData._WR3PlayerPool, singlePlayer, 'WR3');
+        $scope.loadPlayerInPool(savedData._TEPlayerPool, singlePlayer, 'TE');
+        $scope.loadPlayerInPool(savedData._KPlayerPool, singlePlayer, 'K');
+        $scope.loadPlayerInPool(savedData._DSTPlayerPool, singlePlayer, 'DST');
       });
 
       $scope.displayNewMessage("success", "Previous save loaded successfully.");
 
     }
-    $scope.loadPlayerInPool = function(playerPool, singlePlayer) {
+    $scope.loadPlayerInPool = function(playerPool, singlePlayer, position) {
       playerPool.forEach(function(singlePlayerInPool) {
         if(singlePlayerInPool._Name == singlePlayer._Name && singlePlayerInPool._Position == singlePlayer._Position && singlePlayerInPool._Team == singlePlayer._Team) {
-            $scope.addPlayerToPool(singlePlayer);
+            $scope.addPlayerToPool(singlePlayer, position);
         }
       });
     }
@@ -1188,16 +1185,18 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
 
         var postObject = {
     				_AllPlayers : $scope._AllPlayers,
-    				_RBPlayerLocked : $scope._RBPlayerLocked,
-            _WRPlayerLocked : $scope._WRPlayerLocked,
             _QBPlayerPool : $scope._QBPlayerPool,
-            _RBPlayerPool : $scope._RBPlayerPool,
-            _WRPlayerPool : $scope._WRPlayerPool,
+            _RB1PlayerPool : $scope._RB1PlayerPool,
+            _RB2PlayerPool : $scope._RB2PlayerPool,
+            _WR1PlayerPool : $scope._WR1PlayerPool,
+            _WR2PlayerPool : $scope._WR2PlayerPool,
+            _WR3PlayerPool : $scope._WR3PlayerPool,
             _TEPlayerPool : $scope._TEPlayerPool,
             _KPlayerPool : $scope._KPlayerPool,
             _DSTPlayerPool : $scope._DSTPlayerPool,
             TopRange : nfl.TopRange,
-            BottomRange : nfl.BottomRange
+            BottomRange : nfl.BottomRange,
+            TopLimit : nfl.TopLimit
     		};
         var modalInstance = $uibModal.open({
             templateUrl: '/js/AngularControllers/saveDialog.html',
@@ -1210,6 +1209,9 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
                 },
                 currentRead: function() {
                   return $scope.currentRead;
+                },
+                site: function() {
+                  return 'FanDuel';
                 }
             }
         });

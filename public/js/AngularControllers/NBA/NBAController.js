@@ -30,7 +30,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     $scope.SelectedValidDrafts = true;
     $scope.sortTypeDraft = 'FPPG';
 
-    $scope.sortType = '_FPPG'; // set the default sort type
+    $scope.sortType = '_Salary'; // set the default sort type
     $scope.sortReverse = true;  // set the default sort order
     $scope.sortReverseDraft = true;
     $scope.SelectedPosition = 'PG1';     // set the default search/filter term
@@ -48,11 +48,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     $scope.TopRange = -1;
     $scope.BottomRange = -1;
 
-    nba.ERRORRATE = 0.00157;
     nba.TopLimit = 150;
     nba.TopRange = -1;
     nba.BottomRange = -1;
-
     nba.removeDups = true;
 
     //database

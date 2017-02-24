@@ -199,7 +199,7 @@ class NBAController extends Controller
           $this->validate($request, [
               'postObject' => 'required|json',
               'title' => 'required|string|max:255',
-              'site' => 'required|string|max:45'
+              'site' => 'required|string|max:45|in:FanDuel,DraftKings'
           ]);
           $postObject = $request->input('postObject');
           $title = $request->input('title');

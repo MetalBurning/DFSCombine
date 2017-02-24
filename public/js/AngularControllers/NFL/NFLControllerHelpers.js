@@ -32,10 +32,11 @@ angular.module('NFLApp').controller('DraftModalController', function ($scope, $u
         return totalActual.toFixed(2);
     }
 });
-angular.module('NFLApp').controller('SaveModalController', function ($scope, $uibModalInstance, $http, postObject, currentRead, $timeout) {
+angular.module('NFLApp').controller('SaveModalController', function ($scope, $uibModalInstance, $http, postObject, currentRead, site, $timeout) {
 
   $scope.postObject = postObject;
   $scope.currentRead = currentRead;
+  $scope.site = site;
 
   $scope.readData = undefined;
 
@@ -68,7 +69,7 @@ angular.module('NFLApp').controller('SaveModalController', function ($scope, $ui
 
   $scope.create = function() {
     if($scope.title.length > 0 ) {
-      $http.post('/NFL/create', {'postObject':JSON.stringify($scope.postObject), 'title': $scope.title}).then(function successCallback(response) {
+      $http.post('/NFL/create', {'postObject':JSON.stringify($scope.postObject), 'title': $scope.title, 'site': $scope.site}).then(function successCallback(response) {
          $scope.saved = true;
          $scope.readData = response.data;
          $scope.displayNewMessage('success', 'Creating - Success');

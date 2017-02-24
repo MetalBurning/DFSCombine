@@ -53,8 +53,12 @@ class NFLController extends Controller
             $player = new stdClass();
             $player->playerID = $data[0];
             $player->_Position = $data[1];
+            if($player->_Position == "D" || $player->_Position == "DST" ) {
+              $player->_Position = "DST";
+            }
             $player->_Name = $data[2] . " " . $data[4];
             $player->_FPPG = $data[5];
+            $player->_ActualFantasyPoints = -1;
             $player->_GamesPlayed = $data[6];
             $player->_Salary = $data[7];
             $player->_Game = $data[8];
@@ -65,12 +69,11 @@ class NFLController extends Controller
             } else {
               $player->_playerInjured = '';
             }
-
             $player->_playerInjuryDetails = $data[12];
             $player->_TimesInValidDrafts = 0;
             $player->_TimesInDrafts = 0;
             $player->_PercentInDrafts = -1;
-
+            $player->_Rank = -1;
             $players[] = $player;
 
           } else {
@@ -162,7 +165,7 @@ class NFLController extends Controller
       $this->validate($request, [
           'postObject' => 'required|json',
           'title' => 'required|string|max:255',
-          'site' => 'required|string|max:45'
+          'site' => 'required|string|max:45|in:FanDuel,DraftKings'
       ]);
       $postObject = $request->input('postObject');
       $title = $request->input('title');

@@ -1,21 +1,52 @@
 "use strict";
 var NFLApp = angular.module('NFLApp', ['ui.bootstrap']);
 
-
-NFLApp.filter('position', function () {
-    return function (allPlayers, input) {
+NFLApp.filter('positionDK', function () {
+    return function (allPlayers, searchPosition) {
         var filteredPlayers = [];
-        allPlayers.forEach(function (element) {
-            if (input == '' || input == undefined) {
-                filteredPlayers.push(element);
-            }
-            if (element._Position == input) {
-                filteredPlayers.push(element);
+        if(searchPosition === 'UTIL') {
+          return allPlayers;
+        }
+        allPlayers.forEach(function (player) {
+            if (searchPosition == '' || searchPosition == undefined) {
+              filteredPlayers.push(player);
+            } else if (player._Position.indexOf(searchPosition) !== -1) {
+              filteredPlayers.push(player);
             }
         });
         return filteredPlayers;
     };
 })
+
+NFLApp.filter('removeDupDrafts', function() {
+  return function(allDrafts) {
+    var tempDrafts = allDrafts;
+    allDrafts.foreach(function(draft) {
+      draft.players.forEach(function(player) {
+        switch(player.Pos) {
+
+        }
+      });
+    });
+  }
+});
+NFLApp.filter('position', function () {
+    return function (allPlayers, searchPosition) {
+        var filteredPlayers = [];
+        if(searchPosition === '' || searchPosition === null || searchPosition === undefined) {
+          return allPlayers;
+        }
+        allPlayers.forEach(function (player) {
+          if (searchPosition == '' || searchPosition == undefined) {
+            filteredPlayers.push(player);
+          } else if (searchPosition.indexOf(player._Position) !== -1) {
+            filteredPlayers.push(player);
+          }
+        });
+        return filteredPlayers;
+    };
+})
+
 NFLApp.filter('removeInjured', function () {
     return function (allPlayers) {
         var filteredPlayers = [];
@@ -27,16 +58,27 @@ NFLApp.filter('removeInjured', function () {
         return filteredPlayers;
     };
 })
-NFLApp.filter('team', function () {
-    return function (allPlayers, input) {
+NFLApp.filter('removeOut', function () {
+    return function (allPlayers) {
         var filteredPlayers = [];
         allPlayers.forEach(function (element) {
-            if (input.length == 0 || input == undefined) {
+            if (element._playerInjured != 'danger') {
                 filteredPlayers.push(element);
             }
-            if (input.indexOf(element._Team) > -1) {
-                filteredPlayers.push(element);
-            }
+        });
+        return filteredPlayers;
+    };
+})
+NFLApp.filter('team', function () {
+    return function (allPlayers, team) {
+        var filteredPlayers = [];
+        if(team === 'All' || team === undefined || team === '' || team === null) {
+          return allPlayers;
+        }
+        allPlayers.forEach(function (player) {
+          if (team === player._Team) {
+            filteredPlayers.push(player);
+          }
         });
         return filteredPlayers;
     };
@@ -151,17 +193,29 @@ NFLApp.filter('randomize', function () {
 })
 NFLApp.filter('removeCalcDraft', function () {
     return function (drafts, topRange, bottomRange, sortType ) {
-        var maxProjectionDraft = parseFloat(topRange);
-        var minProjectionDraft = parseFloat(bottomRange);
+        var max = parseFloat(topRange);
+        var min = parseFloat(bottomRange);
 
         var filteredDrafts = [];
         drafts.forEach(function (draft) {
           if(sortType === 'FPPG') {
-            if (minProjectionDraft <= draft.FPPG && draft.FPPG <= maxProjectionDraft) {
+            if (max >= draft.FPPG && draft.FPPG >= min) {
               filteredDrafts.push(draft);
             }
           } else if(sortType === 'Actual') {
-            if (minProjectionDraft <= draft.Actual && draft.Actual <= maxProjectionDraft) {
+            if (max >= draft.Actual && draft.Actual >= min) {
+              filteredDrafts.push(draft);
+            }
+          } else if(sortType === 'salaryLeft') {
+            if (max >= draft.salaryLeft && draft.salaryLeft >= min) {
+              filteredDrafts.push(draft);
+            }
+          } else if(sortType === 'pointsPerDollar') {
+            if (max >= draft.pointsPerDollar && draft.pointsPerDollar >= min) {
+              filteredDrafts.push(draft);
+            }
+          }else if(sortType === 'averageRank') {
+            if (max >= draft.averageRank && draft.averageRank >= min) {
               filteredDrafts.push(draft);
             }
           }

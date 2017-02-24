@@ -18,6 +18,7 @@
       <h2 class="featurette-heading"> DFS Package: $8.99/month</h2>
         <p>Gain access to the following sports: NBA, NFL, and MLB(coming soon).</p>
         <p>Supported Sites: DraftKings, FanDuel</p>
+        <p><a class="btn btn-primary" href="/register" role="button">Sign Up »</a></p>
     </div>
   </div>
   <hr class="featurette-divider" id="how">

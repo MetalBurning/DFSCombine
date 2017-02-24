@@ -39,7 +39,7 @@
                           </td>
                       </tr>
                        <tr>
-                           <td>Creation Date</td>
+                           <td>Account Creation Date</td>
                            <td>@{{_User.created_at.date}}</td>
                        </tr>
                        <tr>
