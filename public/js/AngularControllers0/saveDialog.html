@@ -1,0 +1,22 @@
+
+    <div class="modal-header">
+        <h3 class="modal-title">Save Settings</h3>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+          <div class="col-xs-12">
+            <div uib-alert ng-repeat="alert in alerts track by $index" ng-show="$last" ng-class="'alert-' + alert.type" close="closeAlert($index)">{{alert.msg}} - ({{alert.number}})</div>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-xs-12">
+              <label>Title: "{{title}}"</label>
+              <input type="text" class="form-control" ng-model="title" style="min-width:100%;">
+          </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-success"  ng-show="hasCurrentRead()" ng-click="update()" ng-disabled="!CreateUpdateButtonEnabled">Update</button>
+      <button class="btn btn-success"  ng-show="!hasCurrentRead()" ng-click="create()" ng-disabled="!CreateUpdateButtonEnabled">Create</button>
+        <button class="btn btn-danger" ng-click="ok()">Dismiss</button>
+    </div>

@@ -13,7 +13,24 @@ require('laravel-elixir-vue-2');
  |
  */
 
-elixir(mix => {
-    mix.sass('app.scss')
-       .webpack('app.js');
-});
+ elixir(function(mix) {
+     mix.webpack(
+       'NBA/NBAController.js',
+       './public/js/AngularControllers/NBA'
+     );
+     mix.webpack(
+       'NBA/NBADraftKingsController.js',
+       './public/js/AngularControllers/NBA'
+     );
+     mix.webpack(
+       'NBA/NBA.js',
+       './public/js/AngularControllers/NBA'
+     );
+ });
+
+ elixir(function(mix) {
+   mix.webpack(
+     'NFL/NFLController.js',
+     './public/js/AngularControllers/NFL'
+   );
+ });
