@@ -840,18 +840,28 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       var allPFs = $filter('positionDK')(injuredPlayers, 'PF');
       var allCs = $filter('positionDK')(injuredPlayers, 'C');
       $scope._AllPlayers.forEach(function(player) {
-        var playerRank = 99;
+        var playerRank = [];
 
         if(player._Position.indexOf('PG') !== -1) {
-          playerRank = allPGs.indexOf(player) + 1;
-        } else if(player._Position.indexOf('SG') !== -1) {
-          playerRank = allSGs.indexOf(player) + 1;
-        } else if(player._Position.indexOf('SF') !== -1) {
-          playerRank = allSFs.indexOf(player) + 1;
-        } else if(player._Position.indexOf('C') !== -1) {
-          playerRank = allCs.indexOf(player) + 1;
+          playerRank.push(allPGs.indexOf(player) + 1);
         }
-        player._Rank = playerRank;
+        if(player._Position.indexOf('SG') !== -1) {
+          playerRank.push(allSGs.indexOf(player) + 1);
+        }
+        if(player._Position.indexOf('SF') !== -1) {
+          playerRank.push(allSFs.indexOf(player) + 1);
+        }
+        if(player._Position.indexOf('PF') !== -1) {
+          playerRank.push(allPFs.indexOf(player) + 1);
+        }
+        if(player._Position.indexOf('C') !== -1) {
+          playerRank.push(allCs.indexOf(player) + 1);
+        }
+        var totalPlayerRank = 0;
+        playerRank.forEach(function(singleRank) {
+          totalPlayerRank = totalPlayerRank + singleRank;
+        });
+        player._Rank = parseInt(totalPlayerRank / playerRank.length);
       });
     }
     $scope.averageRank = function(finalPlayerList) {
