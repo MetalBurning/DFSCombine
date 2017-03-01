@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'DFSCombine') }}</title>
+    <title>{{ config('app.name', 'DFSCombine - Daily Fantasy Sports Tools') }}</title>
 
     <!-- Styles -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">

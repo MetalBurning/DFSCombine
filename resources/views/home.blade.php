@@ -4,7 +4,7 @@
 <div class="container">
   <div class="row">
     <div class="jumbotron">
-      <h1>DFSCombine.com!</h1>
+      <h1>DFSCombine.com - Daily Fantasy Sports Tools</h1>
       <p>Calculate all possible fantasy drafts from the players of your choosing.</p>
       <p><a class="btn btn-primary btn-lg" href="#how" role="button">Learn more</a></p>
     </div>
@@ -15,7 +15,7 @@
       <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="/images/singleDraft.png" data-holder-rendered="true">
     </div>
     <div class="col-sm-6">
-      <h2 class="featurette-heading"> DFS Package: $8.99/month</h2>
+      <h2 class="featurette-heading"> DFS Package: $7.99/month</h2>
         <p>Gain access to the following sports: NBA, NFL, and MLB(coming soon).</p>
         <p>Supported Sites: DraftKings, FanDuel</p>
         <p><a class="btn btn-primary" href="/register" role="button">Sign Up »</a></p>
@@ -69,8 +69,8 @@
       <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="/images/fanduelCSVExample.png" data-holder-rendered="true">
     </div>
     <div class="col-sm-6 col-sm-pull-6">
-      <h2 class="featurette-heading">FanDuel & DraftKings CSV File Requirement</h2>
-        <p>You're currently required to import each contest CSV file in order to use the app. </p>
+      <h2 class="featurette-heading">FanDuel & DraftKings CSV File</h2>
+        <p>In order to use the app properly you need to upload the respective Fanduel or DraftKings CSV file.</p>
         <p>Both of these files are provided by FanDuel & DraftKings.</p>
     </div>
   </div>
@@ -78,8 +78,7 @@
   <div class="row featurette">
     <div class="col-sm-12">
       <h2 class="featurette-heading">Cancel at anytime.</h2>
-        <p>Seriously, I hate websites that make you jump through weird hoops to cancel.</p>
-        <p>Just press the 'Cancel Subscription' button on your <a href="/account">account page</a> and your cancelled.</p>
+        <p>Just press the 'Cancel Subscription' button on your <a href="/account">account page</a> and your cancelled, no strings whatsoever.</p>
     </div>
   </div>
 </div>
