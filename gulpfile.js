@@ -33,4 +33,18 @@ require('laravel-elixir-vue-2');
      'NFL/NFLController.js',
      './public/js/AngularControllers/NFL'
    );
+   mix.webpack(
+     'NFL/NFL.js',
+     './public/js/AngularControllers/NFL'
+   );
+ });
+ elixir(function(mix) {
+   mix.webpack(
+     'NHL/NHLController.js',
+     './public/js/AngularControllers/NHL'
+   );
+   mix.webpack(
+     'NHL/NHL.js',
+     './public/js/AngularControllers/NHL'
+   );
  });

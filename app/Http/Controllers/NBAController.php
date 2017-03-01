@@ -156,6 +156,65 @@ class NBAController extends Controller
         );
         return Response::json($players, 200);
     }
+    public function loadDraftKingsFPPG(Request $request)
+    {
+        $userID = Auth::user()->id;
+
+        $this->validate($request, [
+          'csvFile' => 'required|file|mimes:csv,txt'
+        ]);
+
+        $file = $request->file('csvFile');
+        $lineCount = 0;
+        $players = [];
+      //  try {
+          $fileRead = fopen($file,"r");
+          while(!feof($fileRead))
+          {
+            if($lineCount > 0) {
+              $data = fgetcsv($fileRead);
+              if(count($data) > 1) {
+                $player = new stdClass();
+                $player->_Position = $data[0];
+
+                $playerName = $data[1];
+
+                $playerNames = explode(" ", $playerName);
+                $player->_Name = trim($playerNames[0]) . " " . trim($playerNames[1]);
+
+                $player->_FPPG = $data[4];
+                $player->_ActualFantasyPoints = -1;
+                $player->_GamesPlayed = -1;
+                $player->_Salary = $data[2];
+
+                $gameData = explode(" ", $data[3]);
+                $player->_Game = trim($gameData[0]);
+
+                $player->_Team = $data[5];
+
+                $playerOpp = explode("@", $gameData[0]);
+                if(trim($playerOpp[0]) == $player->_Team) {
+                  $player->_Opponent = $playerOpp[1];
+                } else {
+                  $player->_Opponent = $playerOpp[0];
+                }
+                $players[] = $player;
+              }
+            } else {
+              fgetcsv($fileRead);
+            }
+            $lineCount++;
+          }
+          fclose($fileRead);
+        // } catch(\Exception $e) {
+        //   $errorMessage = array('error' => 'Incorrect file structure.');
+        //   return Response::json($errorMessage, 500);
+        // }
+        DB::table('UserActions')->insert(
+            ['userID' => Auth::user()->id, 'sport' => 'NBA', 'action' => 'playerFPPGLoad', 'actionDetails' => 'DraftKings', 'actionDetailsLarge' => json_encode($players)]
+        );
+        return Response::json($players, 200);
+    }
     public function loadHistory(Request $request)
     {
         $userID = Auth::user()->id;

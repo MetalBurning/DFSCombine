@@ -50,6 +50,7 @@ Route::post('/NFL/updateTitle', 'NFLController@updateTitle');
 Route::get('/NBA', 'NBAController@NBA');
 Route::post('/NBA/loadFanDuelPlayers', 'NBAController@loadFanDuelPlayers');
 Route::post('/NBA/loadDraftKingsPlayers', 'NBAController@loadDraftKingsPlayers');
+Route::post('/NBA/loadDraftKingsFPPG', 'NBAController@loadDraftKingsFPPG');
 Route::post('/NBA/loadHistory', 'NBAController@loadHistory');
 
 Route::post('/NBA/buildDraft', 'NBAController@buildDraft');

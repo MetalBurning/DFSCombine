@@ -118,19 +118,19 @@ NHLApp.filter('removeCalcDraft', function () {
     };
 })
 
-NHLApp.directive('setHeight', function ($window) {
+NHLApp.directive('setHeight', [ '$window', function ($window) {
     return {
         link: function (scope, element, attrs) {
             element.css('height', $window.innerHeight - 200 + 'px');
             //element.height($window.innerHeight/3);
         }
     }
-});
-NHLApp.directive('setHeightDrafts', function ($window) {
+}]);
+NHLApp.directive('setHeightDrafts', [ '$window', function ($window) {
     return {
         link: function (scope, element, attrs) {
             element.css('height', ($window.innerHeight - 200) / 2 + 'px');
             //element.height($window.innerHeight/3);
         }
     }
-});
+}]);

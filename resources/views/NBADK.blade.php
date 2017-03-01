@@ -532,7 +532,10 @@
                                   <div class="panel-heading">
                                     <div class='btn-toolbar pull-right'>
                                       <label class="btn btn-primary btn-file btn-xs">
-                                          Add Fanduel Player CSV File <input type="file" style="display: none;" custom-on-change="loadDKPlayers">
+                                          Add DraftKings FPPG File <input type="file" style="display: none;" custom-on-change="loadDraftKingsFPPG">
+                                      </label>
+                                      <label class="btn btn-primary btn-file btn-xs">
+                                          Add DraftKings Lineups CSV File <input type="file" style="display: none;" custom-on-change="loadDKPlayers">
                                       </label>
                                     </div>
                                       <h3 class="panel-title">Load Saved History</h3>
