@@ -1,30 +1,72 @@
+"use strict";
 var NHLApp = angular.module('NHLApp', ['ui.bootstrap']);
 
-NHLApp.filter('position', function () {
-    return function (allPlayers, input) {
+NHLApp.filter('positionDK', function () {
+    return function (allPlayers, searchPosition) {
         var filteredPlayers = [];
-        allPlayers.forEach(function (element) {
-            if (input == '' || input == undefined) {
-                filteredPlayers.push(element);
-            }
-            if (element._Position == input) {
-                filteredPlayers.push(element);
+        if(searchPosition === 'UTIL') {
+          return allPlayers;
+        }
+        allPlayers.forEach(function (player) {
+            if (searchPosition == '' || searchPosition == undefined) {
+              filteredPlayers.push(player);
+            } else if (player._Position.indexOf(searchPosition) !== -1) {
+              filteredPlayers.push(player);
             }
         });
         return filteredPlayers;
     };
 })
 
-NHLApp.filter('team', function () {
-    return function (allPlayers, input) {
+NHLApp.filter('position', function () {
+    return function (allPlayers, searchPosition) {
+        var filteredPlayers = [];
+        if(searchPosition === '' || searchPosition === null || searchPosition === undefined) {
+          return allPlayers;
+        }
+        allPlayers.forEach(function (player) {
+          if (searchPosition == '' || searchPosition == undefined) {
+            filteredPlayers.push(player);
+          } else if (searchPosition.indexOf(player._Position) !== -1) {
+            filteredPlayers.push(player);
+          }
+        });
+        return filteredPlayers;
+    };
+})
+
+NHLApp.filter('removeInjured', function () {
+    return function (allPlayers) {
         var filteredPlayers = [];
         allPlayers.forEach(function (element) {
-            if (input.length == 0 || input == undefined) {
+            if (element._playerInjured != 'danger' && element._playerInjured != 'warning') {
                 filteredPlayers.push(element);
             }
-            if (input.indexOf(element._Team) > -1) {
+        });
+        return filteredPlayers;
+    };
+})
+NHLApp.filter('removeOut', function () {
+    return function (allPlayers) {
+        var filteredPlayers = [];
+        allPlayers.forEach(function (element) {
+            if (element._playerInjured != 'danger') {
                 filteredPlayers.push(element);
             }
+        });
+        return filteredPlayers;
+    };
+})
+NHLApp.filter('team', function () {
+    return function (allPlayers, team) {
+        var filteredPlayers = [];
+        if(team === 'All' || team === undefined || team === '' || team === null) {
+          return allPlayers;
+        }
+        allPlayers.forEach(function (player) {
+          if (team === player._Team) {
+            filteredPlayers.push(player);
+          }
         });
         return filteredPlayers;
     };
@@ -104,21 +146,51 @@ NHLApp.filter('checkValidOnly', function () {
     };
 })
 NHLApp.filter('removeCalcDraft', function () {
-    return function (drafts, AVERAGE, STDEVIATION) {
-        var maxProjectionDraft = parseFloat(AVERAGE + STDEVIATION);
-        var minProjectionDraft = parseFloat(AVERAGE - STDEVIATION);
+    return function (drafts, topRange, bottomRange, sortType ) {
+        var max = parseFloat(topRange);
+        var min = parseFloat(bottomRange);
 
         var filteredDrafts = [];
         drafts.forEach(function (draft) {
-            if (minProjectionDraft <= draft.projection && draft.projection <= maxProjectionDraft) {
-                filteredDrafts.push(draft);
+          if(sortType === 'FPPG') {
+            if (max >= draft.FPPG && draft.FPPG >= min) {
+              filteredDrafts.push(draft);
             }
+          } else if(sortType === 'Actual') {
+            if (max >= draft.Actual && draft.Actual >= min) {
+              filteredDrafts.push(draft);
+            }
+          } else if(sortType === 'salaryLeft') {
+            if (max >= draft.salaryLeft && draft.salaryLeft >= min) {
+              filteredDrafts.push(draft);
+            }
+          } else if(sortType === 'pointsPerDollar') {
+            if (max >= draft.pointsPerDollar && draft.pointsPerDollar >= min) {
+              filteredDrafts.push(draft);
+            }
+          }else if(sortType === 'averageRank') {
+            if (max >= draft.averageRank && draft.averageRank >= min) {
+              filteredDrafts.push(draft);
+            }
+          }
+
         });
         return filteredDrafts;
     };
 })
 
-NHLApp.directive('setHeight', [ '$window', function ($window) {
+
+NHLApp.directive('customOnChange', function() {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attrs) {
+      var onChangeHandler = scope.$eval(attrs.customOnChange);
+      element.bind('change', onChangeHandler);
+    }
+  };
+});
+
+NHLApp.directive('setHeight', ['$window', function ($window) {
     return {
         link: function (scope, element, attrs) {
             element.css('height', $window.innerHeight - 200 + 'px');
@@ -126,7 +198,7 @@ NHLApp.directive('setHeight', [ '$window', function ($window) {
         }
     }
 }]);
-NHLApp.directive('setHeightDrafts', [ '$window', function ($window) {
+NHLApp.directive('setHeightDrafts', ['$window', function ($window) {
     return {
         link: function (scope, element, attrs) {
             element.css('height', ($window.innerHeight - 200) / 2 + 'px');

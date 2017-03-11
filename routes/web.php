@@ -69,7 +69,18 @@ Route::get('/NBADK', 'NBAController@NBADK');
 
 
 //NHL
-Route::get('/NHL', 'ApplicationController@NHL');
-Route::post('/NHL/saveSettings', 'ApplicationController@saveNHLSettings');
-Route::post('/NHL/loadSavedSettings', 'ApplicationController@loadNHLSettings');
-Route::post('/NHL/loadSavedSettingsDetails', 'ApplicationController@loadNHLSavedSettingsDetails');
+Route::get('/NHL', 'NHLController@NHL');
+Route::post('/NHL/loadFanDuelPlayers', 'NHLController@loadFanDuelPlayers');
+Route::post('/NHL/loadDraftKingsPlayers', 'NHLController@loadDraftKingsPlayers');
+Route::post('/NHL/loadDraftKingsFPPG', 'NHLController@loadDraftKingsFPPG');
+Route::post('/NHL/loadHistory', 'NHLController@loadHistory');
+
+Route::post('/NHL/buildDraft', 'NHLController@buildDraft');
+Route::post('/NHL/downloadDrafts', 'NHLController@downloadDrafts');
+
+Route::post('/NHL/create', 'NHLController@create');
+Route::post('/NHL/read', 'NHLController@read');
+Route::post('/NHL/update', 'NHLController@update');
+Route::post('/NHL/delete', 'NHLController@delete');
+
+Route::post('/NHL/updateTitle', 'NHLController@updateTitle');
