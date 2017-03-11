@@ -2,7 +2,7 @@
 
 @section('content')
 <script src="/js/AngularControllers/NHL/NHL.js?v={{str_random(40)}}"></script>
-<script src="/js/AngularControllers/NHL/NHLController.js?v={{str_random(40)}}"></script>
+<script src="/js/AngularControllers/NHL/NHLDraftKingsController.js?v={{str_random(40)}}"></script>
 <script src="/js/AngularControllers/NHL/NHLControllerHelpers.js?v={{str_random(40)}}"></script>
 <div  ng-app="NHLApp">
     <div class="container" ng-controller="NHLController as NHL">
@@ -57,9 +57,6 @@
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('W3')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'W3']">W3</button>
                                                   </div>
                                                   <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('W4')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'W4']">W4</button>
-                                                  </div>
-                                                  <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('D1')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'D1']">D1</button>
                                                   </div>
                                                   <div class="btn-group" role="group">
@@ -67,6 +64,9 @@
                                                   </div>
                                                   <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('G')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'G']">G</button>
+                                                  </div>
+                                                  <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('UTIL')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'UTIL']">UTIL</button>
                                                   </div>
                                                 </div>
                                             </div>
@@ -78,10 +78,10 @@
                                                 <option value="W1">W1</option>
                                                 <option value="W2">W2</option>
                                                 <option value="W3">W3</option>
-                                                <option value="W4">W4</option>
                                                 <option value="D1">D1</option>
                                                 <option value="D2">D2</option>
                                                 <option value="G">G</option>
+                                                <option value="UTIL">UTIL</option>
                                               </select>
                                             </div>
                                             <div class="col-md-7 visible-md visible-lg">
@@ -209,7 +209,7 @@
                                                             </th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody ng-repeat="player in _AllPlayers | orderBy:sortType:sortReverse | position:SelectedPosition | team:SelectedTeam">
+                                                    <tbody ng-repeat="player in _AllPlayers | orderBy:sortType:sortReverse | positionDK:SelectedPosition | team:SelectedTeam">
                                                         <tr class="@{{player._playerInjured}} visible-md visible-lg">
                                                             <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player, SelectedPosition)" ng-click="addPlayerToPool(player, SelectedPosition)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player, SelectedPosition)" ng-click="removePlayerFromPool(player, SelectedPosition)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                                                             <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
@@ -342,23 +342,6 @@
                                                 <table class="table table-hover">
                                                     <thead>
                                                         <tr>
-                                                            <th colspan="4">W4 <abbr title="Salary average for this pool">(@{{averagePlayerPoolSalary(_W4PlayerPool)}})</abbr></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody ng-repeat="W4Players in _W4PlayerPool">
-                                                        <tr>
-                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(W4Players, 'W4')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
-                                                            <td ng-click="openClosePlayerDetails(W4Players)">@{{W4Players._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(W4Players)"><abbr title="Player percent in this position">@{{getPlayerPercentInPosition(W4Players, 'W4')}}%</abbr></td>
-                                                            <td ng-click="openClosePlayerDetails(W4Players)">@{{W4Players._Team}}<br /><abbr title="Player FPPG">@{{W4Players._FPPG}}</abbr></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div class="col-xs-12">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
                                                             <th colspan="4">D1 <abbr title="Salary average for this pool">(@{{averagePlayerPoolSalary(_D1PlayerPool)}})</abbr></th>
                                                         </tr>
                                                     </thead>
@@ -406,7 +389,23 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-
+                                            <div class="col-xs-12">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan="4">UTIL <abbr title="Salary average for this pool">(@{{averagePlayerPoolSalary(_UTILPlayerPool)}})</abbr></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody ng-repeat="UTILPlayers in _UTILPlayerPool">
+                                                        <tr>
+                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(UTILPlayers, 'UTIL')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td ng-click="openClosePlayerDetails(UTILPlayers)">@{{UTILPlayers._Name}}</td>
+                                                            <td ng-click="openClosePlayerDetails(UTILPlayers)"><abbr title="Player percent in this position">@{{getPlayerPercentInPosition(UTILPlayers, 'UTIL')}}%</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(UTILPlayers)">@{{UTILPlayers._Team}}<br /><abbr title="Player FPPG">@{{UTILPlayers._FPPG}}</abbr></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -543,7 +542,7 @@
                     </uib-tab>
 
                     <uib-tab index="1" heading="DataBase" ng-click="loadHistory()">
-                      @include('databaseFD')
+                        @include('databaseDK')
                     </uib-tab>
                 </uib-tabset>
             </div>

@@ -2,7 +2,7 @@
 
 @section('content')
 <script src="/js/AngularControllers/NFL/NFL.js?v={{str_random(40)}}"></script>
-<script src="/js/AngularControllers/NFL/NFLController.js?v={{str_random(40)}}"></script>
+<script src="/js/AngularControllers/NFL/NFLDraftKingsController.js?v={{str_random(40)}}"></script>
 <script src="/js/AngularControllers/NFL/NFLControllerHelpers.js?v={{str_random(40)}}"></script>
 <div  ng-app="NFLApp">
     <div class="container" ng-controller="NFLController as nfl">
@@ -63,7 +63,7 @@
                                                   <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('TE')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'TE']">TE</button>
                                                 </div>
                                                 <div class="btn-group" role="group">
-                                                  <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('K')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'K']">K</button>
+                                                  <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('FLEX')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'FLEX']">FLEX</button>
                                                 </div>
                                                 <div class="btn-group" role="group">
                                                   <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('DST')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'DST']">DST</button>
@@ -80,7 +80,7 @@
                                               <option value="WR2">WR2</option>
                                               <option value="WR3">WR3</option>
                                               <option value="TE">TE</option>
-                                              <option value="K">K</option>
+                                              <option value="FLEX">FLEX</option>
                                               <option value="DST">DST</option>
                                             </select>
                                           </div>
@@ -127,7 +127,7 @@
                                           </div>
 
                                         </div>
-                                        @include('playersFD')
+                                        @include('playersDK')
                                     </div>
                                 </div>
                             </div>
@@ -270,15 +270,15 @@
                                                 <table class="table table-hover">
                                                     <thead>
                                                         <tr>
-                                                            <th colspan="4">K <abbr title="Salary average for this pool">(@{{averagePlayerPoolSalary(_KPlayerPool)}})</abbr></th>
+                                                            <th colspan="4">FLEX <abbr title="Salary average for this pool">(@{{averagePlayerPoolSalary(_FLEXPlayerPool)}})</abbr></th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody ng-repeat="KPlayers in _KPlayerPool">
+                                                    <tbody ng-repeat="FLEXPlayers in _FLEXPlayerPool">
                                                         <tr>
-                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(KPlayers, 'K')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
-                                                            <td ng-click="openClosePlayerDetails(KPlayers)">@{{KPlayers._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(KPlayers)"><abbr title="Player percent in this position">@{{getPlayerPercentInPosition(KPlayers, 'K')}}%</abbr></td>
-                                                            <td ng-click="openClosePlayerDetails(KPlayers)">@{{KPlayers._Team}}<br /><abbr title="Player FPPG">@{{KPlayers._FPPG}}</abbr></td>
+                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(FLEXPlayers, 'FLEX')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td ng-click="openClosePlayerDetails(FLEXPlayers)">@{{FLEXPlayers._Name}}</td>
+                                                            <td ng-click="openClosePlayerDetails(FLEXPlayers)"><abbr title="Player percent in this position">@{{getPlayerPercentInPosition(FLEXPlayers, 'FLEX')}}%</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(FLEXPlayers)">@{{FLEXPlayers._Team}}<br /><abbr title="Player FPPG">@{{FLEXPlayers._FPPG}}</abbr></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -396,7 +396,7 @@
                         </div>
                     </uib-tab>
                     <uib-tab index="1" heading="DataBase"  ng-click="loadHistory()">
-                      @include('databaseFD')
+                      @include('databaseDK')
                     </uib-tab>
                 </uib-tabset>
             </div>

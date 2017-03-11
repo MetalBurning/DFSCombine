@@ -108,10 +108,10 @@ class NHLController extends Controller
               $data = fgetcsv($fileRead);
               if(count($data) > 1) {
                 $player = new stdClass();
-                $player->playerID = $data[12];
-                $player->_Position = $data[9];
+                $player->playerID = $data[13];
+                $player->_Position = $data[10];
 
-                $playerName = $data[11];
+                $playerName = $data[12];
 
                 $playerNames = explode(" ", $playerName);
                 $player->_Name = trim($playerNames[0]) . " " . trim($playerNames[1]);
@@ -119,12 +119,12 @@ class NHLController extends Controller
                 $player->_FPPG = -1;
                 $player->_ActualFantasyPoints = -1;
                 $player->_GamesPlayed = -1;
-                $player->_Salary = $data[13];
+                $player->_Salary = $data[14];
 
-                $gameData = explode(" ", $data[14]);
+                $gameData = explode(" ", $data[15]);
                 $player->_Game = trim($gameData[0]);
 
-                $player->_Team = $data[15];
+                $player->_Team = $data[16];
 
                 $playerOpp = explode("@", $gameData[0]);
                 if(trim($playerOpp[0]) == $player->_Team) {

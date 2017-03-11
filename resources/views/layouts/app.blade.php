@@ -50,6 +50,7 @@
                       <li><a href="{{ url('/NBADK') }}">NBA - DK</a></li>
                       <li><a href="{{ url('/NFL') }}">NFL - FD</a></li>
                       <li><a href="{{ url('/NHL') }}">NHL - FD</a></li>
+                      <li><a href="{{ url('/NHLDK') }}">NHL - DK</a></li>
                     </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">

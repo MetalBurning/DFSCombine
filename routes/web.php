@@ -34,6 +34,8 @@ Auth::routes();
 //NFL
 Route::get('/NFL', 'NFLController@NFL');
 Route::post('/NFL/loadFanDuelPlayers', 'NFLController@loadFanDuelPlayers');
+Route::post('/NFL/loadDraftKingsPlayers', 'NFLController@loadDraftKingsPlayers');
+Route::post('/NFL/loadDraftKingsFPPG', 'NFLController@loadDraftKingsFPPG');
 Route::post('/NFL/loadHistory', 'NFLController@loadHistory');
 
 Route::post('/NFL/buildDraft', 'NFLController@buildDraft');
@@ -45,6 +47,9 @@ Route::post('/NFL/update', 'NFLController@update');
 Route::post('/NFL/delete', 'NFLController@delete');
 
 Route::post('/NFL/updateTitle', 'NFLController@updateTitle');
+
+//NFL DK
+Route::get('/NFLDK', 'NFLController@NFLDK');
 
 //NBA
 Route::get('/NBA', 'NBAController@NBA');
@@ -84,3 +89,6 @@ Route::post('/NHL/update', 'NHLController@update');
 Route::post('/NHL/delete', 'NHLController@delete');
 
 Route::post('/NHL/updateTitle', 'NHLController@updateTitle');
+
+//NHL DK
+Route::get('/NHLDK', 'NHLController@NHLDK');

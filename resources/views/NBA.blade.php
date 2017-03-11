@@ -128,112 +128,9 @@
 
                                           </div>
 
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr class="visible-md visible-lg">
-                                                            <th>Add</th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="sortType = '_Name'; sortReverse = !sortReverse">
-                                                                      Name
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="sortType = '_Team'; sortReverse = !sortReverse">
-                                                                    Team
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="sortType = '_Opponent'; sortReverse = !sortReverse">
-                                                                      Opp
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link" ng-click="sortType = '_Game'; sortReverse = !sortReverse">
-                                                                    Game
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="sortType = '_Position'; sortReverse = !sortReverse">
-                                                                    Pos
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="sortType = '_FPPG'; sortReverse = !sortReverse">
-                                                                    FPPG
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="sortType = '_ActualFantasyPoints'; sortReverse = !sortReverse">
-                                                                    Actual
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link" ng-click="sortType = '_Salary'; sortReverse = !sortReverse">
-                                                                    Salary
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="sortType = '_ProjectedPointsPerDollar'; sortReverse = !sortReverse">
-                                                                    Pts / $
-                                                                </span>
-                                                            </th>
-                                                        </tr>
-                                                        <tr class="visible-xs  visible-sm">
-                                                            <th>Add</th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="sortType = '_Name'; sortReverse = !sortReverse">
-                                                                      Name
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link" ng-click="sortType = '_Game'; sortReverse = !sortReverse">
-                                                                    Game
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="sortType = '_FPPG'; sortReverse = !sortReverse">
-                                                                    FPPG
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="sortType = '_ActualFantasyPoints'; sortReverse = !sortReverse">
-                                                                    Actual
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link" ng-click="sortType = '_Salary'; sortReverse = !sortReverse">
-                                                                    Salary
-                                                                </span>
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody ng-repeat="player in _AllPlayers | orderBy:sortType:sortReverse | position:SelectedPosition | team:SelectedTeam">
-                                                        <tr class="@{{player._playerInjured}} visible-md visible-lg">
-                                                            <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player, SelectedPosition)" ng-click="addPlayerToPool(player, SelectedPosition)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player, SelectedPosition)" ng-click="removePlayerFromPool(player, SelectedPosition)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Team}}</td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Opponent}}</td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Game}}</td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Position}}</td>
-                                                            <td><input class="form-control actualPoints"  ng-model="player._FPPG" type="number" ng-change="updatePlayerPtsPerDollar(player)" ></td>
-                                                            <td><input class="form-control actualPoints"  ng-model="player._ActualFantasyPoints" type="number" ></td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Salary}}</td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._ProjectedPointsPerDollar}}</td>
-                                                        </tr>
-                                                        <tr class="@{{player._playerInjured}} visible-xs  visible-sm">
-                                                            <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player, SelectedPosition)" ng-click="addPlayerToPool(player, SelectedPosition)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player, SelectedPosition)" ng-click="removePlayerFromPool(player, SelectedPosition)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Game}}</td>
-                                                            <td><input class="form-control actualPoints"  ng-model="player._FPPG" type="number" ></td>
-                                                            <td><input class="form-control actualPoints"  ng-model="player._ActualFantasyPoints" type="number" ></td>
-                                                            <td ng-click="openClosePlayerDetails(player)">@{{player._Salary}}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
+                                          @include('playersFD')
+
+
                                     </div>
                                 </div>
                             </div>
@@ -491,49 +388,8 @@
                                             </div>
                                         </div>
                                         <div class="row" >
-                                            <div class="col-xs-12"  >
-                                                <table class="table table-hover" >
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Draft</th>
-                                                            <th>
-                                                                <span class="fake-link" ng-click="setDraftSortTypeAndReverse('FPPG')">
-                                                                    FPPG
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('Actual')">
-                                                                    Actual Pts
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('salaryLeft')">
-                                                                    Salary left
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('pointsPerDollar')">
-                                                                    Average Value
-                                                                </span>
-                                                            </th>
-                                                            <th>
-                                                                <span class="fake-link"  ng-click="setDraftSortTypeAndReverse('averageRank')">
-                                                                    Average Rank
-                                                                </span>
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody >
-                                                        <tr ng-repeat="draft in _AllDisplayedDraftData | orderBy:sortTypeDraft:sortReverseDraft">
-                                                            <td>@{{$index + 1}} <button class="btn btn-xs btn-danger" ng-click="removeDraft(draft)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
-                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.FPPG}}</td>
-                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.Actual}}</td>
-                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.salaryLeft}}</td>
-                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.pointsPerDollar}}</td>
-                                                            <td ng-click="openCloseDraftDetails(draft);">@{{draft.averageRank}}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                            <div class="col-xs-12" >
+                                              @include('draftTable')
                                             </div>
                                         </div>
                                     </div>
@@ -543,63 +399,7 @@
                     </uib-tab>
 
                     <uib-tab index="1" heading="DataBase" ng-click="loadHistory()">
-                        <div class="row">
-                            <div class="col-xs-12">
-                              <div class="panel panel-default" >
-                                  <div class="panel-heading">
-                                    <div class='btn-toolbar pull-right'>
-                                      <label class="btn btn-primary btn-file btn-xs">
-                                          Add Actual CSV File <input type="file" style="display: none;" custom-on-change="loadActual">
-                                      </label>
-                                      <label class="btn btn-primary btn-file btn-xs">
-                                          Add Fanduel Player CSV File <input type="file" style="display: none;" custom-on-change="loadPlayers">
-                                      </label>
-
-                                    </div>
-                                      <h3 class="panel-title">Load Saved History</h3>
-
-                                  </div>
-                                  <div class="panel-body" set-height id="savedHistory">
-                                    <div class="row">
-                                      <div class="col-xs-12">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Draft #</th>
-                                                    <th>Title</th>
-                                                    <th>Site</th>
-                                                    <th>Draft Created Date</th>
-                                                    <th>Load</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody ng-repeat="savedSettings in savedPastSettings">
-                                              <tr>
-                                                <td class="col-md-1">@{{$index+1}}</td>
-                                                <td class="col-md-3"><input class="form-control" type="text" ng-model="savedSettings.title"></td>
-                                                <td class="col-md-2">@{{savedSettings.site}}</td>
-                                                <td class="col-md-2">@{{savedSettings.created_at}}</td>
-                                                <td class="col-md-4">
-                                                  <button class="btn btn-sm btn-primary" ng-disabled="savedSettings.site === 'DraftKings'" ng-click="read(savedSettings.id)">Load</button>
-                                                  <button class="btn btn-sm btn-info" ng-click="updateTitle(savedSettings.id, savedSettings.title)">Update</button>
-                                                  -
-                                                  <button class="btn btn-sm btn-danger"  ng-show="!showDeleteConfirmation(savedSettings.id)" ng-click="setDeleteConfirmation(savedSettings.id)">Delete</button>
-                                                  <button class="btn btn-sm btn-primary" ng-show="showDeleteConfirmation(savedSettings.id)" ng-click="delete(savedSettings.id)">Yes</button>
-                                                  <button class="btn btn-sm btn-default" ng-show="showDeleteConfirmation(savedSettings.id)" ng-click="unsetDeleteConfirmation()">No</button>
-                                                </td>
-                                              </tr>
-                                            </tbody>
-                                          </table>
-                                      </div>
-                                    </div>
-                                    <div class="row">
-                                      <div class="col-sm-12">
-                                        <button class="btn btn-info" ng-click="loadHistory()" ng-disabled="savedPastSettings.length % 10 != 0">Load More</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                              </div>
-                            </div>
-                        </div>
+                        @include('databaseFD')
                     </uib-tab>
                 </uib-tabset>
             </div>

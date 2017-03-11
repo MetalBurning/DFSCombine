@@ -4,13 +4,14 @@ var NFLApp = angular.module('NFLApp', ['ui.bootstrap']);
 NFLApp.filter('positionDK', function () {
     return function (allPlayers, searchPosition) {
         var filteredPlayers = [];
-        if(searchPosition === 'UTIL') {
-          return allPlayers;
-        }
         allPlayers.forEach(function (player) {
             if (searchPosition == '' || searchPosition == undefined) {
               filteredPlayers.push(player);
-            } else if (player._Position.indexOf(searchPosition) !== -1) {
+            } else if(searchPosition === 'FLEX') {
+              if(player._Position !== 'DST' && player._Position !== 'QB') {
+                filteredPlayers.push(player);
+              }
+            } else if (player._Position.indexOf(searchPosition.replace(/[0-9]/g, '')) !== -1) {
               filteredPlayers.push(player);
             }
         });

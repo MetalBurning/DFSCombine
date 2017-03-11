@@ -4,13 +4,14 @@ var NHLApp = angular.module('NHLApp', ['ui.bootstrap']);
 NHLApp.filter('positionDK', function () {
     return function (allPlayers, searchPosition) {
         var filteredPlayers = [];
-        if(searchPosition === 'UTIL') {
-          return allPlayers;
-        }
         allPlayers.forEach(function (player) {
             if (searchPosition == '' || searchPosition == undefined) {
               filteredPlayers.push(player);
-            } else if (player._Position.indexOf(searchPosition) !== -1) {
+            } else if(searchPosition === 'UTIL') {
+              if(player._Position !== 'G') {
+                filteredPlayers.push(player);
+              }
+            } else if (player._Position.indexOf(searchPosition.replace(/[0-9]/g, '')) !== -1) {
               filteredPlayers.push(player);
             }
         });
