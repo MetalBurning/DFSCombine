@@ -68,7 +68,6 @@ Route::post('/NBA/delete', 'NBAController@delete');
 
 Route::post('/NBA/updateTitle', 'NBAController@updateTitle');
 
-
 //NBA DK
 Route::get('/NBADK', 'NBAController@NBADK');
 
@@ -92,3 +91,23 @@ Route::post('/NHL/updateTitle', 'NHLController@updateTitle');
 
 //NHL DK
 Route::get('/NHLDK', 'NHLController@NHLDK');
+
+//MLB
+Route::get('/MLB', 'MLBController@MLB');
+Route::post('/MLB/loadFanDuelPlayers', 'MLBController@loadFanDuelPlayers');
+Route::post('/MLB/loadDraftKingsPlayers', 'MLBController@loadDraftKingsPlayers');
+Route::post('/MLB/loadDraftKingsFPPG', 'MLBController@loadDraftKingsFPPG');
+Route::post('/MLB/loadHistory', 'MLBController@loadHistory');
+
+Route::post('/MLB/buildDraft', 'MLBController@buildDraft');
+Route::post('/MLB/downloadDrafts', 'MLBController@downloadDrafts');
+
+Route::post('/MLB/create', 'MLBController@create');
+Route::post('/MLB/read', 'MLBController@read');
+Route::post('/MLB/update', 'MLBController@update');
+Route::post('/MLB/delete', 'MLBController@delete');
+
+Route::post('/MLB/updateTitle', 'MLBController@updateTitle');
+
+//NBA DK
+Route::get('/MLBDK', 'MLBController@MLBDK');

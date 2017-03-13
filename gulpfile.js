@@ -42,6 +42,7 @@ require('laravel-elixir-vue-2');
      './public/js/AngularControllers/NFL'
    );
  });
+ 
  elixir(function(mix) {
    mix.webpack(
      'NHL/NHLController.js',
@@ -54,5 +55,20 @@ require('laravel-elixir-vue-2');
    mix.webpack(
      'NHL/NHL.js',
      './public/js/AngularControllers/NHL'
+   );
+ });
+
+ elixir(function(mix) {
+   mix.webpack(
+     'MLB/MLBController.js',
+     './public/js/AngularControllers/MLB'
+   );
+   mix.webpack(
+     'MLB/MLBDraftKingsController.js',
+     './public/js/AngularControllers/MLB'
+   );
+   mix.webpack(
+     'MLB/MLB.js',
+     './public/js/AngularControllers/MLB'
    );
  });

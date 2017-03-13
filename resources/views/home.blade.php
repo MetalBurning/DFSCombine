@@ -16,9 +16,12 @@
     </div>
     <div class="col-sm-6">
       <h2 class="featurette-heading"> DFS Package: $4.99/month</h2>
-        <p>Gain access to the following sports: NBA, NFL, NHL, and MLB(coming soon).</p>
+        <p>Gain access to the following sports: NBA, NFL, NHL, and MLB.</p>
         <p>Supported Sites: DraftKings, FanDuel</p>
-        <p><a class="btn btn-primary" href="/register" role="button">Sign Up »</a></p>
+        @if (Auth::guest())
+          <p><a class="btn btn-primary" href="/register" role="button">Sign Up »</a></p>
+        @endif
+
     </div>
   </div>
   <hr class="featurette-divider" id="how">
@@ -30,7 +33,9 @@
       <h2 class="featurette-heading" >How does it work?</h2>
         <p>You add players to a positional player pool. Then calculate all possible drafts between each combination of player. </p>
         <p>This app works similarly to "<a href="https://en.wikipedia.org/wiki/Proof_by_exhaustion">Brute Forcing - Proof by exhaustion</a>".</p>
-        <p><a class="btn btn-primary" href="/register" role="button">Register »</a></p>
+        @if (Auth::guest())
+          <p><a class="btn btn-primary" href="/register" role="button">Register »</a></p>
+        @endif
     </div>
   </div>
   <hr class="featurette-divider">
