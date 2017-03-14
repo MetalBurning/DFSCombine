@@ -233,7 +233,32 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         }
         reader.readAsText(file);
     }
+    $scope.loadDraftKingsFPPG = function (event) {
 
+      var formData = new FormData();
+      formData.append('csvFile', event.target.files[0]);
+
+      $http.post("/MLB/loadDraftKingsFPPG", formData, {
+          headers: {
+              "Content-Type": undefined,
+              transformRequest: angular.identity
+          }
+      }).then(function successCallBack(response) {
+          response.data.forEach(function(playerLoaded) {
+            $scope._AllPlayers.forEach(function(player) {
+              if(player._Name === playerLoaded._Name && player._Salary === parseInt(playerLoaded._Salary) && parseFloat(player._FPPG) <= 0) {
+                player._FPPG = parseFloat(playerLoaded._FPPG);
+                var pointsPerDollar = parseFloat((player._FPPG / player._Salary).toFixed(5));
+                player._ProjectedPointsPerDollar = pointsPerDollar;
+              }
+            });
+          });
+          $scope.displayNewMessage("success", "Players FPPG loaded successfully.");
+      }, function errorCallBack(response) {
+          console.log(response);
+          $scope.displayNewMessage("danger", "Error: Players FPPG could not be loaded.");
+      });
+    }
     $scope.loadDKPlayers = function (event) {
       $scope.clearPlayerPools();
       $scope.clearDrafts();
@@ -1078,7 +1103,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.openCloseDraftDetails = function (draftInput) {
         var modalInstance = $uibModal.open({
             templateUrl: '/js/AngularControllers/modalDraft.html',
-            controller: 'DraftModalController',
+            controller: 'DKDraftModalController',
             size:'lg',
             resolve: {
                 draft: function () {

@@ -29,7 +29,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     $scope.SelectedValidDrafts = true;
     $scope.sortTypeDraft = 'FPPG';
 
-    $scope.sortType = '_FPPG'; // set the default sort type
+    $scope.sortType = '_Salary'; // set the default sort type
     $scope.sortReverse = true;  // set the default sort order
     $scope.sortReverseDraft = true;
     $scope.SelectedPosition = 'PG';     // set the default search/filter term
