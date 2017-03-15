@@ -364,6 +364,15 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       }
     }
 
+    $scope.addSalaryImpliedPts = function() {
+      $scope._AllPlayers.forEach(function(player) {
+        player._FPPG = player._Salary * 0.004;
+        player._FPPG = player._FPPG.toFixed(1);
+        player._FPPG = parseFloat(player._FPPG);
+        $scope.updatePlayerPtsPerDollar(player);
+      });
+    }
+
     $scope.selectTopFPPGPlayers = function() {
       $scope.clearPlayerPools();
       if($scope._AllPlayers.length === 0) {
