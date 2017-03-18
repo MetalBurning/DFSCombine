@@ -542,49 +542,61 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 }
             }
             if($scope._AllDraftData.length <= csvRows.length) {
+              var numRowsChanged = 0;
               var drafts = $scope._AllDraftData;
               drafts = $filter('checkValidOnly')(drafts, true);
               drafts = $filter('orderBy')(drafts, $scope.sortTypeDraft, $scope.sortReverseDraft);
               var csvContent = "data:text/csv;charset=utf-8,";
               csvContent = csvContent + "entry_id,contest_id,contest_name,PG,PG,SG,SG,SF,SF,PF,PF,C\n";
               for(var k = 0; k < csvRows.length; k++) {
-                csvContent =  csvContent + csvRows[k].entry_id+','+csvRows[k].contest_id+','+csvRows[k].contest_name+',';
-                var lineOfText = "";
-                for(var j = 0; j < drafts[k].players.length;j++) {
-                  if (j == 0)
-                  {
-                      lineOfText = lineOfText + drafts[k].players[j].playerID;
+                var splitContestID = csvRows[k].contest_id.split('-');
+                if(drafts[k].players[0].playerID.indexOf(splitContestID[0]) !== -1) {
+                  //contains the same contest id within the player id, hard coded to check on ly the first player
+                  csvContent =  csvContent + csvRows[k].entry_id+','+csvRows[k].contest_id+','+csvRows[k].contest_name+',';
+                  var lineOfText = "";
+                  for(var j = 0; j < drafts[k].players.length;j++) {
+                    if (j == 0)
+                    {
+                        lineOfText = lineOfText + drafts[k].players[j].playerID;
+                    }
+                    else
+                    {
+                        lineOfText = lineOfText + "," + drafts[k].players[j].playerID;
+                    }
                   }
-                  else
-                  {
-                      lineOfText = lineOfText + "," + drafts[k].players[j].playerID;
-                  }
-                }
-                csvContent = csvContent + lineOfText + "\n";
-              }
-              var anchor = angular.element('<a/>');
-              anchor.css({ display: 'none' }); // Make sure it's not visible
-              angular.element(document.body).append(anchor); // Attach to document
-              var CSVName = "";
-              $scope._AllTeams.forEach(function (team) {
-                if(CSVName.length == 0) {
-                  CSVName = team;
+                  csvContent = csvContent + lineOfText + "\n";
+                  numRowsChanged++;
                 } else {
-                  CSVName = CSVName + "_" + team;
+                  $scope.$apply(function() {
+                    $scope.displayNewMessage("warning", "WARNING: player ID does not contain contest ID, Are you sure you have the correct CSV Replace file?");
+                  });
                 }
-              });
-              anchor.attr({
-                  href: encodeURI(csvContent),
-                  target: '_blank',
-                  download: 'CSVReplace_'+CSVName+'.csv'
-              })[0].click();
+              }
+              if(numRowsChanged > 0) {
+                var anchor = angular.element('<a/>');
+                anchor.css({ display: 'none' }); // Make sure it's not visible
+                angular.element(document.body).append(anchor); // Attach to document
+                var CSVName = "";
+                $scope._AllTeams.forEach(function (team) {
+                  if(CSVName.length == 0) {
+                    CSVName = team;
+                  } else {
+                    CSVName = CSVName + "_" + team;
+                  }
+                });
+                anchor.attr({
+                    href: encodeURI(csvContent),
+                    target: '_blank',
+                    download: 'CSVReplace_'+CSVName+'.csv'
+                })[0].click();
 
-              anchor.remove(); // Clean it up afterwards
-              $scope.$apply(function() {
+                anchor.remove(); // Clean it up afterwards
+                $scope.$apply(function() {
 
-                $scope.displayNewMessage("success", "Player Actual Results have been successfully loaded");
+                  $scope.displayNewMessage("success", "Successfully replaced lineups in CSV");
 
-              });
+                });
+              }
             } else {
               $scope.$apply(function() {
 
