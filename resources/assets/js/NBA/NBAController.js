@@ -398,7 +398,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         if(j == 0 || j == 1 ) {
           $scope.addPlayerToPool(allSGs[j], 'SG1');
         }
-        if( j == 1 || j == 2 || j == 3 ) {
+        if( j == 1 || j == 2 || j == 3 || j == 4) {
           $scope.addPlayerToPool(allSGs[j], 'SG2');
         }
       }
@@ -416,7 +416,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         if( j == 0 || j == 1 ) {
           $scope.addPlayerToPool(allPFs[j], 'PF1');
         }
-        if(j == 1 || j == 2 || j == 3 ) {
+        if(j == 1 || j == 2 || j == 3 || j == 4) {
           $scope.addPlayerToPool(allPFs[j], 'PF2');
         }
       }
