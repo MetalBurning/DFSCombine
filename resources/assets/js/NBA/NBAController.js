@@ -499,7 +499,104 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
 
     }
+    $scope.CSVReplace = function (event) {
 
+
+      var file = event.target.files[0];
+
+        var allText = "";
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            allText = reader.result;
+
+            var allTextLines = allText.split(/\r\n|\n/);
+            var headers = allTextLines[0].split(',');
+
+            var csvRows = [];
+            for (var i = 1; i < allTextLines.length; i++) {
+                var data = allTextLines[i].split(',');
+
+                var entry_id = "";
+                var contest_id = "";
+                var contest_name = "";
+                var playerPoints = 0;
+                var playerSalary = 0;
+                for (var j = 0; j < data.length; j++) {
+                    switch (j) {
+                        case 0:
+                            entry_id = data[j].replace('"', '').replace('"', '').trim();
+                            break;
+                        case 1:
+                            contest_id = data[j].replace('"', '').replace('"', '').trim();
+
+                            break;
+                        case 2:
+                            contest_name = data[j].replace('"', '').replace('"', '').trim();
+                            break;
+
+                    }
+                }
+                var csvRow = {entry_id: entry_id, contest_id: contest_id, contest_name: contest_name};
+                if(entry_id !== undefined && entry_id !== '') {
+                  csvRows.push(csvRow);
+                }
+            }
+            if($scope._AllDraftData.length <= csvRows.length) {
+              var drafts = $scope._AllDraftData;
+              drafts = $filter('checkValidOnly')(drafts, true);
+              drafts = $filter('orderBy')(drafts, $scope.sortTypeDraft, $scope.sortReverseDraft);
+              var csvContent = "data:text/csv;charset=utf-8,";
+              csvContent = csvContent + "entry_id,contest_id,contest_name,PG,PG,SG,SG,SF,SF,PF,PF,C\n";
+              for(var k = 0; k < csvRows.length; k++) {
+                csvContent =  csvContent + csvRows[k].entry_id+','+csvRows[k].contest_id+','+csvRows[k].contest_name+',';
+                var lineOfText = "";
+                for(var j = 0; j < drafts[k].players.length;j++) {
+                  if (j == 0)
+                  {
+                      lineOfText = lineOfText + drafts[k].players[j].playerID;
+                  }
+                  else
+                  {
+                      lineOfText = lineOfText + "," + drafts[k].players[j].playerID;
+                  }
+                }
+                csvContent = csvContent + lineOfText + "\n";
+              }
+              var anchor = angular.element('<a/>');
+              anchor.css({ display: 'none' }); // Make sure it's not visible
+              angular.element(document.body).append(anchor); // Attach to document
+              var CSVName = "";
+              $scope._AllTeams.forEach(function (team) {
+                if(CSVName.length == 0) {
+                  CSVName = team;
+                } else {
+                  CSVName = CSVName + "_" + team;
+                }
+              });
+              anchor.attr({
+                  href: encodeURI(csvContent),
+                  target: '_blank',
+                  download: 'CSVReplace_'+CSVName+'.csv'
+              })[0].click();
+
+              anchor.remove(); // Clean it up afterwards
+              $scope.$apply(function() {
+
+                $scope.displayNewMessage("success", "Player Actual Results have been successfully loaded");
+
+              });
+            } else {
+              $scope.$apply(function() {
+
+                $scope.displayNewMessage("warning", "WARNING: # drafts: "+$scope._AllDraftData.length+" is larger then the expected csvFile: "+csvRows.length);
+
+              });
+            }
+
+
+        }
+        reader.readAsText(file);
+    }
     $scope.DownloadDraftCSV = function () {
         if ($scope._AllDraftData.length == 0) {
             $scope.displayNewMessage("danger", "Error: Cannot downloaded drafts when none have been generated");
