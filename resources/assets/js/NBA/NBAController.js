@@ -443,20 +443,116 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
       }
       $http.post("/NBA/specialLineup", {'postObject':JSON.stringify(PGPoints)}).then(function successCallBack(response) {
+        var Values1 = [];
+        var Values2 = [];
         response.data[0].forEach(function(Value) {
-          for(var j = 0; j < allPGs.length; j++) {
-            if(allPGs[j]._FPPG === Value[0]) {
-              $scope.addPlayerToPool(allPGs[j], 'PG1');
-            }
-          }
+          Values1.push(Value[0]);
         });
         response.data[1].forEach(function(Value) {
-          for(var j = 0; j < allPGs.length; j++) {
-            if(allPGs[j]._FPPG === Value[0]) {
-              $scope.addPlayerToPool(allPGs[j], 'PG2');
+          Values2.push(Value[0]);
+        });
+
+        Values1 = Values1.sort(function(a, b){return b-a});
+        Values2 = Values2.sort(function(a, b){return b-a});
+
+        var Value1Sum = 0;
+        for(var j = 0; j < Values1.length; j++) {
+          Value1Sum += Values1[j];
+        }
+        var Value1Avg = Value1Sum/Values1.length;
+
+        var Value2Sum = 0;
+        for(var j = 0; j < Values2.length; j++) {
+          Value2Sum += Values2[j];
+        }
+        var Value2Avg = Value2Sum/Values2.length;
+        if(Value1Avg > Value2Avg) {
+          if(Values1.length >= 4) {
+            //split value1s into both positions
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allPGs.length; k++) {
+                if(allPGs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allPGs[k], 'PG1');
+                }
+              }
+            }
+            //lower half of values1
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allPGs.length; k++) {
+                if(allPGs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allPGs[k], 'PG2');
+                }
+              }
+            }
+          } else {
+            //add as normal
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allPGs.length; k++) {
+                if(allPGs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allPGs[k], 'PG1');
+                }
+              }
+            }
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allPGs.length; k++) {
+                if(allPGs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allPGs[k], 'PG2');
+                }
+              }
+            }
+            //add top values from first half of values1, except the #1 value
+            for(var j = 1; j < Values1.length; j++) {
+              for(var k = 0; k < allPGs.length; k++) {
+                if(allPGs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allPGs[k], 'PG2');
+                }
+              }
             }
           }
-        });
+        } else {
+          if(Values2.length >= 4) {
+            //split value1s into both positions
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allPGs.length; k++) {
+                if(allPGs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allPGs[k], 'PG1');
+                }
+              }
+            }
+            //lower half of values1
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allPGs.length; k++) {
+                if(allPGs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allPGs[k], 'PG2');
+                }
+              }
+            }
+          } else {
+            //add as normal
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allPGs.length; k++) {
+                if(allPGs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allPGs[k], 'PG1');
+                }
+              }
+            }
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allPGs.length; k++) {
+                if(allPGs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allPGs[k], 'PG2');
+                }
+              }
+            }
+            //add top values from first half of values1, except the #1 value
+            for(var j = 1; j < Values2.length; j++) {
+              for(var k = 0; k < allPGs.length; k++) {
+                if(allPGs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allPGs[k], 'PG2');
+                }
+              }
+            }
+          }
+        }
       }, function errorCallBack(response) {
           console.log(response);
       });
@@ -469,23 +565,120 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
       }
       $http.post("/NBA/specialLineup", {'postObject':JSON.stringify(SGPoints)}).then(function successCallBack(response) {
+        var Values1 = [];
+        var Values2 = [];
         response.data[0].forEach(function(Value) {
-          for(var j = 0; j < allSGs.length; j++) {
-            if(allSGs[j]._FPPG === Value[0]) {
-              $scope.addPlayerToPool(allSGs[j], 'SG1');
-            }
-          }
+          Values1.push(Value[0]);
         });
         response.data[1].forEach(function(Value) {
-          for(var j = 0; j < allSGs.length; j++) {
-            if(allSGs[j]._FPPG === Value[0]) {
-              $scope.addPlayerToPool(allSGs[j], 'SG2');
+          Values2.push(Value[0]);
+        });
+
+        Values1 = Values1.sort(function(a, b){return b-a});
+        Values2 = Values2.sort(function(a, b){return b-a});
+
+        var Value1Sum = 0;
+        for(var j = 0; j < Values1.length; j++) {
+          Value1Sum += Values1[j];
+        }
+        var Value1Avg = Value1Sum/Values1.length;
+
+        var Value2Sum = 0;
+        for(var j = 0; j < Values2.length; j++) {
+          Value2Sum += Values2[j];
+        }
+        var Value2Avg = Value2Sum/Values2.length;
+        if(Value1Avg > Value2Avg) {
+          if(Values1.length >= 4) {
+            //split value1s into both positions
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allSGs.length; k++) {
+                if(allSGs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allSGs[k], 'SG1');
+                }
+              }
+            }
+            //lower half of values1
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allSGs.length; k++) {
+                if(allSGs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allSGs[k], 'SG2');
+                }
+              }
+            }
+          } else {
+            //add as normal
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allSGs.length; k++) {
+                if(allSGs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allSGs[k], 'SG1');
+                }
+              }
+            }
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allSGs.length; k++) {
+                if(allSGs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allSGs[k], 'SG2');
+                }
+              }
+            }
+            //add top values from first half of values1, except the #1 value
+            for(var j = 1; j < Values1.length; j++) {
+              for(var k = 0; k < allSGs.length; k++) {
+                if(allSGs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allSGs[k], 'SG2');
+                }
+              }
             }
           }
-        });
+        } else {
+          if(Values2.length >= 4) {
+            //split value1s into both positions
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allSGs.length; k++) {
+                if(allSGs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allSGs[k], 'SG1');
+                }
+              }
+            }
+            //lower half of values1
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allSGs.length; k++) {
+                if(allSGs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allSGs[k], 'SG2');
+                }
+              }
+            }
+          } else {
+            //add as normal
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allSGs.length; k++) {
+                if(allSGs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allSGs[k], 'SG1');
+                }
+              }
+            }
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allSGs.length; k++) {
+                if(allSGs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allSGs[k], 'SG2');
+                }
+              }
+            }
+            //add top values from first half of values1, except the #1 value
+            for(var j = 1; j < Values2.length; j++) {
+              for(var k = 0; k < allSGs.length; k++) {
+                if(allSGs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allSGs[k], 'SG2');
+                }
+              }
+            }
+          }
+        }
       }, function errorCallBack(response) {
           console.log(response);
       });
+
 
       //SF
       var SFPoints = [];
@@ -495,23 +688,120 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
       }
       $http.post("/NBA/specialLineup", {'postObject':JSON.stringify(SFPoints)}).then(function successCallBack(response) {
+        var Values1 = [];
+        var Values2 = [];
         response.data[0].forEach(function(Value) {
-          for(var j = 0; j < allSFs.length; j++) {
-            if(allSFs[j]._FPPG === Value[0]) {
-              $scope.addPlayerToPool(allSFs[j], 'SF1');
-            }
-          }
+          Values1.push(Value[0]);
         });
         response.data[1].forEach(function(Value) {
-          for(var j = 0; j < allSFs.length; j++) {
-            if(allSFs[j]._FPPG === Value[0]) {
-              $scope.addPlayerToPool(allSFs[j], 'SF2');
+          Values2.push(Value[0]);
+        });
+
+        Values1 = Values1.sort(function(a, b){return b-a});
+        Values2 = Values2.sort(function(a, b){return b-a});
+
+        var Value1Sum = 0;
+        for(var j = 0; j < Values1.length; j++) {
+          Value1Sum += Values1[j];
+        }
+        var Value1Avg = Value1Sum/Values1.length;
+
+        var Value2Sum = 0;
+        for(var j = 0; j < Values2.length; j++) {
+          Value2Sum += Values2[j];
+        }
+        var Value2Avg = Value2Sum/Values2.length;
+        if(Value1Avg > Value2Avg) {
+          if(Values1.length >= 4) {
+            //split value1s into both positions
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allSFs.length; k++) {
+                if(allSFs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allSFs[k], 'SF1');
+                }
+              }
+            }
+            //lower half of values1
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allSFs.length; k++) {
+                if(allSFs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allSFs[k], 'SF2');
+                }
+              }
+            }
+          } else {
+            //add as normal
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allSFs.length; k++) {
+                if(allSFs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allSFs[k], 'SF1');
+                }
+              }
+            }
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allSFs.length; k++) {
+                if(allSFs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allSFs[k], 'SF2');
+                }
+              }
+            }
+            //add top values from first half of values1, except the #1 value
+            for(var j = 1; j < Values1.length; j++) {
+              for(var k = 0; k < allSFs.length; k++) {
+                if(allSFs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allSFs[k], 'SF2');
+                }
+              }
             }
           }
-        });
+        } else {
+          if(Values2.length >= 4) {
+            //split value1s into both positions
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allSFs.length; k++) {
+                if(allSFs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allSFs[k], 'SF1');
+                }
+              }
+            }
+            //lower half of values1
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allSFs.length; k++) {
+                if(allSFs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allSFs[k], 'SF2');
+                }
+              }
+            }
+          } else {
+            //add as normal
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allSFs.length; k++) {
+                if(allSFs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allSFs[k], 'SF1');
+                }
+              }
+            }
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allSFs.length; k++) {
+                if(allSFs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allSFs[k], 'SF2');
+                }
+              }
+            }
+            //add top values from first half of values1, except the #1 value
+            for(var j = 1; j < Values2.length; j++) {
+              for(var k = 0; k < allSFs.length; k++) {
+                if(allSFs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allSFs[k], 'SF2');
+                }
+              }
+            }
+          }
+        }
       }, function errorCallBack(response) {
           console.log(response);
       });
+
 
       //PF
       var PFPoints = [];
@@ -521,24 +811,120 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
       }
       $http.post("/NBA/specialLineup", {'postObject':JSON.stringify(PFPoints)}).then(function successCallBack(response) {
+        var Values1 = [];
+        var Values2 = [];
         response.data[0].forEach(function(Value) {
-          for(var j = 0; j < allPFs.length; j++) {
-            if(allPFs[j]._FPPG === Value[0]) {
-              $scope.addPlayerToPool(allPFs[j], 'PF1');
-            }
-          }
+          Values1.push(Value[0]);
         });
         response.data[1].forEach(function(Value) {
-          for(var j = 0; j < allPFs.length; j++) {
-            if(allPFs[j]._FPPG === Value[0]) {
-              $scope.addPlayerToPool(allPFs[j], 'PF2');
+          Values2.push(Value[0]);
+        });
+
+        Values1 = Values1.sort(function(a, b){return b-a});
+        Values2 = Values2.sort(function(a, b){return b-a});
+
+        var Value1Sum = 0;
+        for(var j = 0; j < Values1.length; j++) {
+          Value1Sum += Values1[j];
+        }
+        var Value1Avg = Value1Sum/Values1.length;
+
+        var Value2Sum = 0;
+        for(var j = 0; j < Values2.length; j++) {
+          Value2Sum += Values2[j];
+        }
+        var Value2Avg = Value2Sum/Values2.length;
+        if(Value1Avg > Value2Avg) {
+          if(Values1.length >= 4) {
+            //split value1s into both positions
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allPFs.length; k++) {
+                if(allPFs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allPFs[k], 'PF1');
+                }
+              }
+            }
+            //lower half of values1
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allPFs.length; k++) {
+                if(allPFs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allPFs[k], 'PF2');
+                }
+              }
+            }
+          } else {
+            //add as normal
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allPFs.length; k++) {
+                if(allPFs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allPFs[k], 'PF1');
+                }
+              }
+            }
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allPFs.length; k++) {
+                if(allPFs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allPFs[k], 'PF2');
+                }
+              }
+            }
+            //add top values from first half of values1, except the #1 value
+            for(var j = 1; j < Values1.length; j++) {
+              for(var k = 0; k < allPFs.length; k++) {
+                if(allPFs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allPFs[k], 'PF2');
+                }
+              }
             }
           }
-        });
+        } else {
+          if(Values2.length >= 4) {
+            //split value1s into both positions
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allPFs.length; k++) {
+                if(allPFs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allPFs[k], 'PF1');
+                }
+              }
+            }
+            //lower half of values1
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allPFs.length; k++) {
+                if(allPFs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allPFs[k], 'PF2');
+                }
+              }
+            }
+          } else {
+            //add as normal
+            for(var j = 0; j < Values2.length; j++) {
+              for(var k = 0; k < allPFs.length; k++) {
+                if(allPFs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allPFs[k], 'PF1');
+                }
+              }
+            }
+            for(var j = 0; j < Values1.length; j++) {
+              for(var k = 0; k < allPFs.length; k++) {
+                if(allPFs[k]._FPPG === Values1[j]) {
+                  $scope.addPlayerToPool(allPFs[k], 'PF2');
+                }
+              }
+            }
+            //add top values from first half of values1, except the #1 value
+            for(var j = 1; j < Values2.length; j++) {
+              for(var k = 0; k < allPFs.length; k++) {
+                if(allPFs[k]._FPPG === Values2[j]) {
+                  $scope.addPlayerToPool(allPFs[k], 'PF2');
+                }
+              }
+            }
+          }
+        }
       }, function errorCallBack(response) {
           console.log(response);
       });
-
+      
       $scope.addPlayerToPool(allCs[0], 'C');
       $scope.addPlayerToPool(allCs[1], 'C');
 
