@@ -71,6 +71,7 @@ Route::post('/NBA/updateTitle', 'NBAController@updateTitle');
 //NBA DK
 Route::get('/NBADK', 'NBAController@NBADK');
 
+Route::post('/NBA/specialLineup', 'NBAController@specialLineup');
 
 //NHL
 Route::get('/NHL', 'NHLController@NHL');

@@ -8,7 +8,8 @@
         "php": ">=5.6.4",
         "laravel/framework": "5.3.*",
         "guzzlehttp/guzzle": "^6.2",
-        "laravel/cashier": "~7.0"
+        "laravel/cashier": "~7.0",
+        "jacobemerick/kmeans": "~1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

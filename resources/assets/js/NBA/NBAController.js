@@ -423,6 +423,126 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       $scope.addPlayerToPool(allCs[0], 'C');
       $scope.addPlayerToPool(allCs[1], 'C');
     }
+    $scope.selectTopSpecialPlayers = function() {
+      $scope.clearPlayerPools();
+      if($scope._AllPlayers.length === 0) {
+        return;
+      }
+      var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
+      var NonInjuredPlayers =  $filter('removeInjured')(orderedPlayers);
+      var allPGs = $filter('position')(NonInjuredPlayers, 'PG');
+      var allSGs = $filter('position')(NonInjuredPlayers, 'SG');
+      var allSFs = $filter('position')(NonInjuredPlayers, 'SF');
+      var allPFs = $filter('position')(NonInjuredPlayers, 'PF');
+      var allCs = $filter('position')(NonInjuredPlayers, 'C');
+
+      var PGPoints = [];
+      for(var j = 0; j < allPGs.length; j++) {
+        if(allPGs[j]._FPPG > 14) {
+          PGPoints.push(allPGs[j]._FPPG);
+        }
+      }
+      $http.post("/NBA/specialLineup", {'postObject':JSON.stringify(PGPoints)}).then(function successCallBack(response) {
+        response.data[0].forEach(function(Value) {
+          for(var j = 0; j < allPGs.length; j++) {
+            if(allPGs[j]._FPPG === Value[0]) {
+              $scope.addPlayerToPool(allPGs[j], 'PG1');
+            }
+          }
+        });
+        response.data[1].forEach(function(Value) {
+          for(var j = 0; j < allPGs.length; j++) {
+            if(allPGs[j]._FPPG === Value[0]) {
+              $scope.addPlayerToPool(allPGs[j], 'PG2');
+            }
+          }
+        });
+      }, function errorCallBack(response) {
+          console.log(response);
+      });
+
+      //SG
+      var SGPoints = [];
+      for(var j = 0; j < allSGs.length; j++) {
+        if(allSGs[j]._FPPG > 14) {
+          SGPoints.push(allSGs[j]._FPPG);
+        }
+      }
+      $http.post("/NBA/specialLineup", {'postObject':JSON.stringify(SGPoints)}).then(function successCallBack(response) {
+        response.data[0].forEach(function(Value) {
+          for(var j = 0; j < allSGs.length; j++) {
+            if(allSGs[j]._FPPG === Value[0]) {
+              $scope.addPlayerToPool(allSGs[j], 'SG1');
+            }
+          }
+        });
+        response.data[1].forEach(function(Value) {
+          for(var j = 0; j < allSGs.length; j++) {
+            if(allSGs[j]._FPPG === Value[0]) {
+              $scope.addPlayerToPool(allSGs[j], 'SG2');
+            }
+          }
+        });
+      }, function errorCallBack(response) {
+          console.log(response);
+      });
+
+      //SF
+      var SFPoints = [];
+      for(var j = 0; j < allSFs.length; j++) {
+        if(allSFs[j]._FPPG > 14) {
+          SFPoints.push(allSFs[j]._FPPG);
+        }
+      }
+      $http.post("/NBA/specialLineup", {'postObject':JSON.stringify(SFPoints)}).then(function successCallBack(response) {
+        response.data[0].forEach(function(Value) {
+          for(var j = 0; j < allSFs.length; j++) {
+            if(allSFs[j]._FPPG === Value[0]) {
+              $scope.addPlayerToPool(allSFs[j], 'SF1');
+            }
+          }
+        });
+        response.data[1].forEach(function(Value) {
+          for(var j = 0; j < allSFs.length; j++) {
+            if(allSFs[j]._FPPG === Value[0]) {
+              $scope.addPlayerToPool(allSFs[j], 'SF2');
+            }
+          }
+        });
+      }, function errorCallBack(response) {
+          console.log(response);
+      });
+
+      //PF
+      var PFPoints = [];
+      for(var j = 0; j < allPFs.length; j++) {
+        if(allPFs[j]._FPPG > 14) {
+          PFPoints.push(allPFs[j]._FPPG);
+        }
+      }
+      $http.post("/NBA/specialLineup", {'postObject':JSON.stringify(PFPoints)}).then(function successCallBack(response) {
+        response.data[0].forEach(function(Value) {
+          for(var j = 0; j < allPFs.length; j++) {
+            if(allPFs[j]._FPPG === Value[0]) {
+              $scope.addPlayerToPool(allPFs[j], 'PF1');
+            }
+          }
+        });
+        response.data[1].forEach(function(Value) {
+          for(var j = 0; j < allPFs.length; j++) {
+            if(allPFs[j]._FPPG === Value[0]) {
+              $scope.addPlayerToPool(allPFs[j], 'PF2');
+            }
+          }
+        });
+      }, function errorCallBack(response) {
+          console.log(response);
+      });
+
+      $scope.addPlayerToPool(allCs[0], 'C');
+      $scope.addPlayerToPool(allCs[1], 'C');
+
+    }
     $scope.parseFloat = function(value)
     {
        return parseFloat(value);

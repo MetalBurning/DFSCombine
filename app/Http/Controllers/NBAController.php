@@ -8,6 +8,7 @@ use DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use stdClass;
+use \App\library\KMeans;
 
 class NBAController extends Controller
 {
@@ -333,6 +334,23 @@ class NBAController extends Controller
     public function NBADK()
     {
         return view('NBADK');
+    }
+
+    public function specialLineup(Request $request)
+    {
+      $this->validate($request, [
+          'postObject' => 'required|json',
+      ]);
+      $dataPoints = json_decode($request['postObject']);
+      $multiDataPoints = [];
+      foreach ($dataPoints as $singleData) {
+        $multiDataPoints[] = [$singleData];
+      }
+      $kmeans = new KMeans($multiDataPoints);
+      $kmeans->cluster(2);
+      $clustered_data = $kmeans->getClusteredData();
+      $centroids = $kmeans->getCentroids();
+      return Response::json($clustered_data, 200);
     }
 
 }
