@@ -438,7 +438,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
       var PGPoints = [];
       for(var j = 0; j < allPGs.length; j++) {
-        if(allPGs[j]._FPPG > 15) {
+        if(allPGs[j]._FPPG > 16) {
           PGPoints.push(allPGs[j]._FPPG);
         }
       }
@@ -560,7 +560,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       //SG
       var SGPoints = [];
       for(var j = 0; j < allSGs.length; j++) {
-        if(allSGs[j]._FPPG > 15) {
+        if(allSGs[j]._FPPG > 16) {
           SGPoints.push(allSGs[j]._FPPG);
         }
       }
@@ -683,7 +683,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       //SF
       var SFPoints = [];
       for(var j = 0; j < allSFs.length; j++) {
-        if(allSFs[j]._FPPG > 15) {
+        if(allSFs[j]._FPPG > 16) {
           SFPoints.push(allSFs[j]._FPPG);
         }
       }
@@ -806,7 +806,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       //PF
       var PFPoints = [];
       for(var j = 0; j < allPFs.length; j++) {
-        if(allPFs[j]._FPPG > 15) {
+        if(allPFs[j]._FPPG > 16) {
           PFPoints.push(allPFs[j]._FPPG);
         }
       }
@@ -924,7 +924,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       }, function errorCallBack(response) {
           console.log(response);
       });
-      
+
       $scope.addPlayerToPool(allCs[0], 'C');
       $scope.addPlayerToPool(allCs[1], 'C');
 
