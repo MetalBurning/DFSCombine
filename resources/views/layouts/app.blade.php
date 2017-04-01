@@ -61,6 +61,7 @@
                       <li><a href="{{ url('/NFL') }}">NFL - FD</a></li>
                       <li><a href="{{ url('/NHL') }}">NHL - FD</a></li>
                       <li><a href="{{ url('/NHLDK') }}">NHL - DK</a></li>
+                      <li><a href="{{ url('/MLB') }}">MLB - FD</a></li>
                       <li><a href="{{ url('/MLBDK') }}">MLB - DK</a></li>
                     </ul>
                     <!-- Right Side Of Navbar -->

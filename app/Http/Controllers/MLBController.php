@@ -67,6 +67,8 @@ class MLBController extends Controller
               }
 
               $player->_playerInjuryDetails = $data[12];
+              $player->_ProbablePitcher = $data[13];
+              $player->_BattingOrder = $data[14];
               $player->_TimesInValidDrafts = 0;
               $player->_TimesInDrafts = 0;
               $player->_PercentInDrafts = -1;

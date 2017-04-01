@@ -1,5 +1,5 @@
 angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filter', '$uibModal', '$window', function ($http, $scope, $filter, $uibModal, $window) {
-    var nhl = this;
+    var mlb = this;
 
     $scope.alerts = [
       { type: 'info', msg: 'Please Upload/Load Players...', number: 1 }
@@ -13,15 +13,15 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope._AllReadPlayerIDs = [];
     $scope._AllStacks = [];
 
-    $scope._C1PlayerPool = [];
-    $scope._C2PlayerPool = [];
-    $scope._W1PlayerPool = [];
-    $scope._W2PlayerPool = [];
-    $scope._W3PlayerPool = [];
-    $scope._W4PlayerPool = [];
-    $scope._D1PlayerPool = [];
-    $scope._D2PlayerPool = [];
-    $scope._GPlayerPool = [];
+    $scope._PPlayerPool = [];
+    $scope._CPlayerPool = [];
+    $scope._1BPlayerPool = [];
+    $scope._2BPlayerPool = [];
+    $scope._3BPlayerPool = [];
+    $scope._SSPlayerPool = [];
+    $scope._OF1PlayerPool = [];
+    $scope._OF2PlayerPool = [];
+    $scope._OF3PlayerPool = [];
 
     $scope._AllDisplayedDraftData = [];
     $scope._AllDraftData = [];
@@ -33,7 +33,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.sortType = '_Salary'; // set the default sort type
     $scope.sortReverse = true;  // set the default sort order
     $scope.sortReverseDraft = true;
-    $scope.SelectedPosition = 'C1';     // set the default search/filter term
+    $scope.SelectedPosition = 'P';     // set the default search/filter term
     $scope.SelectedTeam = 'All';
     $scope.SelectedStackPositions = [];
     $scope.SelectedDraft = null;
@@ -48,10 +48,10 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.TopRange = -1;
     $scope.BottomRange = -1;
 
-    nhl.TopLimit = 150;
-    nhl.TopRange = -1;
-    nhl.BottomRange = -1;
-    nhl.removeDups = true;
+    mlb.TopLimit = 150;
+    mlb.TopRange = -1;
+    mlb.BottomRange = -1;
+    mlb.removeDups = true;
 
     //database
     $scope.savedPastSettings = [];
@@ -231,6 +231,13 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
         }
         reader.readAsText(file);
+        //clear input
+        angular.forEach(
+          angular.element("input[type='file']"),
+          function(inputElem) {
+            angular.element(inputElem).val(null);
+          }
+        );
     }
 
 
@@ -246,7 +253,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       var formData = new FormData();
       formData.append('csvFile', event.target.files[0]);
 
-      $http.post("/NHL/loadFanDuelPlayers", formData, {
+      $http.post("/MLB/loadFanDuelPlayers", formData, {
           headers: {
               "Content-Type": undefined,
               transformRequest: angular.identity
@@ -259,11 +266,13 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             player._FPPG = parseFloat(player._FPPG);
             var pointsPerDollar = parseFloat((player._FPPG / player._Salary).toFixed(5));
             player._ProjectedPointsPerDollar = pointsPerDollar;
-            if (player._playerInjured == 'O' || player._playerInjured === 'IR') {
+            if (player._playerInjured == 'O' || player._playerInjured === 'IR' || player._playerInjured === 'NA') {
               player._playerInjured = 'danger';
             } else if(player._playerInjured == 'DTD') {
               player._playerInjured = 'warning';
             }
+
+
 
             //add team data
             if ($scope._AllTeams.length == 0) {
@@ -271,8 +280,14 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             } else if ($scope._AllTeams.indexOf(player._Team) == -1) {
                 $scope._AllTeams.push(player._Team);
             }
-            $scope._AllPlayers.push(player);
-            $scope._AllPlayersMASTER.push(player);
+            //only display probable pitchers
+            if(player._Position === 'P' && player._ProbablePitcher === 'Yes') {
+              $scope._AllPlayers.push(player);
+              $scope._AllPlayersMASTER.push(player);
+            } else if(player._Position !== 'P') {
+              $scope._AllPlayers.push(player);
+              $scope._AllPlayersMASTER.push(player);
+            }
           });
           if($scope._AllPlayers.length > 0) {
             $scope.displayNewMessage("success", "Players have been successfully loaded");
@@ -281,6 +296,13 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
           console.log(response);
           $scope.displayNewMessage("danger", "Error: Players could not be loaded.");
       });
+      //clear input
+      angular.forEach(
+        angular.element("input[type='file']"),
+        function(inputElem) {
+          angular.element(inputElem).val(null);
+        }
+      );
     }
 
     $scope.selectTopActualPlayers = function() {
@@ -289,27 +311,32 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         return;
       }
       var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_ActualFantasyPoints', true);
-      var allCs = $filter('position')(orderedPlayers, 'C');
-      var allWs = $filter('position')(orderedPlayers, 'W');
-      var allDs = $filter('position')(orderedPlayers, 'D');
-      var allGs = $filter('position')(orderedPlayers, 'G');
+      var allPs = $filter('positionDK')(orderedPlayers, 'P');
+      var allCs = $filter('positionDK')(orderedPlayers, 'C');
+      var all1Bs = $filter('positionDK')(orderedPlayers, '1B');
+      var all2Bs = $filter('positionDK')(orderedPlayers, '2B');
+      var all3Bs = $filter('positionDK')(orderedPlayers, '3B');
+      var allSSs = $filter('positionDK')(orderedPlayers, 'SS');
+      var allOFs = $filter('positionDK')(orderedPlayers, 'OF');
 
       for(var j = 0; j < 5; j++) {
         if(j < 3) {
-          $scope.addPlayerToPool(allCs[j], 'C1');
-          $scope.addPlayerToPool(allWs[j], 'W1');
-          $scope.addPlayerToPool(allDs[j], 'D1');
-          $scope.addPlayerToPool(allGs[j], 'G');
+          $scope.addPlayerToPool(allPs[j], 'P');
+          $scope.addPlayerToPool(allCs[j], 'C');
+          $scope.addPlayerToPool(all1Bs[j], '1B');
+          $scope.addPlayerToPool(all2Bs[j], '2B');
+          $scope.addPlayerToPool(all3Bs[j], '3B');
+          $scope.addPlayerToPool(all1Bs[j], 'SS');
+          $scope.addPlayerToPool(allOFs[j], 'OF1');
+          $scope.addPlayerToPool(allOFs[j], 'OF2');
+          $scope.addPlayerToPool(allOFs[j], 'OF3');
         }
         if(j > 0) {
-          $scope.addPlayerToPool(allCs[j], 'C2');
-          $scope.addPlayerToPool(allWs[j], 'W2');
-          $scope.addPlayerToPool(allWs[j], 'W3');
-          $scope.addPlayerToPool(allWs[j], 'W4');
-          $scope.addPlayerToPool(allDs[j], 'D2');
-          $scope.addPlayerToPool(allGs[j], 'G');
+          $scope.addPlayerToPool(allOFs[j], 'OF2');
+          $scope.addPlayerToPool(allOFs[j], 'OF3');
         }
       }
+
 
     }
 
@@ -321,7 +348,123 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
           $scope.SelectedPosition = position;
       }
     }
+    $scope.CSVReplace = function (event) {
 
+
+      var file = event.target.files[0];
+
+        var allText = "";
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            allText = reader.result;
+
+            var allTextLines = allText.split(/\r\n|\n/);
+            var headers = allTextLines[0].split(',');
+
+            var csvRows = [];
+            for (var i = 1; i < allTextLines.length; i++) {
+                var data = allTextLines[i].split(',');
+
+                var entry_id = "";
+                var contest_id = "";
+                var contest_name = "";
+                var playerPoints = 0;
+                var playerSalary = 0;
+                for (var j = 0; j < data.length; j++) {
+                    switch (j) {
+                        case 0:
+                            entry_id = data[j].replace('"', '').replace('"', '').trim();
+                            break;
+                        case 1:
+                            contest_id = data[j].replace('"', '').replace('"', '').trim();
+
+                            break;
+                        case 2:
+                            contest_name = data[j].replace('"', '').replace('"', '').trim();
+                            break;
+
+                    }
+                }
+                var csvRow = {entry_id: entry_id, contest_id: contest_id, contest_name: contest_name};
+                if(entry_id !== undefined && entry_id !== '') {
+                  csvRows.push(csvRow);
+                }
+            }
+            if($scope._AllDraftData.length == csvRows.length) {
+              var numRowsChanged = 0;
+              var drafts = $scope._AllDraftData;
+              drafts = $filter('checkValidOnly')(drafts, true);
+              drafts = $filter('orderBy')(drafts, $scope.sortTypeDraft, $scope.sortReverseDraft);
+              var csvContent = "data:text/csv;charset=utf-8,";
+              csvContent = csvContent + "entry_id,contest_id,contest_name,P,C,1B,2B,3B,SS,OF,OF,OF\n";
+              for(var k = 0; k < csvRows.length; k++) {
+                var splitContestID = csvRows[k].contest_id.split('-');
+                if(drafts[k].players[0].playerID.indexOf(splitContestID[0]) !== -1) {
+                  //contains the same contest id within the player id, hard coded to check on ly the first player
+                  csvContent =  csvContent + csvRows[k].entry_id+','+csvRows[k].contest_id+','+csvRows[k].contest_name+',';
+                  var lineOfText = "";
+                  for(var j = 0; j < drafts[k].players.length;j++) {
+                    if (j == 0)
+                    {
+                        lineOfText = lineOfText + drafts[k].players[j].playerID;
+                    }
+                    else
+                    {
+                        lineOfText = lineOfText + "," + drafts[k].players[j].playerID;
+                    }
+                  }
+                  csvContent = csvContent + lineOfText + "\n";
+                  numRowsChanged++;
+                } else {
+                  $scope.$apply(function() {
+                    $scope.displayNewMessage("warning", "WARNING: player ID does not contain contest ID, Are you sure you have the correct CSV Replace file?");
+                  });
+                }
+              }
+              if(numRowsChanged > 0) {
+                var anchor = angular.element('<a/>');
+                anchor.css({ display: 'none' }); // Make sure it's not visible
+                angular.element(document.body).append(anchor); // Attach to document
+                var CSVName = "";
+                $scope._AllTeams.forEach(function (team) {
+                  if(CSVName.length == 0) {
+                    CSVName = team;
+                  } else {
+                    CSVName = CSVName + "_" + team;
+                  }
+                });
+                anchor.attr({
+                    href: encodeURI(csvContent),
+                    target: '_blank',
+                    download: 'CSVReplace_'+CSVName+'.csv'
+                })[0].click();
+
+                anchor.remove(); // Clean it up afterwards
+                $scope.$apply(function() {
+
+                  $scope.displayNewMessage("success", "Successfully replaced lineups in CSV");
+
+                });
+              }
+            } else {
+              $scope.$apply(function() {
+
+                $scope.displayNewMessage("danger", "ERROR: # drafts: "+$scope._AllDraftData.length+" != "+csvRows.length+". Both CSV File and Total Drafts must be equal.");
+
+              });
+            }
+
+
+        }
+        reader.readAsText(file);
+        //clear input
+        angular.forEach(
+          angular.element("input[type='file']"),
+          function(inputElem) {
+            angular.element(inputElem).val(null);
+          }
+        );
+    }
     $scope.updatePlayerPtsPerDollar = function(player) {
       var indexOfPlayer = $scope._AllPlayers.indexOf(player);
       if(indexOfPlayer !== -1) {
@@ -337,48 +480,56 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       }
       var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
       var NonInjuredPlayers =  $filter('removeInjured')(orderedPlayers);
-      var allCs = $filter('position')(NonInjuredPlayers, 'C');
-      var allWs = $filter('position')(NonInjuredPlayers, 'W');
-      var allDs = $filter('position')(NonInjuredPlayers, 'D');
-      var allGs = $filter('position')(NonInjuredPlayers, 'G');
-
+      var allPs = $filter('positionDK')(NonInjuredPlayers, 'P');
+      var allCs = $filter('positionDK')(NonInjuredPlayers, 'C');
+      var all1Bs = $filter('positionDK')(NonInjuredPlayers, '1B');
+      var all2Bs = $filter('positionDK')(NonInjuredPlayers, '2B');
+      var all3Bs = $filter('positionDK')(NonInjuredPlayers, '3B');
+      var allSSs = $filter('positionDK')(NonInjuredPlayers, 'SS');
+      var allOFs = $filter('positionDK')(NonInjuredPlayers, 'OF');
+      for(var j = 0; j < allPs.length; j++) {
+        if(j == 0 || j == 1 || j == 3) {
+          $scope.addPlayerToPool(allPs[j], 'P');
+        }
+      }
       for(var j = 0; j < allCs.length; j++) {
-        if(j == 0 || j == 1 ) {
-          $scope.addPlayerToPool(allCs[j], 'C1');
-        }
-        if(j == 1 ||j == 2 || j == 3) {
-          $scope.addPlayerToPool(allCs[j], 'C2');
-        }
-      }
-      for(var j = 0; j < allWs.length; j++) {
         if(j == 0 || j == 1 || j == 2 ) {
-          $scope.addPlayerToPool(allWs[j], 'W1');
-        }
-        if(j == 1 || j == 2 || j == 3 || j == 4) {
-          $scope.addPlayerToPool(allWs[j], 'W2');
-        }
-        if(j == 2 || j == 3 || j == 4 || j == 5) {
-          $scope.addPlayerToPool(allWs[j], 'W3');
-        }
-        if( j == 3 || j == 4 || j == 5 || j == 6) {
-          $scope.addPlayerToPool(allWs[j], 'W4');
+          $scope.addPlayerToPool(allCs[j], 'C');
         }
       }
-
-      for(var j = 0; j < allDs.length; j++) {
-        if( j == 0 || j == 1) {
-          $scope.addPlayerToPool(allDs[j], 'D1');
+      for(var j = 0; j < all1Bs.length; j++) {
+        if(j == 1 || j == 2 || j == 3) {
+          $scope.addPlayerToPool(all1Bs[j], '1B');
+        }
+      }
+      for(var j = 0; j < all2Bs.length; j++) {
+        if( j == 0 || j == 1 || j == 2 ) {
+          $scope.addPlayerToPool(all2Bs[j], '2B');
+        }
+      }
+      for(var j = 0; j < all3Bs.length; j++) {
+        if( j == 0 || j == 1 || j == 2 ) {
+          $scope.addPlayerToPool(all3Bs[j], '3B');
+        }
+      }
+      for(var j = 0; j < allSSs.length; j++) {
+        if( j == 0 || j == 1 || j == 2 ) {
+          $scope.addPlayerToPool(allSSs[j], 'SS');
+        }
+      }
+      for(var j = 0; j < allOFs.length; j++) {
+        if( j == 0 || j == 1 || j == 2 ) {
+          $scope.addPlayerToPool(allOFs[j], 'OF1');
         }
         if( j == 1 || j == 2 || j == 3) {
-          $scope.addPlayerToPool(allDs[j], 'D2');
+          $scope.addPlayerToPool(allOFs[j], 'OF2');
+        }
+        if( j ==2 || j ==3 || j == 4 ) {
+          $scope.addPlayerToPool(allOFs[j], 'OF3');
         }
       }
 
-      for(var j = 0; j < allGs.length; j++) {
-        if( j == 0 || j == 1 || j == 2 ) {
-          $scope.addPlayerToPool(allGs[j], 'G');
-        }
-      }
+
     }
     $scope.parseFloat = function(value)
     {
@@ -397,7 +548,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             formData.append(files[j].name, files[j]);
         }
 
-        $http.post("/api/NHL/changeLineups", formData, {
+        $http.post("/api/MLB/changeLineups", formData, {
             headers: {
                 "Content-Type": undefined,
                 transformRequest: angular.identity
@@ -468,7 +619,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         drafts = $filter('checkValidOnly')(drafts, true);
         drafts = $filter('orderBy')(drafts, $scope.sortTypeDraft, $scope.sortReverseDraft);
 
-        csvContent = csvContent + "C,C,W,W,W,W,D,D,G\n";
+        csvContent = csvContent + "P,C,1B,2B,3B,SS,OF,OF,OF\n";
         drafts.forEach(function (draft) {
             var lineOfText = "";
             for (var j = 0; j < draft.players.length; j++) {
@@ -484,7 +635,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             csvContent = csvContent + lineOfText + "\n";
         });
 
-        $http.post('/NHL/downloadDrafts', {'downloadDrafts':drafts.length}).then(function successCallback(response) {
+        $http.post('/MLB/downloadDrafts', {'downloadDrafts':drafts.length}).then(function successCallback(response) {
 
         }, function errorCallBack(response) {
           if(response.data.error !== undefined) {
@@ -523,32 +674,32 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       {
         switch (position)
         {
-            case 'C1':
-                $scope._C1PlayerPool.splice($scope._C1PlayerPool.indexOf(player), 1);
+            case 'P':
+                $scope._PPlayerPool.splice($scope._PPlayerPool.indexOf(player), 1);
                 break;
-            case 'C2':
-                $scope._C2PlayerPool.splice($scope._C2PlayerPool.indexOf(player), 1);
+            case 'C':
+                $scope._CPlayerPool.splice($scope._CPlayerPool.indexOf(player), 1);
                 break;
-            case 'W1':
-                $scope._W1PlayerPool.splice($scope._W1PlayerPool.indexOf(player), 1);
+            case '1B':
+                $scope._1BPlayerPool.splice($scope._1BPlayerPool.indexOf(player), 1);
                 break;
-            case 'W2':
-                $scope._W2PlayerPool.splice($scope._W2PlayerPool.indexOf(player), 1);
+            case '2B':
+                $scope._2BPlayerPool.splice($scope._2BPlayerPool.indexOf(player), 1);
                 break;
-            case 'W3':
-                $scope._W3PlayerPool.splice($scope._W3PlayerPool.indexOf(player), 1);
+            case '3B':
+                $scope._3BPlayerPool.splice($scope._3BPlayerPool.indexOf(player), 1);
                 break;
-            case 'W4':
-                $scope._W4PlayerPool.splice($scope._W4PlayerPool.indexOf(player), 1);
+            case 'SS':
+                $scope._SSPlayerPool.splice($scope._SSPlayerPool.indexOf(player), 1);
                 break;
-            case 'D1':
-                $scope._D1PlayerPool.splice($scope._D1PlayerPool.indexOf(player), 1);
+            case 'OF1':
+                $scope._OF1PlayerPool.splice($scope._OF1PlayerPool.indexOf(player), 1);
                 break;
-            case 'D2':
-                $scope._D2PlayerPool.splice($scope._D2PlayerPool.indexOf(player), 1);
+            case 'OF2':
+                $scope._OF2PlayerPool.splice($scope._OF2PlayerPool.indexOf(player), 1);
                 break;
-            case 'G':
-                $scope._GPlayerPool.splice($scope._GPlayerPool.indexOf(player), 1);
+            case 'OF3':
+                $scope._OF3PlayerPool.splice($scope._OF3PlayerPool.indexOf(player), 1);
                 break;
         }
       }
@@ -564,32 +715,32 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         {
             switch (position)
             {
-                case 'C1':
-                    $scope._C1PlayerPool.push(player);
+                case 'P':
+                    $scope._PPlayerPool.push(player);
                     break;
-                case 'C2':
-                    $scope._C2PlayerPool.push(player);
+                case 'C':
+                    $scope._CPlayerPool.push(player);
                     break;
-                case 'W1':
-                    $scope._W1PlayerPool.push(player);
+                case '1B':
+                    $scope._1BPlayerPool.push(player);
                     break;
-                case 'W2':
-                    $scope._W2PlayerPool.push(player);
+                case '2B':
+                    $scope._2BPlayerPool.push(player);
                     break;
-                case 'W3':
-                    $scope._W3PlayerPool.push(player);
+                case '3B':
+                    $scope._3BPlayerPool.push(player);
                     break;
-                case 'W4':
-                    $scope._W4PlayerPool.push(player);
+                case 'SS':
+                    $scope._SSPlayerPool.push(player);
                     break;
-                case 'D1':
-                    $scope._D1PlayerPool.push(player);
+                case 'OF1':
+                    $scope._OF1PlayerPool.push(player);
                     break;
-                case 'D2':
-                    $scope._D2PlayerPool.push(player);
+                case 'OF2':
+                    $scope._OF2PlayerPool.push(player);
                     break;
-                case 'G':
-                    $scope._GPlayerPool.push(player);
+                case 'OF3':
+                    $scope._OF3PlayerPool.push(player);
                     break;
             }
         }
@@ -599,56 +750,56 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     {
         switch (position)
         {
-            case 'C1':
-                if ($scope._C1PlayerPool.indexOf(player) > -1)
+            case 'P':
+                if ($scope._PPlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'C2':
-                if ($scope._C2PlayerPool.indexOf(player) > -1)
+            case 'C':
+                if ($scope._CPlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'W1':
-                if ($scope._W1PlayerPool.indexOf(player) > -1)
+            case '1B':
+                if ($scope._1BPlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'W2':
-                if ($scope._W2PlayerPool.indexOf(player) > -1)
+            case '2B':
+                if ($scope._2BPlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'W3':
-                if ($scope._W3PlayerPool.indexOf(player) > -1)
+            case '3B':
+                if ($scope._3BPlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'W4':
-                if ($scope._W4PlayerPool.indexOf(player) > -1)
+            case 'SS':
+                if ($scope._SSPlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'D1':
-                if ($scope._D1PlayerPool.indexOf(player) > -1)
+            case 'OF1':
+                if ($scope._OF1PlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'D2':
-                if ($scope._D2PlayerPool.indexOf(player) > -1)
+            case 'OF2':
+                if ($scope._OF2PlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
                 break;
-            case 'G':
-                if ($scope._GPlayerPool.indexOf(player) > -1)
+            case 'OF3':
+                if ($scope._OF3PlayerPool.indexOf(player) > -1)
                 {
                     return true;
                 }
@@ -657,16 +808,15 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         return false;
     }
     $scope.clearPlayerPools = function () {
-        $scope._C1PlayerPool = [];
-        $scope._C2PlayerPool = [];
-        $scope._W1PlayerPool = [];
-        $scope._W2PlayerPool = [];
-        $scope._W3PlayerPool = [];
-        $scope._W4PlayerPool = [];
-        $scope._D1PlayerPool = [];
-        $scope._D2PlayerPool = [];
-        $scope._GPlayerPool = [];
-
+        $scope._PPlayerPool = [];
+        $scope._CPlayerPool = [];
+        $scope._1BPlayerPool = [];
+        $scope._2BPlayerPool = [];
+        $scope._3BPlayerPool = [];
+        $scope._SSPlayerPool = [];
+        $scope._OF1PlayerPool = [];
+        $scope._OF2PlayerPool = [];
+        $scope._OF3PlayerPool = [];
     }
 
     $scope.averagePlayerPoolSalary = function (playerPool) {
@@ -692,9 +842,9 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
     $scope.removeAllButTopN = function() {
       $scope._AllDraftData = $filter('orderBy')($scope._AllDraftData, $scope.sortTypeDraft, $scope.sortReverseDraft);
-      if($scope._AllDraftData.length > nhl.TopLimit) {
+      if($scope._AllDraftData.length > mlb.TopLimit) {
         var tempDraftData = [];
-        for(var j = 0; j < nhl.TopLimit; j++) {
+        for(var j = 0; j < mlb.TopLimit; j++) {
           tempDraftData.push($scope._AllDraftData[j]);
 
         }
@@ -703,7 +853,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         $scope.TotalValidDrafts = $scope.TotalPossibleDrafts;
         //add top TopLimit to displayed
         $scope._AllDisplayedDraftData = [];
-        for(var i = 0; i < nhl.TopLimit; i++) {
+        for(var i = 0; i < mlb.TopLimit; i++) {
           $scope._AllDisplayedDraftData.push($scope._AllDraftData[i]);
         }
       }
@@ -717,49 +867,43 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.setPlayerRanking = function() {
       var orderedFPPGPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
       var injuredPlayers =  $filter('removeInjured')(orderedFPPGPlayers);
-      var allCs = $filter('position')(injuredPlayers, 'C');
-      var allWs = $filter('position')(injuredPlayers, 'W');
-      var allDs = $filter('position')(injuredPlayers, 'D');
-      var allGs = $filter('position')(injuredPlayers, 'G');
-      var outPlayers =  $filter('removeOut')(orderedFPPGPlayers);
-      var allInjCs = $filter('position')(outPlayers, 'C');
-      var allInjWs = $filter('position')(outPlayers, 'W');
-      var allInjDs = $filter('position')(outPlayers, 'D');
-      var allInjGs = $filter('position')(outPlayers, 'G');
+      var allPs = $filter('positionDK')(injuredPlayers, 'P');
+      var allCs = $filter('positionDK')(injuredPlayers, 'C');
+      var all1Bs = $filter('positionDK')(injuredPlayers, '1B');
+      var all2Bs = $filter('positionDK')(injuredPlayers, '2B');
+      var all3Bs = $filter('positionDK')(injuredPlayers, '3B');
+      var allSSs = $filter('positionDK')(injuredPlayers, 'SS');
+      var allOFs = $filter('positionDK')(injuredPlayers, 'OF');
+
       $scope._AllPlayers.forEach(function(player) {
-        var playerRank = 99;
-        if(!player._playerInjured) {
-          switch(player._Position) {
-            case 'C':
-              playerRank = allCs.indexOf(player) + 1;
-              break;
-            case 'W':
-              playerRank = allWs.indexOf(player) + 1;
-              break;
-            case 'D':
-              playerRank = allDs.indexOf(player) + 1;
-              break;
-            case 'G':
-              playerRank = allGs.indexOf(player) + 1;
-              break;
-          }
-        } else {
-          switch(player._Position) {
-            case 'C':
-              playerRank = allInjCs.indexOf(player) + 1;
-              break;
-            case 'W':
-              playerRank = allInjWs.indexOf(player) + 1;
-              break;
-            case 'D':
-              playerRank = allInjDs.indexOf(player) + 1;
-              break;
-            case 'G':
-              playerRank = allInjGs.indexOf(player) + 1;
-              break;
-          }
+        var playerRank = [];
+
+        if(player._Position.indexOf('P') !== -1) {
+          playerRank.push(allPs.indexOf(player) + 1);
         }
-        player._Rank = playerRank;
+        if(player._Position.indexOf('C') !== -1) {
+          playerRank.push(allCs.indexOf(player) + 1);
+        }
+        if(player._Position.indexOf('1B') !== -1) {
+          playerRank.push(all1Bs.indexOf(player) + 1);
+        }
+        if(player._Position.indexOf('2B') !== -1) {
+          playerRank.push(all2Bs.indexOf(player) + 1);
+        }
+        if(player._Position.indexOf('3B') !== -1) {
+          playerRank.push(all3Bs.indexOf(player) + 1);
+        }
+        if(player._Position.indexOf('SS') !== -1) {
+          playerRank.push(allSSs.indexOf(player) + 1);
+        }
+        if(player._Position.indexOf('OF') !== -1) {
+          playerRank.push(allOFs.indexOf(player) + 1);
+        }
+        var totalPlayerRank = 0;
+        playerRank.forEach(function(singleRank) {
+          totalPlayerRank = totalPlayerRank + singleRank;
+        });
+        player._Rank = parseInt(totalPlayerRank / playerRank.length);
       });
     }
     $scope.averageRank = function(finalPlayerList) {
@@ -770,18 +914,26 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       average = parseFloat(average / finalPlayerList.length);
       return (average).toFixed(2);
     }
+    $scope.addSalaryImpliedPts = function() {
+      $scope._AllPlayers.forEach(function(player) {
+        player._FPPG = player._Salary * 0.004;
+        player._FPPG = player._FPPG.toFixed(1);
+        player._FPPG = parseFloat(player._FPPG);
+        $scope.updatePlayerPtsPerDollar(player);
+      });
+    }
     $scope.buildDrafts = function () {
 
         //check if all pools have at least 1 player
-        if ($scope._C1PlayerPool.length == 0 ||
-            $scope._C2PlayerPool.length == 0 ||
-            $scope._W1PlayerPool.length == 0 ||
-            $scope._W2PlayerPool.length == 0 ||
-            $scope._W3PlayerPool.length == 0 ||
-            $scope._W4PlayerPool.length == 0 ||
-            $scope._D1PlayerPool.length == 0 ||
-            $scope._D2PlayerPool.length == 0 ||
-            $scope._GPlayerPool.length == 0 )
+        if ($scope._PPlayerPool.length == 0 ||
+            $scope._CPlayerPool.length  == 0 ||
+            $scope._1BPlayerPool.length == 0 ||
+            $scope._2BPlayerPool.length == 0 ||
+            $scope._3BPlayerPool.length == 0 ||
+            $scope._SSPlayerPool.length == 0 ||
+            $scope._OF1PlayerPool.length == 0 ||
+            $scope._OF2PlayerPool.length == 0 ||
+            $scope._OF3PlayerPool.length == 0)
         {
             $scope.displayNewMessage("danger", "Error: One or more player pools contain zero players");
             return;
@@ -789,14 +941,14 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
         $scope.setPlayerRanking();
 
-        $scope.totalPossibleDraftsToBeCreated = $scope._C1PlayerPool.length * $scope._C2PlayerPool.length *
-        $scope._W1PlayerPool.length * $scope._W2PlayerPool.length *
-        $scope._W3PlayerPool.length * $scope._W4PlayerPool.length *
-        $scope._D1PlayerPool.length * $scope._D2PlayerPool.length *
-        $scope._GPlayerPool.length;
+        $scope.totalPossibleDraftsToBeCreated = $scope._PPlayerPool.length *
+        $scope._CPlayerPool.length * $scope._1BPlayerPool.length *
+        $scope._2BPlayerPool.length * $scope._3BPlayerPool.length *
+        $scope._SSPlayerPool.length * $scope._OF1PlayerPool.length *
+        $scope._OF2PlayerPool.length * $scope._OF3PlayerPool.length;
 
         if($scope.totalPossibleDraftsToBeCreated > 15000) {
-          if (!confirm('Creating '+$scope.totalPossibleDraftsToBeCreated+' possible drafts can take longer than expected. It can crash your session if loaded with to much memory, save your data. Are you sure you want to create?')) {
+          if (!confirm('WARNING: Creating '+$scope.totalPossibleDraftsToBeCreated+' possible drafts can take longer than expected. It can crash your session if loaded with to much memory, save your data. Are you sure you want to create?')) {
             return;
           }
         }
@@ -807,47 +959,48 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         var tempDrafts = [];
         var tempPlayerNamesList = [];
         //start draft building
-        $scope._C1PlayerPool.forEach(function(C1Player) {
+        $scope._PPlayerPool.forEach(function(PPlayer) {
             var tempDraft = {};
-            tempDraft['C1'] = C1Player;
-            $scope._C2PlayerPool.forEach(function(C2Player) {
-              tempDraft['C2'] = C2Player;
-              $scope._W1PlayerPool.forEach(function(W1Player) {
-                tempDraft['W1'] = W1Player;
-                $scope._W2PlayerPool.forEach(function(W2Player) {
-                  tempDraft['W2'] = W2Player;
-                  $scope._W3PlayerPool.forEach(function(W3Player) {
-                    tempDraft['W3'] = W3Player;
-                    $scope._W4PlayerPool.forEach(function(W4Player) {
-                      tempDraft['W4'] = W4Player;
-                      $scope._D1PlayerPool.forEach(function(D1Player) {
-                        tempDraft['D1'] = D1Player;
-                        $scope._D2PlayerPool.forEach(function(D2Player) {
-                          tempDraft['D2'] = D2Player;
-                          $scope._GPlayerPool.forEach(function(GPlayer) {
+            tempDraft['P'] = PPlayer;
+            $scope._CPlayerPool.forEach(function(CPlayer) {
+              tempDraft['C'] = CPlayer;
+              $scope._1BPlayerPool.forEach(function(firstBPlayer) {
+                tempDraft['1B'] = firstBPlayer;
+                $scope._2BPlayerPool.forEach(function(secondBPlayer) {
+                  tempDraft['2B'] = secondBPlayer;
+                  $scope._3BPlayerPool.forEach(function(thirdBPlayer) {
+                    tempDraft['3B'] = thirdBPlayer;
+                    $scope._SSPlayerPool.forEach(function(SSPlayer) {
+                      tempDraft['SS'] = SSPlayer;
+                      $scope._OF1PlayerPool.forEach(function(OF1Player) {
+                        tempDraft['OF1'] = OF1Player;
+                        $scope._OF2PlayerPool.forEach(function(OF2Player) {
+                          tempDraft['OF2'] = OF2Player;
+                          $scope._OF3PlayerPool.forEach(function(OF3Player) {
+                            tempDraft['OF3'] = OF3Player;
 
                             $scope.totalPossibleCurrentDraftsCount++;
 
-                            tempDraft['G'] = GPlayer;
                             var finalPlayerList = [];
-                            finalPlayerList.push(tempDraft['C1']);
-                            finalPlayerList.push(tempDraft['C2']);
-                            finalPlayerList.push(tempDraft['W1']);
-                            finalPlayerList.push(tempDraft['W2']);
-                            finalPlayerList.push(tempDraft['W3']);
-                            finalPlayerList.push(tempDraft['W4']);
-                            finalPlayerList.push(tempDraft['D1']);
-                            finalPlayerList.push(tempDraft['D2']);
-                            finalPlayerList.push(tempDraft['G']);
-                            //player name list
-                            var tempPlayerNames = {};
-                            tempPlayerNames['C'] = [];
-                            tempPlayerNames['W'] = [];
-                            tempPlayerNames['D'] = [];
-                            tempPlayerNames['G'] = [];
-                            finalPlayerList.forEach(function(player) {
-                              tempPlayerNames[player._Position].push(player);
-                            });
+                            finalPlayerList.push(tempDraft['P']);
+                            finalPlayerList.push(tempDraft['C']);
+                            finalPlayerList.push(tempDraft['1B']);
+                            finalPlayerList.push(tempDraft['2B']);
+                            finalPlayerList.push(tempDraft['3B']);
+                            finalPlayerList.push(tempDraft['SS']);
+                            finalPlayerList.push(tempDraft['OF1']);
+                            finalPlayerList.push(tempDraft['OF2']);
+                            finalPlayerList.push(tempDraft['OF3']);
+                            var tempPlayerNames = [];
+                            tempPlayerNames.push(tempDraft['P']._Name);
+                            tempPlayerNames.push(tempDraft['C']._Name);
+                            tempPlayerNames.push(tempDraft['1B']._Name);
+                            tempPlayerNames.push(tempDraft['2B']._Name);
+                            tempPlayerNames.push(tempDraft['3B']._Name);
+                            tempPlayerNames.push(tempDraft['SS']._Name);
+                            tempPlayerNames.push(tempDraft['OF1']._Name);
+                            tempPlayerNames.push(tempDraft['OF2']._Name);
+                            tempPlayerNames.push(tempDraft['OF3']._Name);
 
                             //add only valid drafts
                             if($scope.isDraftTeamValid(finalPlayerList) && $scope.isDraftSalaryValid(finalPlayerList) && !$scope.doesDraftHaveDupPlayers(finalPlayerList)) {
@@ -864,37 +1017,38 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
                                  pointsPerDollar:  parseFloat($scope.averageValue(finalPlayerList)),
                                  averageRank: parseFloat($scope.averageRank(finalPlayerList))
                                };
-                               if(nhl.removeDups)
+                               if(mlb.removeDups)
                                {
                                  var sameDraft = false;
                                  if(tempPlayerNamesList.length > 0) {
                                    for(var j = tempPlayerNamesList.length-1; j >= 0; j--) {
                                      var playersInDraft = 0;
-                                     if(tempPlayerNames['C'].indexOf(tempPlayerNamesList[j]['C'][0]) !== -1) {
+
+                                     if(tempPlayerNames.indexOf(tempPlayerNamesList[j][0]) !== -1) {
                                        playersInDraft++;
                                      }
-                                     if(tempPlayerNames['C'].indexOf(tempPlayerNamesList[j]['C'][1]) !== -1) {
+                                     if(tempPlayerNames.indexOf(tempPlayerNamesList[j][1]) !== -1) {
                                        playersInDraft++;
                                      }
-                                     if(tempPlayerNames['W'].indexOf(tempPlayerNamesList[j]['W'][0]) !== -1) {
+                                     if(tempPlayerNames.indexOf(tempPlayerNamesList[j][2]) !== -1) {
                                        playersInDraft++;
                                      }
-                                     if(tempPlayerNames['W'].indexOf(tempPlayerNamesList[j]['W'][1]) !== -1) {
+                                     if(tempPlayerNames.indexOf(tempPlayerNamesList[j][3]) !== -1) {
                                        playersInDraft++;
                                      }
-                                     if(tempPlayerNames['W'].indexOf(tempPlayerNamesList[j]['W'][2]) !== -1) {
+                                     if(tempPlayerNames.indexOf(tempPlayerNamesList[j][4]) !== -1) {
                                        playersInDraft++;
                                      }
-                                     if(tempPlayerNames['W'].indexOf(tempPlayerNamesList[j]['W'][3]) !== -1) {
+                                     if(tempPlayerNames.indexOf(tempPlayerNamesList[j][5]) !== -1) {
                                        playersInDraft++;
                                      }
-                                     if(tempPlayerNames['D'].indexOf(tempPlayerNamesList[j]['D'][0]) !== -1) {
+                                     if(tempPlayerNames.indexOf(tempPlayerNamesList[j][6]) !== -1) {
                                        playersInDraft++;
                                      }
-                                     if(tempPlayerNames['D'].indexOf(tempPlayerNamesList[j]['D'][1]) !== -1) {
+                                     if(tempPlayerNames.indexOf(tempPlayerNamesList[j][7]) !== -1) {
                                        playersInDraft++;
                                      }
-                                     if(tempPlayerNames['G'].indexOf(tempPlayerNamesList[j]['G'][0]) !== -1) {
+                                     if(tempPlayerNames.indexOf(tempPlayerNamesList[j][8]) !== -1) {
                                        playersInDraft++;
                                      }
                                      if(playersInDraft === 9) {
@@ -908,8 +1062,8 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
                                      tempPlayerNamesList.push(tempPlayerNames);
                                    }
                                  } else {
-                                    $scope._AllDraftData.push(tempDataObj);//store valid only
-                                    tempPlayerNamesList.push(tempPlayerNames);
+                                   $scope._AllDraftData.push(tempDataObj);//store valid only
+                                   tempPlayerNamesList.push(tempPlayerNames);
                                  }
                                }
                                else
@@ -929,7 +1083,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             });
         });
 
-        $http.post('/NHL/buildDraft', {'builtDrafts':$scope._AllDraftData.length}).then(function successCallback(response) {
+        $http.post('/MLB/buildDraft', {'builtDrafts':$scope._AllDraftData.length}).then(function successCallback(response) {
 
         }, function errorCallBack(response) {
           if(response.data.error !== undefined) {
@@ -975,7 +1129,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       return hasDups;
     }
     $scope.getDraftSalaryLeft = function (draft) {
-        var startingSalary = 55000;
+        var startingSalary = 35000;
         draft.forEach(function (player) {
             startingSalary = startingSalary - player._Salary;
         });
@@ -996,7 +1150,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     }
 
     $scope.removeCalcDrafts = function () {
-        var calcRemovedDrafts = $filter('removeCalcDraft')($scope._AllDraftData, parseFloat(nhl.TopRange), parseFloat(nhl.BottomRange), $scope.sortTypeDraft);
+        var calcRemovedDrafts = $filter('removeCalcDraft')($scope._AllDraftData, parseFloat(mlb.TopRange), parseFloat(mlb.BottomRange), $scope.sortTypeDraft);
 
         $scope._AllDraftData = calcRemovedDrafts;
 
@@ -1018,7 +1172,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         }
     }
     $scope.getDraftSalaryRemaining = function (draft) {
-        var startingSalary = 55000;
+        var startingSalary = 35000;
         draft.players.forEach(function (player) {
             startingSalary = startingSalary - player._Salary;
         });
@@ -1072,7 +1226,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
 
     $scope.isDraftSalaryValid = function (draft) {
-        var startingSalary = 55000;
+        var startingSalary = 35000;
         draft.forEach(function (player) {
             startingSalary = startingSalary - player._Salary;
         });
@@ -1107,6 +1261,12 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
                 return false;
             }
         }
+
+        //check # of teams on this draft
+        if(Object.keys(teams).length < 3) {
+          return false;
+        }
+
         return true;
     }
 
@@ -1124,18 +1284,18 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
         var postObject = {
             _AllPlayers : $scope._AllPlayers,
-            _C1PlayerPool : $scope._C1PlayerPool,
-            _C2PlayerPool : $scope._C2PlayerPool,
-            _W1PlayerPool : $scope._W1PlayerPool,
-            _W2PlayerPool : $scope._W2PlayerPool,
-            _W3PlayerPool : $scope._W3PlayerPool,
-            _W4PlayerPool : $scope._W4PlayerPool,
-            _D1PlayerPool : $scope._D1PlayerPool,
-            _D2PlayerPool : $scope._D2PlayerPool,
-            _GPlayerPool : $scope._GPlayerPool,
-            TopRange : nhl.TopRange,
-            BottomRange : nhl.BottomRange,
-            TopLimit : nhl.TopLimit
+            _PPlayerPool : $scope._PPlayerPool,
+            _CPlayerPool : $scope._CPlayerPool,
+            _1BPlayerPool : $scope._1BPlayerPool,
+            _2BPlayerPool : $scope._2BPlayerPool,
+            _3BPlayerPool : $scope._3BPlayerPool,
+            _SSPlayerPool : $scope._SSPlayerPool,
+            _OF1PlayerPool : $scope._OF1PlayerPool,
+            _OF2PlayerPool : $scope._OF2PlayerPool,
+            _OF3PlayerPool : $scope._OF3PlayerPool,
+            TopRange : mlb.TopRange,
+            BottomRange : mlb.BottomRange,
+            TopLimit : mlb.TopLimit
         };
         var modalInstance = $uibModal.open({
             templateUrl: '/js/AngularControllers/saveDialog.html',
@@ -1165,7 +1325,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
     $scope.read = function(saveDetailsID) {
 
-      $http.post('/NHL/read', {'id':saveDetailsID}).then(function successCallback(response) {
+      $http.post('/MLB/read', {'id':saveDetailsID}).then(function successCallback(response) {
           $scope.currentRead = response.data;
           $scope.loadPlayersFromSave(JSON.parse($scope.currentRead['userSaveJSON']));
           $scope.mainTabHeading = "Players - "+$scope.currentRead['title'];
@@ -1180,7 +1340,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     }
 
     $scope.loadHistory = function() {
-      $http.post('/NHL/loadHistory', {'endIndex':$scope.savedPastSettings.length}).then(function successCallback(response) {
+      $http.post('/MLB/loadHistory', {'endIndex':$scope.savedPastSettings.length}).then(function successCallback(response) {
         var jsonData = response.data;
         jsonData.forEach(function(singleDraftDetail) {
           $scope.savedPastSettings.push(singleDraftDetail);
@@ -1208,7 +1368,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     }
 
     $scope.delete = function(saveID) {
-      $http.post('/NHL/delete', {'id':saveID}).then(function successCallback(response) {
+      $http.post('/MLB/delete', {'id':saveID}).then(function successCallback(response) {
         var indexToDelete = -1;
         for(var j = 0; j < $scope.savedPastSettings.length;j++) {
           if($scope.savedPastSettings[j].id == saveID) {
@@ -1228,7 +1388,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
     }
     $scope.updateTitle = function(saveID, title) {
-      $http.post('/NHL/updateTitle', {'id':saveID, 'title': title}).then(function successCallback(response) {
+      $http.post('/MLB/updateTitle', {'id':saveID, 'title': title}).then(function successCallback(response) {
         $scope.displayNewMessage('success', 'Title Update - Success, Saved: '+title);
       }, function errorCallBack(response) {
         if(response.data.error !== undefined) {
@@ -1257,9 +1417,9 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       $scope._AllPlayers = savedData._AllPlayers;
       $scope._AllPlayersMASTER = savedData._AllPlayers;
 
-      nhl.TopRange = parseFloat(savedData.TopRange);
-      nhl.BottomRange = parseFloat(savedData.BottomRange);
-      nhl.TopLimit = parseInt(savedData.TopLimit);
+      mlb.TopRange = parseFloat(savedData.TopRange);
+      mlb.BottomRange = parseFloat(savedData.BottomRange);
+      mlb.TopLimit = parseInt(savedData.TopLimit);
 
       $scope._AllPlayers.forEach(function(singlePlayer) {
 
@@ -1270,15 +1430,15 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             $scope._AllTeams.push(singlePlayer._Team);
         }
 
-        $scope.loadPlayerInPool(savedData._C1PlayerPool, singlePlayer, 'C1');
-        $scope.loadPlayerInPool(savedData._C2PlayerPool, singlePlayer, 'C2');
-        $scope.loadPlayerInPool(savedData._W1PlayerPool, singlePlayer, 'W1');
-        $scope.loadPlayerInPool(savedData._W2PlayerPool, singlePlayer, 'W2');
-        $scope.loadPlayerInPool(savedData._W3PlayerPool, singlePlayer, 'W3');
-        $scope.loadPlayerInPool(savedData._W4PlayerPool, singlePlayer, 'W4');
-        $scope.loadPlayerInPool(savedData._D1PlayerPool, singlePlayer, 'D1');
-        $scope.loadPlayerInPool(savedData._D2PlayerPool, singlePlayer, 'D2');
-        $scope.loadPlayerInPool(savedData._GPlayerPool, singlePlayer, 'G');
+        $scope.loadPlayerInPool(savedData._PPlayerPool, singlePlayer, 'P');
+        $scope.loadPlayerInPool(savedData._CPlayerPool, singlePlayer,  'C');
+        $scope.loadPlayerInPool(savedData._1BPlayerPool, singlePlayer, '1B');
+        $scope.loadPlayerInPool(savedData._2BPlayerPool, singlePlayer, '2B');
+        $scope.loadPlayerInPool(savedData._3BPlayerPool, singlePlayer, '3B');
+        $scope.loadPlayerInPool(savedData._SSPlayerPool, singlePlayer, 'SS');
+        $scope.loadPlayerInPool(savedData._OF1PlayerPool, singlePlayer, 'OF1');
+        $scope.loadPlayerInPool(savedData._OF2PlayerPool, singlePlayer, 'OF2');
+        $scope.loadPlayerInPool(savedData._OF3PlayerPool, singlePlayer, 'OF3');
       });
 
       $scope.displayNewMessage("success", "Previous save loaded successfully.");

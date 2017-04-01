@@ -231,6 +231,13 @@ angular.module('NHLApp').controller('NHLController', ['$http', '$scope', '$filte
 
         }
         reader.readAsText(file);
+        //clear input
+        angular.forEach(
+          angular.element("input[type='file']"),
+          function(inputElem) {
+            angular.element(inputElem).val(null);
+          }
+        );
     }
 
 
@@ -281,6 +288,13 @@ angular.module('NHLApp').controller('NHLController', ['$http', '$scope', '$filte
           console.log(response);
           $scope.displayNewMessage("danger", "Error: Players could not be loaded.");
       });
+      //clear input
+      angular.forEach(
+        angular.element("input[type='file']"),
+        function(inputElem) {
+          angular.element(inputElem).val(null);
+        }
+      );
     }
 
     $scope.selectTopActualPlayers = function() {
@@ -673,7 +687,14 @@ angular.module('NHLApp').controller('NHLController', ['$http', '$scope', '$filte
         $scope._GPlayerPool = [];
 
     }
-
+    $scope.addSalaryImpliedPts = function() {
+      $scope._AllPlayers.forEach(function(player) {
+        player._FPPG = player._Salary * 0.004;
+        player._FPPG = player._FPPG.toFixed(1);
+        player._FPPG = parseFloat(player._FPPG);
+        $scope.updatePlayerPtsPerDollar(player);
+      });
+    }
     $scope.averagePlayerPoolSalary = function (playerPool) {
         if (playerPool.length == 0)
             return 0;

@@ -146,7 +146,13 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
           console.log(response);
           $scope.displayNewMessage("danger", "Error: Players could not be loaded.");
       });
-
+      //clear input
+      angular.forEach(
+        angular.element("input[type='file']"),
+        function(inputElem) {
+          angular.element(inputElem).val(null);
+        }
+      );
     }
 
     $scope.loadActual = function (file) {
@@ -202,6 +208,13 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
             $scope.displayNewMessage("info", "Player Actual Results have been successfully loaded");
         }
         reader.readAsText(file[0]);
+        //clear input
+        angular.forEach(
+          angular.element("input[type='file']"),
+          function(inputElem) {
+            angular.element(inputElem).val(null);
+          }
+        );
     }
 
     $scope.parseFloat = function(value)
@@ -789,6 +802,14 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
           $scope._AllDisplayedDraftData.push($scope._AllDraftData[i]);
         }
       }
+    }
+    $scope.addSalaryImpliedPts = function() {
+      $scope._AllPlayers.forEach(function(player) {
+        player._FPPG = player._Salary * 0.004;
+        player._FPPG = player._FPPG.toFixed(1);
+        player._FPPG = parseFloat(player._FPPG);
+        $scope.updatePlayerPtsPerDollar(player);
+      });
     }
     $scope.selectTopActualPlayers = function() {
       $scope.clearPlayerPools();

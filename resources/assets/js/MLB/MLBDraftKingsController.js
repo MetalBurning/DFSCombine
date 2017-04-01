@@ -232,6 +232,13 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
         }
         reader.readAsText(file);
+        //clear input
+        angular.forEach(
+          angular.element("input[type='file']"),
+          function(inputElem) {
+            angular.element(inputElem).val(null);
+          }
+        );
     }
     $scope.loadDraftKingsFPPG = function (event) {
 
@@ -258,6 +265,13 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
           console.log(response);
           $scope.displayNewMessage("danger", "Error: Players FPPG could not be loaded.");
       });
+      //clear input
+      angular.forEach(
+        angular.element("input[type='file']"),
+        function(inputElem) {
+          angular.element(inputElem).val(null);
+        }
+      );
     }
     $scope.loadDKPlayers = function (event) {
       $scope.clearPlayerPools();
@@ -478,7 +492,14 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             $scope.SelectedWeeks.push(week);
         }
     }
-
+    $scope.addSalaryImpliedPts = function() {
+      $scope._AllPlayers.forEach(function(player) {
+        player._FPPG = player._Salary * 0.004;
+        player._FPPG = player._FPPG.toFixed(1);
+        player._FPPG = parseFloat(player._FPPG);
+        $scope.updatePlayerPtsPerDollar(player);
+      });
+    }
     $scope.setDraftSortTypeAndReverse = function (sortType) {
         $scope.sortTypeDraft = sortType;
         $scope.sortReverseDraft = !$scope.sortReverseDraft;

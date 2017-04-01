@@ -231,6 +231,13 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
         }
         reader.readAsText(file);
+        //clear input
+        angular.forEach(
+          angular.element("input[type='file']"),
+          function(inputElem) {
+            angular.element(inputElem).val(null);
+          }
+        );
     }
 
 
@@ -281,6 +288,13 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
           console.log(response);
           $scope.displayNewMessage("danger", "Error: Players could not be loaded.");
       });
+      //clear input
+      angular.forEach(
+        angular.element("input[type='file']"),
+        function(inputElem) {
+          angular.element(inputElem).val(null);
+        }
+      );
     }
 
     $scope.selectTopActualPlayers = function() {
@@ -1047,7 +1061,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                   csvRows.push(csvRow);
                 }
             }
-            if($scope._AllDraftData.length <= csvRows.length) {
+            if($scope._AllDraftData.length == csvRows.length) {
               var numRowsChanged = 0;
               var drafts = $scope._AllDraftData;
               drafts = $filter('checkValidOnly')(drafts, true);
@@ -1106,7 +1120,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             } else {
               $scope.$apply(function() {
 
-                $scope.displayNewMessage("warning", "WARNING: # drafts: "+$scope._AllDraftData.length+" is larger then the expected csvFile: "+csvRows.length);
+                $scope.displayNewMessage("danger", "ERROR: # drafts: "+$scope._AllDraftData.length+" != "+csvRows.length+". Both CSV File and Total Drafts must be equal.");
 
               });
             }
@@ -1114,6 +1128,13 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
         }
         reader.readAsText(file);
+        //clear input
+        angular.forEach(
+          angular.element("input[type='file']"),
+          function(inputElem) {
+            angular.element(inputElem).val(null);
+          }
+        );
     }
     $scope.DownloadDraftCSV = function () {
         if ($scope._AllDraftData.length == 0) {

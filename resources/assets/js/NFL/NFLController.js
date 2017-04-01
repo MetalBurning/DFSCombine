@@ -146,7 +146,13 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
           console.log(response);
           $scope.displayNewMessage("danger", "Error: Players could not be loaded.");
       });
-
+      //clear input
+      angular.forEach(
+        angular.element("input[type='file']"),
+        function(inputElem) {
+          angular.element(inputElem).val(null);
+        }
+      );
     }
 
     $scope.loadActual = function (file) {
@@ -202,6 +208,13 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
             $scope.displayNewMessage("info", "Player Actual Results have been successfully loaded");
         }
         reader.readAsText(file[0]);
+        //clear input
+        angular.forEach(
+          angular.element("input[type='file']"),
+          function(inputElem) {
+            angular.element(inputElem).val(null);
+          }
+        );
     }
 
     $scope.parseFloat = function(value)
@@ -531,6 +544,14 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
       average = parseFloat(average / finalPlayerList.length);
       return (average).toFixed(2);
     }
+    $scope.addSalaryImpliedPts = function() {
+      $scope._AllPlayers.forEach(function(player) {
+        player._FPPG = player._Salary * 0.004;
+        player._FPPG = player._FPPG.toFixed(1);
+        player._FPPG = parseFloat(player._FPPG);
+        $scope.updatePlayerPtsPerDollar(player);
+      });
+    }
     $scope.buildDrafts = function () {
 
         //check if all pools have at least 1 player
@@ -856,6 +877,123 @@ angular.module('NFLApp').controller('NFLController', ['$http', '$scope', '$filte
         $scope._AllPlayers[indexOfPlayer]._ProjectedPointsPerDollar = parseFloat(player._FPPG / player._Salary).toFixed(5);
         player._ProjectedPointsPerDollar = parseFloat(player._FPPG / player._Salary).toFixed(5);
       }
+    }
+    $scope.CSVReplace = function (event) {
+
+
+      var file = event.target.files[0];
+
+        var allText = "";
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            allText = reader.result;
+
+            var allTextLines = allText.split(/\r\n|\n/);
+            var headers = allTextLines[0].split(',');
+
+            var csvRows = [];
+            for (var i = 1; i < allTextLines.length; i++) {
+                var data = allTextLines[i].split(',');
+
+                var entry_id = "";
+                var contest_id = "";
+                var contest_name = "";
+                var playerPoints = 0;
+                var playerSalary = 0;
+                for (var j = 0; j < data.length; j++) {
+                    switch (j) {
+                        case 0:
+                            entry_id = data[j].replace('"', '').replace('"', '').trim();
+                            break;
+                        case 1:
+                            contest_id = data[j].replace('"', '').replace('"', '').trim();
+
+                            break;
+                        case 2:
+                            contest_name = data[j].replace('"', '').replace('"', '').trim();
+                            break;
+
+                    }
+                }
+                var csvRow = {entry_id: entry_id, contest_id: contest_id, contest_name: contest_name};
+                if(entry_id !== undefined && entry_id !== '') {
+                  csvRows.push(csvRow);
+                }
+            }
+            if($scope._AllDraftData.length == csvRows.length) {
+              var numRowsChanged = 0;
+              var drafts = $scope._AllDraftData;
+              drafts = $filter('checkValidOnly')(drafts, true);
+              drafts = $filter('orderBy')(drafts, $scope.sortTypeDraft, $scope.sortReverseDraft);
+              var csvContent = "data:text/csv;charset=utf-8,";
+              csvContent = csvContent + "entry_id,contest_id,contest_name,QB,RB,RB,WR,WR,WR,TE,K,D\n";
+              for(var k = 0; k < csvRows.length; k++) {
+                var splitContestID = csvRows[k].contest_id.split('-');
+                if(drafts[k].players[0].playerID.indexOf(splitContestID[0]) !== -1) {
+                  //contains the same contest id within the player id, hard coded to check on ly the first player
+                  csvContent =  csvContent + csvRows[k].entry_id+','+csvRows[k].contest_id+','+csvRows[k].contest_name+',';
+                  var lineOfText = "";
+                  for(var j = 0; j < drafts[k].players.length;j++) {
+                    if (j == 0)
+                    {
+                        lineOfText = lineOfText + drafts[k].players[j].playerID;
+                    }
+                    else
+                    {
+                        lineOfText = lineOfText + "," + drafts[k].players[j].playerID;
+                    }
+                  }
+                  csvContent = csvContent + lineOfText + "\n";
+                  numRowsChanged++;
+                } else {
+                  $scope.$apply(function() {
+                    $scope.displayNewMessage("warning", "WARNING: player ID does not contain contest ID, Are you sure you have the correct CSV Replace file?");
+                  });
+                }
+              }
+              if(numRowsChanged > 0) {
+                var anchor = angular.element('<a/>');
+                anchor.css({ display: 'none' }); // Make sure it's not visible
+                angular.element(document.body).append(anchor); // Attach to document
+                var CSVName = "";
+                $scope._AllTeams.forEach(function (team) {
+                  if(CSVName.length == 0) {
+                    CSVName = team;
+                  } else {
+                    CSVName = CSVName + "_" + team;
+                  }
+                });
+                anchor.attr({
+                    href: encodeURI(csvContent),
+                    target: '_blank',
+                    download: 'CSVReplace_'+CSVName+'.csv'
+                })[0].click();
+
+                anchor.remove(); // Clean it up afterwards
+                $scope.$apply(function() {
+
+                  $scope.displayNewMessage("success", "Successfully replaced lineups in CSV");
+
+                });
+              }
+            } else {
+              $scope.$apply(function() {
+
+                $scope.displayNewMessage("danger", "ERROR: # drafts: "+$scope._AllDraftData.length+" != "+csvRows.length+". Both CSV File and Total Drafts must be equal.");
+
+              });
+            }
+
+
+        }
+        reader.readAsText(file);
+        //clear input
+        angular.forEach(
+          angular.element("input[type='file']"),
+          function(inputElem) {
+            angular.element(inputElem).val(null);
+          }
+        );
     }
     $scope.selectTopFPPGPlayers = function() {
       $scope.clearPlayerPools();

@@ -27,6 +27,7 @@
                                             <button type="button" class="btn btn-xs btn-primary" ng-disabled="_AllPlayers.length == 0" ng-click="openSaveDialog()"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span></button>
                                           </div>
                                             <div class='btn-group'>
+                                              <button type="button" class="btn btn-xs btn-info" ng-click="addSalaryImpliedPts()" >Salary Implied Pts</button>
                                               <button type="button" class="btn btn-xs btn-info" ng-click="selectTopActualPlayers()" >Top Actual</button>
                                               <button type="button" class="btn btn-xs btn-info" ng-click="selectTopFPPGPlayers()" >Top FPPG</button>
                                               <button type="button" class="btn btn-xs btn-default" ng-click="clearAllPlayerFilters()">Clear Filters</button>
@@ -313,7 +314,10 @@
                                         <div class='btn-toolbar pull-right'>
                                             <div class='btn-group'>
                                               <button type="button" class="btn btn-xs btn-info" ng-click="DownloadDraftCSV()">Download</button>
-                                                <button type="button" class="btn btn-xs btn-default" ng-click="clearDrafts()">Clear Drafts</button>
+                                              <label class="btn btn-primary btn-file btn-xs">
+                                                  CSVReplace<input type="file" style="display: none;" custom-on-change="CSVReplace">
+                                              </label>
+                                              <button type="button" class="btn btn-xs btn-default" ng-click="clearDrafts()">Clear Drafts</button>
                                             </div>
                                         </div>
                                         <h3 class="panel-title">Generated Drafts (150 Display Cap)</h3>

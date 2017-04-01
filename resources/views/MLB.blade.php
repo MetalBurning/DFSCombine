@@ -2,7 +2,7 @@
 
 @section('content')
 <script src="/js/AngularControllers/MLB/MLB.js?v={{str_random(40)}}"></script>
-<script src="/js/AngularControllers/MLB/MLBDraftKingsController.js?v={{str_random(40)}}"></script>
+<script src="/js/AngularControllers/MLB/MLBController.js?v={{str_random(40)}}"></script>
 <script src="/js/AngularControllers/MLB/MLBControllerHelpers.js?v={{str_random(40)}}"></script>
 <div  ng-app="MLBApp">
     <div class="container" ng-controller="MLBController as mlb">
@@ -41,10 +41,7 @@
                                                 <h4>Filter Positions</h4>
                                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                   <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('P1')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'P1']">P1</button>
-                                                  </div>
-                                                  <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('P2')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'P2']">P2</button>
+                                                    <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('P')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'P']">P</button>
                                                   </div>
                                                   <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('C')" ng-class="{true: 'active', false: ''}[SelectedPosition === 'C']">C</button>
@@ -57,7 +54,6 @@
                                                   </div>
                                                 </div>
                                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
-
                                                   <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-primary" ng-click="setAndUnsetPosition('3B')" ng-class="{true: 'active', false: ''}[SelectedPosition === '3B']">3B</button>
                                                   </div>
@@ -78,8 +74,7 @@
                                             <div class="col-sm-6 visible-sm visible-xs">
                                               <h4>Filter Positions</h4>
                                               <select class="form-control" ng-model="SelectedPosition" >
-                                                <option value="P1">P1</option>
-                                                <option value="P2">P2</option>
+                                                <option value="P">P</option>
                                                 <option value="C">C</option>
                                                 <option value="1B">1B</option>
                                                 <option value="2B">2B</option>
@@ -134,7 +129,7 @@
 
                                           </div>
 
-                                          @include('playersDK')
+                                          @include('playersFD')
 
 
                                     </div>
@@ -160,32 +155,15 @@
                                                 <table class="table table-hover">
                                                     <thead>
                                                         <tr>
-                                                            <th colspan="4">P1 <abbr title="Salary average for this pool">(@{{averagePlayerPoolSalary(_P1PlayerPool)}})</abbr></th>
+                                                            <th colspan="4">P <abbr title="Salary average for this pool">(@{{averagePlayerPoolSalary(_PPlayerPool)}})</abbr></th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody ng-repeat="P1Players in _P1PlayerPool">
+                                                    <tbody ng-repeat="PPlayers in _PPlayerPool">
                                                         <tr>
-                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(P1Players, 'P1')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
-                                                            <td ng-click="openClosePlayerDetails(P1Players)">@{{P1Players._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(P1Players)"><abbr title="Player percent in this position">@{{getPlayerPercentInPosition(P1Players, 'P1')}}%</abbr></td>
-                                                            <td ng-click="openClosePlayerDetails(P1Players)">@{{P1Players._Team}}<br /><abbr title="Player FPPG">@{{P1Players._FPPG}}</abbr></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div class="col-xs-12">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th colspan="4">P2 <abbr title="Salary average for this pool">(@{{averagePlayerPoolSalary(_P2PlayerPool)}})</abbr></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody ng-repeat="P2Players in _P2PlayerPool">
-                                                        <tr>
-                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(P2Players, 'P2')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
-                                                            <td ng-click="openClosePlayerDetails(P2Players)">@{{P2Players._Name}}</td>
-                                                            <td ng-click="openClosePlayerDetails(P2Players)"><abbr title="Player percent in this position">@{{getPlayerPercentInPosition(P2Players, 'P2')}}%</abbr></td>
-                                                            <td ng-click="openClosePlayerDetails(P2Players)">@{{P2Players._Team}}<br /><abbr title="Player FPPG">@{{P2Players._FPPG}}</abbr></td>
+                                                            <td><button class="btn btn-xs btn-danger" ng-click="removePlayerFromPool(PPlayers, 'P')"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
+                                                            <td ng-click="openClosePlayerDetails(PPlayers)">@{{PPlayers._Name}}</td>
+                                                            <td ng-click="openClosePlayerDetails(PPlayers)"><abbr title="Player percent in this position">@{{getPlayerPercentInPosition(PPlayers, 'P')}}%</abbr></td>
+                                                            <td ng-click="openClosePlayerDetails(PPlayers)">@{{PPlayers._Team}}<br /><abbr title="Player FPPG">@{{PPlayers._FPPG}}</abbr></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -338,6 +316,9 @@
                                         <div class='btn-toolbar pull-right'>
                                             <div class='btn-group'>
                                                 <button type="button" class="btn btn-xs btn-info" ng-click="DownloadDraftCSV()">Download</button>
+                                                <label class="btn btn-primary btn-file btn-xs">
+                                                    CSVReplace<input type="file" style="display: none;" custom-on-change="CSVReplace">
+                                                </label>
                                                 <button type="button" class="btn btn-xs btn-default" ng-click="clearDrafts()">Clear Drafts</button>
                                             </div>
                                         </div>
@@ -421,7 +402,7 @@
                     </uib-tab>
 
                     <uib-tab index="1" heading="DataBase" ng-click="loadHistory()">
-                        @include('databaseDK')
+                        @include('databaseFD')
                     </uib-tab>
                 </uib-tabset>
             </div>

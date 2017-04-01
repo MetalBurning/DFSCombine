@@ -11,7 +11,7 @@ angular.module('MLBApp').controller('DraftModalController', function ($scope, $u
         $uibModalInstance.dismiss('cancel');
     };
     $scope.getDraftSalaryLeft = function (draft) {
-        var startingSalary = 60000;
+        var startingSalary = 35000;
         draft.players.forEach(function (player) {
             startingSalary = startingSalary - player._Salary;
         });
@@ -104,31 +104,34 @@ angular.module('MLBApp').controller('SaveModalController', function ($scope, $ui
 
   $scope.create = function() {
     if($scope.title.length > 0 ) {
+      $scope.CreateUpdateButtonEnabled = false;
       $http.post('/MLB/create', {'postObject':JSON.stringify($scope.postObject), 'title': $scope.title, 'site': $scope.site}).then(function successCallback(response) {
          $scope.saved = true;
          $scope.displayNewMessage('success', 'Creating - Success');
          $scope.readData = response.data;
+         $scope.CreateUpdateButtonEnabled = true;
+         $uibModalInstance.close({title: $scope.title, postObject: $scope.postObject, readData: $scope.readData});
       }, function errorCallBack(response) {
         if(response.data.title.length > 0) {
           $scope.displayNewMessage('danger', 'Creating - Failed, '+response.data.title);
         } else if(response.data.postObject.length > 0) {
           $scope.displayNewMessage('danger', 'Creating - Failed, '+response.data.postObject);
         }
+        $scope.CreateUpdateButtonEnabled = true;
       });
     } else {
         $scope.displayNewMessage('danger', 'Creating - Failed, title is required');
+        $scope.CreateUpdateButtonEnabled = true;
     }
-    $scope.CreateUpdateButtonEnabled = false;
-    $timeout(function() {
-       $scope.CreateUpdateButtonEnabled = true;
-    }, 1000);
   }
   $scope.update = function() {
     if($scope.currentRead != null) {
+      $scope.CreateUpdateButtonEnabled = false;
       $http.post('/MLB/update', {'id':$scope.currentRead['id'], 'postObject':JSON.stringify($scope.postObject), 'title': $scope.title}).then(function successCallback(response) {
          $scope.displayNewMessage('success', 'Updating - Success');
          $scope.saved = true;
          $scope.readData = response.data;
+         $scope.CreateUpdateButtonEnabled = true;
       }, function errorCallBack(response) {
         if(response.data.title.length > 0) {
           $scope.displayNewMessage('danger', 'Updating - Failed, '+response.data.title);
@@ -137,11 +140,8 @@ angular.module('MLBApp').controller('SaveModalController', function ($scope, $ui
         } else if(response.data.postObject.length > 0) {
           $scope.displayNewMessage('danger', 'Updating - Failed, '+response.data.postObject);
         }
+        $scope.CreateUpdateButtonEnabled = true;
       });
-      $scope.CreateUpdateButtonEnabled = false;
-      $timeout(function() {
-         $scope.CreateUpdateButtonEnabled = true;
-      }, 1000);
     }
   }
 
