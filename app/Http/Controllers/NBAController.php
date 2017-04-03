@@ -72,7 +72,9 @@ class NBAController extends Controller
               $player->_TimesInDrafts = 0;
               $player->_PercentInDrafts = -1;
               $player->_Rank = -1;
-              $players[] = $player;
+              if($player->playerID != null) {
+                $players[] = $player;
+              }
 
             } else {
               $firstLine = false;
@@ -140,7 +142,9 @@ class NBAController extends Controller
                 $player->_TimesInDrafts = 0;
                 $player->_PercentInDrafts = -1;
                 $player->_Rank = -1;
-                $players[] = $player;
+                if($player->playerID != null) {
+                  $players[] = $player;
+                }
               }
             } else {
               fgetcsv($fileRead);

@@ -311,13 +311,13 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         return;
       }
       var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_ActualFantasyPoints', true);
-      var allPs = $filter('positionDK')(orderedPlayers, 'P');
-      var allCs = $filter('positionDK')(orderedPlayers, 'C');
-      var all1Bs = $filter('positionDK')(orderedPlayers, '1B');
-      var all2Bs = $filter('positionDK')(orderedPlayers, '2B');
-      var all3Bs = $filter('positionDK')(orderedPlayers, '3B');
-      var allSSs = $filter('positionDK')(orderedPlayers, 'SS');
-      var allOFs = $filter('positionDK')(orderedPlayers, 'OF');
+      var allPs = $filter('position')(orderedPlayers, 'P');
+      var allCs = $filter('position')(orderedPlayers, 'C');
+      var all1Bs = $filter('position')(orderedPlayers, '1B');
+      var all2Bs = $filter('position')(orderedPlayers, '2B');
+      var all3Bs = $filter('position')(orderedPlayers, '3B');
+      var allSSs = $filter('position')(orderedPlayers, 'SS');
+      var allOFs = $filter('position')(orderedPlayers, 'OF');
 
       for(var j = 0; j < 5; j++) {
         if(j < 3) {
@@ -480,13 +480,13 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       }
       var orderedPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
       var NonInjuredPlayers =  $filter('removeInjured')(orderedPlayers);
-      var allPs = $filter('positionDK')(NonInjuredPlayers, 'P');
-      var allCs = $filter('positionDK')(NonInjuredPlayers, 'C');
-      var all1Bs = $filter('positionDK')(NonInjuredPlayers, '1B');
-      var all2Bs = $filter('positionDK')(NonInjuredPlayers, '2B');
-      var all3Bs = $filter('positionDK')(NonInjuredPlayers, '3B');
-      var allSSs = $filter('positionDK')(NonInjuredPlayers, 'SS');
-      var allOFs = $filter('positionDK')(NonInjuredPlayers, 'OF');
+      var allPs = $filter('position')(NonInjuredPlayers, 'P');
+      var allCs = $filter('position')(NonInjuredPlayers, 'C');
+      var all1Bs = $filter('position')(NonInjuredPlayers, '1B');
+      var all2Bs = $filter('position')(NonInjuredPlayers, '2B');
+      var all3Bs = $filter('position')(NonInjuredPlayers, '3B');
+      var allSSs = $filter('position')(NonInjuredPlayers, 'SS');
+      var allOFs = $filter('position')(NonInjuredPlayers, 'OF');
       for(var j = 0; j < allPs.length; j++) {
         if(j == 0 || j == 1 || j == 3) {
           $scope.addPlayerToPool(allPs[j], 'P');
@@ -867,13 +867,13 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.setPlayerRanking = function() {
       var orderedFPPGPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
       var injuredPlayers =  $filter('removeInjured')(orderedFPPGPlayers);
-      var allPs = $filter('positionDK')(injuredPlayers, 'P');
-      var allCs = $filter('positionDK')(injuredPlayers, 'C');
-      var all1Bs = $filter('positionDK')(injuredPlayers, '1B');
-      var all2Bs = $filter('positionDK')(injuredPlayers, '2B');
-      var all3Bs = $filter('positionDK')(injuredPlayers, '3B');
-      var allSSs = $filter('positionDK')(injuredPlayers, 'SS');
-      var allOFs = $filter('positionDK')(injuredPlayers, 'OF');
+      var allPs = $filter('position')(injuredPlayers, 'P');
+      var allCs = $filter('position')(injuredPlayers, 'C');
+      var all1Bs = $filter('position')(injuredPlayers, '1B');
+      var all2Bs = $filter('position')(injuredPlayers, '2B');
+      var all3Bs = $filter('position')(injuredPlayers, '3B');
+      var allSSs = $filter('position')(injuredPlayers, 'SS');
+      var allOFs = $filter('position')(injuredPlayers, 'OF');
 
       $scope._AllPlayers.forEach(function(player) {
         var playerRank = [];
