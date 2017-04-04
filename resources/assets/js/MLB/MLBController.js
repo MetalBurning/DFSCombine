@@ -211,7 +211,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
                 }
 
                 $scope._AllPlayers.forEach(function (player) {
-                    if((player._Name.includes(playerFName) && player._Name.includes(playerLName)) && player._Salary === playerSalary) {
+                    if((player._Name.includes(playerFName) && player._Name.includes(playerLName))) {
                         player._ActualFantasyPoints = playerPoints;
                     }
                     if($scope._Positions.indexOf(player._Postion) === -1) {
