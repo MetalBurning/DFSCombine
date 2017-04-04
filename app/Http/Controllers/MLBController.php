@@ -19,7 +19,7 @@ class MLBController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-      //$this->middleware('subscribed');
+        $this->middleware('subscribed');
     }
     /**
      * Show the application dashboard.
