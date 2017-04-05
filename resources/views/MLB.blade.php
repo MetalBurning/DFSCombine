@@ -374,18 +374,24 @@
                                             </div>
                                             <div class="col-sm-3">
                                               <div class="row">
-                                                <div class="col-xs-12">
+                                                <div class="col-xs-8">
                                                   <h4>Draft Options</h4>
+                                                </div>
+                                                <div class="col-xs-4">
+                                                  <h4>BatvsPit:</h4>
                                                 </div>
                                               </div>
                                               <div class="row">
-                                                <div class="col-xs-12">
+                                                <div class="col-xs-8">
                                                   <div class="input-group">
                                                     <span class="input-group-btn">
-                                                      <button class="btn btn-primary" type="button" ng-click="removeAllButTopN()">Select Top</button>
+                                                      <button class="btn btn-primary" type="button" ng-click="removeAllButTopN()">SelectTop</button>
                                                     </span>
                                                     <input type="number" class="form-control" ng-model="mlb.TopLimit"  >
                                                   </div>
+                                                </div>
+                                                <div class="col-xs-4">
+                                                  <input type="number" class="form-control" ng-model="mlb.battersVSPitcher" >
                                                 </div>
                                               </div>
                                             </div>

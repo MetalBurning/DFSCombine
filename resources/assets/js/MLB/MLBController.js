@@ -52,7 +52,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     mlb.TopRange = -1;
     mlb.BottomRange = -1;
     mlb.removeDups = true;
-
+    mlb.battersVSPitcher = 0;
     //database
     $scope.savedPastSettings = [];
     $scope.currentRead = null;
@@ -1000,7 +1000,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
                             tempPlayerNames.push(tempDraft['OF3']._Name);
 
                             //add only valid drafts
-                            if($scope.isDraftTeamValid(finalPlayerList) && $scope.isDraftSalaryValid(finalPlayerList) && !$scope.doesDraftHaveDupPlayers(finalPlayerList)) {
+                            if($scope.isDraftTeamValid(finalPlayerList) && $scope.isDraftSalaryValid(finalPlayerList) && !$scope.doesDraftHaveDupPlayers(finalPlayerList) && $scope.validBattersVsPitcher(finalPlayerList)) {
                               //$scope._AllDrafts.push(tempDraft);
                               var tempDataObj = { FPPG: parseFloat($scope.getDraftFPPG(finalPlayerList)),
                                  Actual: parseFloat($scope.getDraftActual(finalPlayerList)),
@@ -1112,6 +1112,16 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
           }
         }
 
+    }
+    $scope.validBattersVsPitcher = function(draft) {
+      var battersVSPitcher = 0;
+      var pitcherOpp = draft[0]._Opponent;
+      draft.forEach(function (player) {
+        if(player._Team === pitcherOpp) {
+          battersVSPitcher++;
+        }
+      });
+      return (battersVSPitcher <= mlb.battersVSPitcher) ? true : false;
     }
     $scope.doesDraftHaveDupPlayers = function(draft) {
       var players = [];
@@ -1292,7 +1302,8 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             _OF3PlayerPool : $scope._OF3PlayerPool,
             TopRange : mlb.TopRange,
             BottomRange : mlb.BottomRange,
-            TopLimit : mlb.TopLimit
+            TopLimit : mlb.TopLimit,
+            battersVSPitcher : mlb.battersVSPitcher
         };
         var modalInstance = $uibModal.open({
             templateUrl: '/js/AngularControllers/saveDialog.html',
