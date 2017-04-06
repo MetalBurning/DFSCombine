@@ -181,16 +181,18 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
 
             for (var i = 1; i < allTextLines.length; i++) {
-                var data = allTextLines[i].split(';');
+                var data = allTextLines[i].split(',');
 
                 var playerPosition = "";
+                var playerTeam = "";
                 var playerFName = "";
                 var playerLName = "";
                 var playerPoints = 0;
+                var playerProjection = 0;
                 var playerSalary = 0;
                 for (var j = 0; j < data.length; j++) {
                     switch (j) {
-                        case 3:
+                        case 0:
                             var name = data[j].replace('"', '').replace('"', '').replace('Jr.', '').replace('Sr.', '').trim();
                             var splitName = name.split(' ');
                             playerFName = splitName[0];
@@ -200,19 +202,30 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
                                 playerLName = splitName[2];
                             }
                             break;
-                        case 7:
+                        case 1:
+                            playerPosition = data[j].replace('"', '').replace('"', '').trim();
+                            break;
+                        case 2:
+                            playerTeam = data[j].replace('"', '').replace('"', '').trim();
+                            break;
+                        case 14:
+                            playerProjection = parseFloat(data[j].replace('"', '').replace('"', '').trim());
+                            break;
+                        case 19:
                             playerPoints = parseFloat(data[j].replace('"', '').replace('"', '').trim());
                             break;
-                        case 8:
-                            playerSalary = parseInt(data[j].replace('"', '').replace('"', '').replace('$', '').trim());
-                            break;
+                        // case 8:
+                        //     playerSalary = parseInt(data[j].replace('"', '').replace('"', '').replace('$', '').trim());
+                        //     break;
 
                     }
                 }
 
                 $scope._AllPlayers.forEach(function (player) {
-                    if((player._Name.includes(playerFName) && player._Name.includes(playerLName)) && player._Salary === playerSalary) {
+                    if((player._Name.includes(playerFName) && player._Name.includes(playerLName))) {
                         player._ActualFantasyPoints = playerPoints;
+                        player._FPPG = playerProjection;
+                        $scope.updatePlayerPtsPerDollar(player);
                     }
                     if($scope._Positions.indexOf(player._Postion) === -1) {
                       $scope._Positions.push(player._Position);
