@@ -183,13 +183,10 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             for (var i = 1; i < allTextLines.length; i++) {
                 var data = allTextLines[i].split(',');
 
-                var playerPosition = "";
-                var playerTeam = "";
                 var playerFName = "";
                 var playerLName = "";
                 var playerPoints = 0;
                 var playerProjection = 0;
-                var playerSalary = 0;
                 for (var j = 0; j < data.length; j++) {
                     switch (j) {
                         case 0:
@@ -203,15 +200,9 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
                             }
                             break;
                         case 1:
-                            playerPosition = data[j].replace('"', '').replace('"', '').trim();
-                            break;
-                        case 2:
-                            playerTeam = data[j].replace('"', '').replace('"', '').trim();
-                            break;
-                        case 14:
                             playerProjection = parseFloat(data[j].replace('"', '').replace('"', '').trim());
                             break;
-                        case 19:
+                        case 2:
                             playerPoints = parseFloat(data[j].replace('"', '').replace('"', '').trim());
                             break;
                         // case 8:
