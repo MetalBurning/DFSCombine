@@ -867,7 +867,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
     $scope.setPlayerRanking = function() {
       var orderedFPPGPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
-      var injuredPlayers =  $filter('removeInjured')(orderedFPPGPlayers);
+      var injuredPlayers =  $filter('removeOut')(orderedFPPGPlayers);
       var allPs = $filter('position')(injuredPlayers, 'P');
       var allCs = $filter('position')(injuredPlayers, 'C');
       var all1Bs = $filter('position')(injuredPlayers, '1B');

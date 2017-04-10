@@ -1393,7 +1393,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
     $scope.setPlayerRanking = function() {
       var orderedFPPGPlayers =  $filter('orderBy')($scope._AllPlayers, '_FPPG', true);
-      var injuredPlayers =  $filter('removeInjured')(orderedFPPGPlayers);
+      var injuredPlayers =  $filter('removeOut')(orderedFPPGPlayers);
       var allPGs = $filter('position')(injuredPlayers, 'PG');
       var allSGs = $filter('position')(injuredPlayers, 'SG');
       var allSFs = $filter('position')(injuredPlayers, 'SF');
