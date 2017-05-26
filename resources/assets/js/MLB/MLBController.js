@@ -53,7 +53,9 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     mlb.BottomRange = -1;
     mlb.removeDups = true;
     mlb.minTeamStack1 = 4;
+    mlb.teamsForStack1 = [];
     mlb.minTeamStack2 = 3;
+    mlb.teamsForStack2 = [];
     mlb.battersVSPitcher = 0;
     //database
     $scope.savedPastSettings = [];
@@ -1132,7 +1134,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       var hasValidTeamStack1 = false;
       var validTeam1 = "";
       for (var team in teamStacks) {
-        if(teamStacks[team] >= mlb.minTeamStack1) {
+        if(teamStacks[team] >= mlb.minTeamStack1 && mlb.teamsForStack1.indexOf(team) !== -1) {
           hasValidTeamStack1 = true;
           validTeam1 = team;
           break;
@@ -1140,7 +1142,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       }
       var hasValidTeamStack2 = false;
       for (var team in teamStacks) {
-        if(teamStacks[team] >= mlb.minTeamStack2 && team != validTeam1) {
+        if(teamStacks[team] >= mlb.minTeamStack2 && team != validTeam1 && mlb.teamsForStack2.indexOf(team) !== -1) {
           hasValidTeamStack2 = true;
           break;
         }
@@ -1281,6 +1283,15 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
                 },
                 battersVSPitcher: function() {
                     return mlb.battersVSPitcher;
+                },
+                allTeams: function() {
+                  return $scope._AllTeams;
+                },
+                teamsForStack1: function() {
+                  return mlb.teamsForStack1;
+                },
+                teamsForStack2: function() {
+                  return mlb.teamsForStack2;
                 }
             }
         });
@@ -1288,6 +1299,8 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
           mlb.minTeamStack1 = saveResult['minTeamStack1'];
           mlb.minTeamStack2 = saveResult['minTeamStack2'];
           mlb.battersVSPitcher = saveResult['battersVSPitcher'];
+          mlb.teamsForStack1 = saveResult['teamsForStack1'];
+          mlb.teamsForStack2 = saveResult['teamsForStack2'];
         }, function () {
 
         });

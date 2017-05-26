@@ -1,16 +1,36 @@
 
-angular.module('MLBApp').controller('AdvancedControllerMLB', function ($scope, $uibModalInstance, minTeamStack1, minTeamStack2, battersVSPitcher) {
+angular.module('MLBApp').controller('AdvancedControllerMLB', function ($scope, $uibModalInstance, minTeamStack1, minTeamStack2, battersVSPitcher, allTeams, teamsForStack1, teamsForStack2) {
+
+    $scope.allTeams = allTeams;
 
     $scope.minTeamStack1 = minTeamStack1;
     $scope.minTeamStack2 = minTeamStack2;
     $scope.battersVSPitcher = battersVSPitcher;
+    $scope.teamsForStack1 = teamsForStack1;
+    $scope.teamsForStack2 = teamsForStack2;
 
+    $scope.addRemoveTeamStack1 = function(team) {
+      var index = $scope.teamsForStack1.indexOf(team);
+      if(index === -1) {
+        $scope.teamsForStack1.push(team);
+      } else {
+        $scope.teamsForStack1.splice(index, 1);
+      }
+    }
+    $scope.addRemoveTeamStack2 = function(team) {
+      var index = $scope.teamsForStack2.indexOf(team);
+      if(index === -1) {
+        $scope.teamsForStack2.push(team);
+      } else {
+        $scope.teamsForStack2.splice(index, 1);
+      }
+    }
     $scope.ok = function () {
-        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, battersVSPitcher: $scope.battersVSPitcher});
+        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, battersVSPitcher: $scope.battersVSPitcher, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2});
     };
 
     $scope.cancel = function () {
-        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, battersVSPitcher: $scope.battersVSPitcher});
+        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, battersVSPitcher: $scope.battersVSPitcher, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2});
     };
 });
 
