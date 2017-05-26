@@ -52,6 +52,8 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     mlb.TopRange = -1;
     mlb.BottomRange = -1;
     mlb.removeDups = true;
+    mlb.minTeamStack1 = 4;
+    mlb.minTeamStack2 = 3;
     mlb.battersVSPitcher = 0;
     //database
     $scope.savedPastSettings = [];
@@ -1004,7 +1006,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
                             tempPlayerNames.push(tempDraft['OF3']._Name);
 
                             //add only valid drafts
-                            if($scope.isDraftTeamValid(finalPlayerList) && $scope.isDraftSalaryValid(finalPlayerList) && !$scope.doesDraftHaveDupPlayers(finalPlayerList) && $scope.validBattersVsPitcher(finalPlayerList)) {
+                            if($scope.isDraftTeamValid(finalPlayerList) && $scope.isDraftSalaryValid(finalPlayerList) && !$scope.doesDraftHaveDupPlayers(finalPlayerList) && $scope.validBattersVsPitcher(finalPlayerList) && $scope.validTeamStacks(finalPlayerList)) {
                               //$scope._AllDrafts.push(tempDraft);
                               var tempDataObj = { FPPG: parseFloat($scope.getDraftFPPG(finalPlayerList)),
                                  Actual: parseFloat($scope.getDraftActual(finalPlayerList)),
@@ -1116,6 +1118,37 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
           }
         }
 
+    }
+    $scope.validTeamStacks = function(draft) {
+      var teamStacks = {}
+      draft.forEach(function (player) {
+        if(teamStacks.hasOwnProperty(player._Team)) {
+          teamStacks[player._Team]++;
+        } else {
+          teamStacks[player._Team] = 1;
+        }
+      });
+      // Looping through
+      var hasValidTeamStack1 = false;
+      var validTeam1 = "";
+      for (var team in teamStacks) {
+        if(teamStacks[team] >= mlb.minTeamStack1) {
+          hasValidTeamStack1 = true;
+          validTeam1 = team;
+          break;
+        }
+      }
+      var hasValidTeamStack2 = false;
+      for (var team in teamStacks) {
+        if(teamStacks[team] >= mlb.minTeamStack2 && team != validTeam1) {
+          hasValidTeamStack2 = true;
+          break;
+        }
+      }
+      if(hasValidTeamStack2 && hasValidTeamStack1) {
+        return true;
+      }
+      return false;
     }
     $scope.validBattersVsPitcher = function(draft) {
       var battersVSPitcher = 0;
@@ -1234,7 +1267,31 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             }
         });
     }
+    $scope.openAdvanced = function () {
+        var modalInstance = $uibModal.open({
+            templateUrl: '/js/AngularControllers/modelAdvancedMLB.html',
+            controller: 'AdvancedControllerMLB',
+            size: 'lg',
+            resolve: {
+                minTeamStack1: function () {
+                    return mlb.minTeamStack1;
+                },
+                minTeamStack2: function () {
+                    return mlb.minTeamStack2;
+                },
+                battersVSPitcher: function() {
+                    return mlb.battersVSPitcher;
+                }
+            }
+        });
+        modalInstance.result.then(function (saveResult) {
+          mlb.minTeamStack1 = saveResult['minTeamStack1'];
+          mlb.minTeamStack2 = saveResult['minTeamStack2'];
+          mlb.battersVSPitcher = saveResult['battersVSPitcher'];
+        }, function () {
 
+        });
+    }
 
     $scope.isDraftSalaryValid = function (draft) {
         var startingSalary = 35000;

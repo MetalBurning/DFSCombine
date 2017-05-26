@@ -1,4 +1,19 @@
 
+angular.module('MLBApp').controller('AdvancedControllerMLB', function ($scope, $uibModalInstance, minTeamStack1, minTeamStack2, battersVSPitcher) {
+
+    $scope.minTeamStack1 = minTeamStack1;
+    $scope.minTeamStack2 = minTeamStack2;
+    $scope.battersVSPitcher = battersVSPitcher;
+
+    $scope.ok = function () {
+        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, battersVSPitcher: $scope.battersVSPitcher});
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, battersVSPitcher: $scope.battersVSPitcher});
+    };
+});
+
 angular.module('MLBApp').controller('DraftModalController', function ($scope, $uibModalInstance, draft) {
 
     $scope.draft = draft;
