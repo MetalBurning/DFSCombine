@@ -57,6 +57,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     mlb.minTeamStack2 = 3;
     mlb.teamsForStack2 = [];
     mlb.battersVSPitcher = 0;
+
     //database
     $scope.savedPastSettings = [];
     $scope.currentRead = null;
@@ -545,6 +546,11 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       $scope._AllPlayersMASTER = [];
       $scope._AllTeams = [];
       $scope._Positions = [];
+      mlb.minTeamStack1 = 4;
+      mlb.teamsForStack1 = [];
+      mlb.minTeamStack2 = 3;
+      mlb.teamsForStack2 = [];
+      mlb.battersVSPitcher = 0;
     }
 
     $scope.changeLineups = function (files) {
@@ -1377,7 +1383,11 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             TopRange : mlb.TopRange,
             BottomRange : mlb.BottomRange,
             TopLimit : mlb.TopLimit,
-            battersVSPitcher : mlb.battersVSPitcher
+            battersVSPitcher : mlb.battersVSPitcher,
+            minTeamStack1 : mlb.minTeamStack1,
+            teamsForStack1 : mlb.teamsForStack1,
+            minTeamStack2 : mlb.minTeamStack2,
+            teamsForStack2 : mlb.teamsForStack2
         };
         var modalInstance = $uibModal.open({
             templateUrl: '/js/AngularControllers/saveDialog.html',
@@ -1503,6 +1513,21 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       mlb.BottomRange = parseFloat(savedData.BottomRange);
       mlb.TopLimit = parseInt(savedData.TopLimit);
 
+      if(savedData.minTeamStack1 === undefined) {
+        mlb.minTeamStack1 = 4;
+        mlb.teamsForStack1 = [];
+        mlb.minTeamStack2 = 3
+        mlb.teamsForStack2 = [];
+        mlb.battersVSPitcher = 0;
+      }
+      else {
+        mlb.minTeamStack1 = parseInt(savedData.minTeamStack1);
+        mlb.teamsForStack1 = savedData.teamsForStack1;
+        mlb.minTeamStack2 = parseInt(savedData.minTeamStack2);
+        mlb.teamsForStack2 = savedData.teamsForStack2;
+        mlb.battersVSPitcher = savedData.battersVSPitcher;
+      }
+      
       $scope._AllPlayers.forEach(function(singlePlayer) {
 
         //add team data
