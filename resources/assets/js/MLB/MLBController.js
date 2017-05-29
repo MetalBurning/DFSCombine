@@ -34,7 +34,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.sortReverse = true;  // set the default sort order
     $scope.sortReverseDraft = true;
     $scope.SelectedPosition = 'P';     // set the default search/filter term
-    $scope.SelectedTeam = 'All';
+    $scope.SelectedTeam = [];
     $scope.SelectedStackPositions = [];
     $scope.SelectedDraft = null;
 
@@ -585,10 +585,10 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         $scope._Message.message = "";
     }
     $scope.addRemoveTeam = function (team) {
-        if ($scope.SelectedTeam === team) {
-            $scope.SelectedTeam = 'All';
+        if ($scope.SelectedTeam.indexOf(team) !== -1) {
+            $scope.SelectedTeam.splice($scope.SelectedTeam.indexOf(team), 1);
         } else {
-            $scope.SelectedTeam = team;
+            $scope.SelectedTeam.push(team);
         }
     }
     $scope.addRemoveWeek= function (week) {
@@ -1358,7 +1358,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     }
 
     $scope.clearAllPlayerFilters = function () {
-        $scope.SelectedTeam = 'All';
+        $scope.SelectedTeam = [];
         $scope.SelectedWeeks = [];
     }
 
@@ -1527,7 +1527,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         mlb.teamsForStack2 = savedData.teamsForStack2;
         mlb.battersVSPitcher = savedData.battersVSPitcher;
       }
-      
+
       $scope._AllPlayers.forEach(function(singlePlayer) {
 
         //add team data

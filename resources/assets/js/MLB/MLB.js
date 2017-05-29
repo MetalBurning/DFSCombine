@@ -55,13 +55,13 @@ MLBApp.filter('removeOut', function () {
     };
 })
 MLBApp.filter('team', function () {
-    return function (allPlayers, team) {
+    return function (allPlayers, selectedTeams) {
         var filteredPlayers = [];
-        if(team === 'All' || team === undefined || team === '' || team === null) {
+        if(selectedTeams.length === 0) {
           return allPlayers;
         }
         allPlayers.forEach(function (player) {
-          if (team === player._Team) {
+          if (selectedTeams.indexOf(player._Team) !== -1) {
             filteredPlayers.push(player);
           }
         });

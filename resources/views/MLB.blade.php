@@ -90,41 +90,34 @@
                                                 <div ng-if="_AllTeams.length >= 12">
                                                   <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                     <div class="btn-group" ng-repeat="team in _AllTeams|limitTo:(_AllTeams.length / 2)"  role="group">
-                                                        <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam === team]">@{{team}}</button>
+                                                        <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam.indexOf(team) !== -1]">@{{team}}</button>
                                                     </div>
                                                   </div>
                                                   <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                     <div class="btn-group" ng-repeat="team in _AllTeams| limitTo: ((_AllTeams.length / 2) - _AllTeams.length)"  role="group">
-                                                        <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam === team]">@{{team}}</button>
+                                                        <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam.indexOf(team) !== -1]">@{{team}}</button>
                                                     </div>
                                                   </div>
                                               </div>
                                               <div ng-if="_AllTeams.length < 12 && _AllTeams.length > 8">
                                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                   <div class="btn-group" ng-repeat="team in _AllTeams|limitTo:(_AllTeams.length / 2)"  role="group">
-                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam === team]">@{{team}}</button>
+                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam.indexOf(team) !== -1]">@{{team}}</button>
                                                   </div>
                                                 </div>
                                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                   <div class="btn-group" ng-repeat="team in _AllTeams|limitTo: ((_AllTeams.length / 2) - _AllTeams.length)"  role="group">
-                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam === team]">@{{team}}</button>
+                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam.indexOf(team) !== -1]">@{{team}}</button>
                                                   </div>
                                                 </div>
                                               </div>
                                               <div ng-if="_AllTeams.length < 9 ">
                                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                                                   <div class="btn-group" ng-repeat="team in _AllTeams|limitTo:8"  role="group">
-                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam === team]">@{{team}}</button>
+                                                      <button type="button" class="btn btn-primary"  ng-click="addRemoveTeam(team);" ng-class="{true: 'active', false: ''}[SelectedTeam.indexOf(team) !== -1]">@{{team}}</button>
                                                   </div>
                                                 </div>
                                               </div>
-                                            </div>
-                                            <div class="col-sm-6 visible-sm visible-xs">
-                                              <h4>Filter Teams</h4>
-                                              <select class="form-control" ng-model="SelectedTeam"  >
-                                                <option value="All">All</option>
-                                                <option ng-repeat="team in _AllTeams" ng-value="team">@{{team}}</option>
-                                              </select>
                                             </div>
 
                                           </div>
