@@ -661,7 +661,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 $scope._G3PlayerPool.splice($scope._G3PlayerPool.indexOf(player), 1);
                 break;
             case 'F1':
-                $scope._F2PlayerPool.splice($scope._F2PlayerPool.indexOf(player), 1);
+                $scope._F1PlayerPool.splice($scope._F1PlayerPool.indexOf(player), 1);
                 break;
             case 'F2':
                 $scope._F2PlayerPool.splice($scope._F2PlayerPool.indexOf(player), 1);
