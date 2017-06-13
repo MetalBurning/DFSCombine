@@ -68,6 +68,23 @@ Route::post('/NBA/delete', 'NBAController@delete');
 
 Route::post('/NBA/updateTitle', 'NBAController@updateTitle');
 
+//WNBA
+Route::get('/WNBA', 'WNBAController@WNBA');
+Route::post('/WNBA/loadFanDuelPlayers', 'WNBAController@loadFanDuelPlayers');
+Route::post('/WNBA/loadDraftKingsPlayers', 'WNBAController@loadDraftKingsPlayers');
+Route::post('/WNBA/loadDraftKingsFPPG', 'WNBAController@loadDraftKingsFPPG');
+Route::post('/WNBA/loadHistory', 'WNBAController@loadHistory');
+
+Route::post('/WNBA/buildDraft', 'WNBAController@buildDraft');
+Route::post('/WNBA/downloadDrafts', 'WNBAController@downloadDrafts');
+
+Route::post('/WNBA/create', 'WNBAController@create');
+Route::post('/WNBA/read', 'WNBAController@read');
+Route::post('/WNBA/update', 'WNBAController@update');
+Route::post('/WNBA/delete', 'WNBAController@delete');
+
+Route::post('/WNBA/updateTitle', 'WNBAController@updateTitle');
+
 //NBA DK
 Route::get('/NBADK', 'NBAController@NBADK');
 

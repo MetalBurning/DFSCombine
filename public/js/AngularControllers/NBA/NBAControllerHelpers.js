@@ -32,6 +32,39 @@ angular.module('NBAApp').controller('DraftModalController', function ($scope, $u
         return totalActual.toFixed(2);
     }
 });
+angular.module('NBAApp').controller('DraftModalControllerWNBA', function ($scope, $uibModalInstance, draft) {
+
+    $scope.draft = draft;
+
+    $scope.ok = function () {
+        $uibModalInstance.close();
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+    $scope.getDraftSalaryLeft = function (draft) {
+        var startingSalary = 40000;
+        draft.players.forEach(function (player) {
+            startingSalary = startingSalary - player._Salary;
+        });
+        return startingSalary;
+    }
+    $scope.getDraftProjection = function (draft) {
+        var totalProjection = 0;
+        draft.players.forEach(function (player) {
+            totalProjection = totalProjection + player._FPPG;
+        });
+        return totalProjection.toFixed(2);
+    }
+    $scope.getDraftActual = function (draft) {
+        var totalActual = 0;
+        draft.players.forEach(function (player) {
+            totalActual = totalActual + player._ActualFantasyPoints;
+        });
+        return totalActual.toFixed(2);
+    }
+});
 angular.module('NBAApp').controller('DKDraftModalController', function ($scope, $uibModalInstance, draft) {
 
     $scope.draft = draft;
@@ -168,7 +201,109 @@ angular.module('NBAApp').controller('SaveModalController', function ($scope, $ui
 
   };
 });
+angular.module('NBAApp').controller('SaveModalControllerWNBA', function ($scope, $uibModalInstance, $http, postObject, currentRead, site, $timeout) {
 
+  $scope.postObject = postObject;
+  $scope.currentRead = currentRead;
+  $scope.site = site;
+
+  $scope.readData = undefined;
+
+  if(currentRead != null) {
+    $scope.title = currentRead['title'];
+  } else {
+    $scope.title = "";
+  }
+
+  $scope.saved = false;
+  $scope.alerts = [{type: "info", msg: "Save / Update current settings.", number: 1 }];
+
+  $scope.CreateUpdateButtonEnabled = true;
+
+  $scope.displayNewMessage = function (messageType, messageContent) {
+    $scope.addAlert(messageType, messageContent);
+  }
+  $scope.addAlert = function(type, message) {
+    var sameNumberOfAlerts = 1;
+    $scope.alerts.forEach(function(alert) {
+      if(alert.type == type && alert.msg == message) {
+        sameNumberOfAlerts++;
+      }
+    });
+    $scope.alerts.push({type: type, msg: message, number: sameNumberOfAlerts});
+  }
+  $scope.closeAlert = function(index) {
+    $scope.alerts.splice(index, 1);
+  }
+
+
+
+  $scope.create = function() {
+    if($scope.title.length > 0 ) {
+      $scope.CreateUpdateButtonEnabled = false;
+      $http.post('/WNBA/create', {'postObject':JSON.stringify($scope.postObject), 'title': $scope.title, 'site': $scope.site}).then(function successCallback(response) {
+         $scope.saved = true;
+         $scope.displayNewMessage('success', 'Creating - Success');
+         $scope.readData = response.data;
+         $scope.CreateUpdateButtonEnabled = true;
+         $uibModalInstance.close({title: $scope.title, postObject: $scope.postObject, readData: $scope.readData});
+      }, function errorCallBack(response) {
+        if(response.data.title.length > 0) {
+          $scope.displayNewMessage('danger', 'Creating - Failed, '+response.data.title);
+        } else if(response.data.postObject.length > 0) {
+          $scope.displayNewMessage('danger', 'Creating - Failed, '+response.data.postObject);
+        }
+        $scope.CreateUpdateButtonEnabled = true;
+      });
+    } else {
+        $scope.displayNewMessage('danger', 'Creating - Failed, title is required');
+        $scope.CreateUpdateButtonEnabled = true;
+    }
+  }
+  $scope.update = function() {
+    if($scope.currentRead != null) {
+      $scope.CreateUpdateButtonEnabled = false;
+      $http.post('/WNBA/update', {'id':$scope.currentRead['id'], 'postObject':JSON.stringify($scope.postObject), 'title': $scope.title}).then(function successCallback(response) {
+         $scope.displayNewMessage('success', 'Updating - Success');
+         $scope.saved = true;
+         $scope.readData = response.data;
+         $scope.CreateUpdateButtonEnabled = true;
+      }, function errorCallBack(response) {
+        if(response.data.title.length > 0) {
+          $scope.displayNewMessage('danger', 'Updating - Failed, '+response.data.title);
+        } else if(response.data.id.length > 0) {
+          $scope.displayNewMessage('danger', 'Updating - Failed, '+response.data.id);
+        } else if(response.data.postObject.length > 0) {
+          $scope.displayNewMessage('danger', 'Updating - Failed, '+response.data.postObject);
+        }
+        $scope.CreateUpdateButtonEnabled = true;
+      });
+    }
+  }
+
+
+  $scope.hasCurrentRead = function() {
+    return ($scope.currentRead != null);
+  }
+
+
+  $scope.ok = function () {
+    if($scope.readData !== undefined) {
+      $uibModalInstance.close({title: $scope.title, postObject: $scope.postObject, readData: $scope.readData});
+    } else {
+      $uibModalInstance.dismiss();
+    }
+  };
+
+  $scope.cancel = function () {
+    if($scope.readData !== undefined) {
+      $uibModalInstance.close({title: $scope.title, postObject: $scope.postObject, readData: $scope.readData});
+    } else {
+      $uibModalInstance.dismiss();
+    }
+
+  };
+});
 
 angular.module('NBAApp').controller('PlayerModalController', function ($scope, $uibModalInstance, allPlayers, selectedPlayer) {
 
