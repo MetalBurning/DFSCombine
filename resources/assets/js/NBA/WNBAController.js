@@ -900,7 +900,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                     tempDraft['F1'] = F1Player;
                     $scope._F2PlayerPool.forEach(function(F2Player) {
                       tempDraft['F2'] = F2Player;
-                      $scope._F1PlayerPool.forEach(function(F3Player) {
+                      $scope._F3PlayerPool.forEach(function(F3Player) {
                         tempDraft['F3'] = F3Player;
                         $scope._F4PlayerPool.forEach(function(F4Player) {
                           tempDraft['F4'] = F4Player;
@@ -995,6 +995,10 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
               });
             });
         });
+
+        if($scope._AllDraftData.length == 0) {
+          $scope.displayNewMessage('danger', 'No Lineups Built, Try adding more players');
+        }
 
         $http.post('/WNBA/buildDraft', {'builtDrafts':$scope._AllDraftData.length}).then(function successCallback(response) {
 
