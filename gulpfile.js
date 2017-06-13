@@ -19,6 +19,10 @@ require('laravel-elixir-vue-2');
        './public/js/AngularControllers/NBA'
      );
      mix.webpack(
+       'NBA/WNBAController.js',
+       './public/js/AngularControllers/NBA'
+     );
+     mix.webpack(
        'NBA/NBADraftKingsController.js',
        './public/js/AngularControllers/NBA'
      );
@@ -42,7 +46,7 @@ require('laravel-elixir-vue-2');
      './public/js/AngularControllers/NFL'
    );
  });
- 
+
  elixir(function(mix) {
    mix.webpack(
      'NHL/NHLController.js',
