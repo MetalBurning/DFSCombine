@@ -273,6 +273,7 @@
                                     <div class="panel-heading">
                                         <div class='btn-toolbar pull-right'>
                                             <div class='btn-group'>
+                                                <button type="button" class="btn btn-xs btn-info" ng-click="openAdvanced()">Advanced</button>
                                                 <button type="button" class="btn btn-xs btn-info" ng-click="DownloadDraftCSV()">Download</button>
                                                 <label class="btn btn-primary btn-file btn-xs">
                                                     CSVReplace<input type="file" style="display: none;" custom-on-change="CSVReplace">

@@ -371,3 +371,36 @@ angular.module('NBAApp').controller('PlayerModalController', function ($scope, $
         $uibModalInstance.dismiss('cancel');
     };
 });
+angular.module('NBAApp').controller('AdvancedControllerNBA', function ($scope, $uibModalInstance, minTeamStack1, minTeamStack2, allTeams, teamsForStack1, teamsForStack2) {
+
+    $scope.allTeams = allTeams;
+
+    $scope.minTeamStack1 = minTeamStack1;
+    $scope.minTeamStack2 = minTeamStack2;
+    $scope.teamsForStack1 = teamsForStack1;
+    $scope.teamsForStack2 = teamsForStack2;
+
+    $scope.addRemoveTeamStack1 = function(team) {
+      var index = $scope.teamsForStack1.indexOf(team);
+      if(index === -1) {
+        $scope.teamsForStack1.push(team);
+      } else {
+        $scope.teamsForStack1.splice(index, 1);
+      }
+    }
+    $scope.addRemoveTeamStack2 = function(team) {
+      var index = $scope.teamsForStack2.indexOf(team);
+      if(index === -1) {
+        $scope.teamsForStack2.push(team);
+      } else {
+        $scope.teamsForStack2.splice(index, 1);
+      }
+    }
+    $scope.ok = function () {
+        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2});
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2});
+    };
+});

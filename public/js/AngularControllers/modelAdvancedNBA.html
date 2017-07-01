@@ -1,0 +1,88 @@
+﻿
+<div class="modal-header">
+    <h3 class="modal-title">Advanced Settings</h3>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xs-6">
+      <div ng-if="allTeams.length >= 12">
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" ng-repeat="team in allTeams|limitTo:(allTeams.length / 2)"  role="group">
+              <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeamStack1(team);" ng-class="{true: 'active', false: ''}[teamsForStack1.indexOf(team) !== -1]">{{team}}</button>
+          </div>
+        </div>
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" ng-repeat="team in allTeams| limitTo: ((allTeams.length / 2) - allTeams.length)"  role="group">
+              <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeamStack1(team);" ng-class="{true: 'active', false: ''}[teamsForStack1.indexOf(team) !== -1]">{{team}}</button>
+          </div>
+        </div>
+      </div>
+      <div ng-if="allTeams.length < 12 && allTeams.length > 8">
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" ng-repeat="team in allTeams|limitTo:(allTeams.length / 2)"  role="group">
+              <button type="button" class="btn btn-primary"  ng-click="addRemoveTeamStack1(team);" ng-class="{true: 'active', false: ''}[teamsForStack1.indexOf(team) !== -1]">{{team}}</button>
+          </div>
+        </div>
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" ng-repeat="team in allTeams|limitTo: ((allTeams.length / 2) - allTeams.length)"  role="group">
+              <button type="button" class="btn btn-primary"  ng-click="addRemoveTeamStack1(team);" ng-class="{true: 'active', false: ''}[teamsForStack1.indexOf(team) !== -1]">{{team}}</button>
+          </div>
+        </div>
+      </div>
+      <div ng-if="allTeams.length < 9 ">
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" ng-repeat="team in allTeams|limitTo:8"  role="group">
+              <button type="button" class="btn btn-primary"  ng-click="addRemoveTeamStack1(team);" ng-class="{true: 'active', false: ''}[teamsForStack1.indexOf(team) !== -1]">{{team}}</button>
+          </div>
+        </div>
+      </div>
+      <div class="input-group input-group-lg">
+        <span class="input-group-addon" id="sizing-addon1">Min Team Stack 1:</span>
+        <input type="text" class="form-control" ng-model="minTeamStack1" aria-describedby="sizing-addon1">
+      </div>
+    </div>
+    <div class="col-xs-6">
+      <div ng-if="allTeams.length >= 12">
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" ng-repeat="team in allTeams|limitTo:(allTeams.length / 2)"  role="group">
+              <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeamStack2(team);" ng-class="{true: 'active', false: ''}[teamsForStack2.indexOf(team) !== -1]">{{team}}</button>
+          </div>
+        </div>
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" ng-repeat="team in allTeams| limitTo: ((allTeams.length / 2) - allTeams.length)"  role="group">
+              <button type="button" class="btn btn-xs btn-primary"  ng-click="addRemoveTeamStack2(team);" ng-class="{true: 'active', false: ''}[teamsForStack2.indexOf(team) !== -1]">{{team}}</button>
+          </div>
+        </div>
+      </div>
+      <div ng-if="allTeams.length < 12 && allTeams.length > 8">
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" ng-repeat="team in allTeams|limitTo:(allTeams.length / 2)"  role="group">
+              <button type="button" class="btn btn-primary"  ng-click="addRemoveTeamStack2(team);" ng-class="{true: 'active', false: ''}[teamsForStack2.indexOf(team) !== -1]">{{team}}</button>
+          </div>
+        </div>
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" ng-repeat="team in allTeams|limitTo: ((allTeams.length / 2) - allTeams.length)"  role="group">
+              <button type="button" class="btn btn-primary"  ng-click="addRemoveTeamStack2(team);" ng-class="{true: 'active', false: ''}[teamsForStack2.indexOf(team) !== -1]">{{team}}</button>
+          </div>
+        </div>
+      </div>
+      <div ng-if="allTeams.length < 9 ">
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" ng-repeat="team in allTeams|limitTo:8"  role="group">
+              <button type="button" class="btn btn-primary"  ng-click="addRemoveTeamStack2(team);" ng-class="{true: 'active', false: ''}[teamsForStack2.indexOf(team) !== -1]">{{team}}</button>
+          </div>
+        </div>
+      </div>
+      <div class="input-group input-group-lg">
+        <span class="input-group-addon" id="sizing-addon1">Min Team Stack 2:</span>
+        <input type="text" class="form-control" ng-model="minTeamStack2" aria-describedby="sizing-addon1">
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
