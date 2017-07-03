@@ -371,14 +371,16 @@ angular.module('NBAApp').controller('PlayerModalController', function ($scope, $
         $uibModalInstance.dismiss('cancel');
     };
 });
-angular.module('NBAApp').controller('AdvancedControllerNBA', function ($scope, $uibModalInstance, minTeamStack1, minTeamStack2, allTeams, teamsForStack1, teamsForStack2) {
+angular.module('NBAApp').controller('AdvancedControllerNBA', function ($scope, $uibModalInstance, minTeamStack1, minTeamStack2, minTeamStack3, allTeams, teamsForStack1, teamsForStack2, teamsForStack3) {
 
     $scope.allTeams = allTeams;
 
     $scope.minTeamStack1 = minTeamStack1;
     $scope.minTeamStack2 = minTeamStack2;
+    $scope.minTeamStack3 = minTeamStack3;
     $scope.teamsForStack1 = teamsForStack1;
     $scope.teamsForStack2 = teamsForStack2;
+    $scope.teamsForStack3 = teamsForStack3;
 
     $scope.addRemoveTeamStack1 = function(team) {
       var index = $scope.teamsForStack1.indexOf(team);
@@ -396,11 +398,19 @@ angular.module('NBAApp').controller('AdvancedControllerNBA', function ($scope, $
         $scope.teamsForStack2.splice(index, 1);
       }
     }
+    $scope.addRemoveTeamStack3 = function(team) {
+      var index = $scope.teamsForStack3.indexOf(team);
+      if(index === -1) {
+        $scope.teamsForStack3.push(team);
+      } else {
+        $scope.teamsForStack3.splice(index, 1);
+      }
+    }
     $scope.ok = function () {
-        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2});
+        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, minTeamStack3: $scope.minTeamStack3, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2, teamsForStack3: $scope.teamsForStack3});
     };
 
     $scope.cancel = function () {
-        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2});
+        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, minTeamStack3: $scope.minTeamStack3, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2, teamsForStack3: $scope.teamsForStack3});
     };
 });

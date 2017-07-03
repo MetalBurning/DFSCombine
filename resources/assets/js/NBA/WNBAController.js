@@ -50,10 +50,12 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     nba.TopRange = -1;
     nba.BottomRange = -1;
     nba.removeDups = true;
-    nba.minTeamStack1 = 4;
+    nba.minTeamStack1 = 3;
     nba.teamsForStack1 = [];
     nba.minTeamStack2 = 2;
     nba.teamsForStack2 = [];
+    nba.minTeamStack3 = 1;
+    nba.teamsForStack3 = [];
 
     //database
     $scope.savedPastSettings = [];
@@ -405,10 +407,12 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       $scope._AllPlayersMASTER = [];
       $scope._AllTeams = [];
       $scope._Positions = [];
-      nba.minTeamStack1 = 4;
+      nba.minTeamStack1 = 3;
       nba.teamsForStack1 = [];
       nba.minTeamStack2 = 2;
       nba.teamsForStack2 = [];
+      nba.minTeamStack3 = 1;
+      nba.teamsForStack3 = [];
     }
 
     $scope.changeLineups = function (files) {
@@ -1167,7 +1171,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       return (value / (draft.length)).toFixed(5);
     }
     $scope.validTeamStacks = function(draft) {
-      if(nba.teamsForStack1.length == 0 && nba.teamsForStack2.length == 0) {
+      if(nba.teamsForStack1.length == 0 || nba.teamsForStack2.length == 0 ) {
         return true;
       }
       var teamStacks = {}
@@ -1189,13 +1193,24 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
       }
       var hasValidTeamStack2 = false;
+      var validTeam2 = "";
       for (var team in teamStacks) {
         if(teamStacks[team] >= nba.minTeamStack2 && team != validTeam1 && nba.teamsForStack2.indexOf(team) !== -1) {
           hasValidTeamStack2 = true;
+          validTeam2 = team;
           break;
         }
       }
-      if(hasValidTeamStack2 && hasValidTeamStack1) {
+      var hasValidTeamStack3 = false;
+      var validTeam3 = "";
+      for (var team in teamStacks) {
+        if(teamStacks[team] >= nba.minTeamStack3 && team != validTeam1 && team != validTeam2 && nba.teamsForStack3.indexOf(team) !== -1) {
+          hasValidTeamStack3 = true;
+          validTeam3 = team;
+          break;
+        }
+      }
+      if(hasValidTeamStack2 && hasValidTeamStack1 && hasValidTeamStack3) {
         return true;
       }
       return false;
@@ -1234,7 +1249,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     }
     $scope.openAdvanced = function () {
         var modalInstance = $uibModal.open({
-            templateUrl: '/js/AngularControllers/modelAdvancedNBA.html',
+            templateUrl: '/js/AngularControllers/modelAdvancedWNBA.html',
             controller: 'AdvancedControllerNBA',
             size: 'lg',
             resolve: {
@@ -1244,6 +1259,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 minTeamStack2: function () {
                     return nba.minTeamStack2;
                 },
+                minTeamStack3: function () {
+                    return nba.minTeamStack3;
+                },
                 allTeams: function() {
                   return $scope._AllTeams;
                 },
@@ -1252,14 +1270,19 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 },
                 teamsForStack2: function() {
                   return nba.teamsForStack2;
+                },
+                teamsForStack3: function() {
+                  return nba.teamsForStack3;
                 }
             }
         });
         modalInstance.result.then(function (saveResult) {
           nba.minTeamStack1 = saveResult['minTeamStack1'];
           nba.minTeamStack2 = saveResult['minTeamStack2'];
+          nba.minTeamStack3 = saveResult['minTeamStack3'];
           nba.teamsForStack1 = saveResult['teamsForStack1'];
           nba.teamsForStack2 = saveResult['teamsForStack2'];
+          nba.teamsForStack3 = saveResult['teamsForStack3'];
         }, function () {
 
         });
@@ -1283,7 +1306,13 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             _F4PlayerPool : $scope._F4PlayerPool,
             TopRange : nba.TopRange,
             BottomRange : nba.BottomRange,
-            TopLimit : nba.TopLimit
+            TopLimit : nba.TopLimit,
+            minTeamStack1: nba.minTeamStack1,
+            minTeamStack2: nba.minTeamStack2,
+            minTeamStack3: nba.minTeamStack3,
+            teamsForStack1: nba.teamsForStack1,
+            teamsForStack2: nba.teamsForStack2,
+            teamsForStack3: nba.teamsForStack3
         };
         var modalInstance = $uibModal.open({
             templateUrl: '/js/AngularControllers/saveDialog.html',
@@ -1408,6 +1437,23 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       nba.TopRange = parseFloat(savedData.TopRange);
       nba.BottomRange = parseFloat(savedData.BottomRange);
       nba.TopLimit = parseInt(savedData.TopLimit);
+
+      if(savedData.minTeamStack1 === undefined) {
+        nba.minTeamStack1 = 3;
+        nba.teamsForStack1 = [];
+        nba.minTeamStack2 = 2;
+        nba.teamsForStack2 = [];
+        nba.minTeamStack3 = 1;
+        nba.teamsForStack3 = [];
+      }
+      else {
+        nba.minTeamStack1 = parseInt(savedData.minTeamStack1);
+        nba.teamsForStack1 = savedData.teamsForStack1;
+        nba.minTeamStack2 = parseInt(savedData.minTeamStack2);
+        nba.teamsForStack2 = savedData.teamsForStack2;
+        nba.minTeamStack3 = parseInt(savedData.minTeamStack3);
+        nba.teamsForStack3 = savedData.teamsForStack3;
+      }
 
       $scope._AllPlayers.forEach(function(singlePlayer) {
 

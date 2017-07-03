@@ -1516,7 +1516,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       if(savedData.minTeamStack1 === undefined) {
         mlb.minTeamStack1 = 4;
         mlb.teamsForStack1 = [];
-        mlb.minTeamStack2 = 3
+        mlb.minTeamStack2 = 3;
         mlb.teamsForStack2 = [];
         mlb.battersVSPitcher = 0;
       }
