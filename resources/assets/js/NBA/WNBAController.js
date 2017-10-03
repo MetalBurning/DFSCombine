@@ -381,18 +381,38 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       var allGs = $filter('position')(orderedPlayers, 'G');
       var allFs = $filter('position')(orderedPlayers, 'F');
 
-      for(var j = 0; j < 12; j++) {
-        if(j < 3) {
-          $scope.addPlayerToPool(allGs[j], 'G1');
-          $scope.addPlayerToPool(allFs[j], 'F1');
-        }
-        if(j > 0 && j < 5) {
-          $scope.addPlayerToPool(allGs[j], 'G2');
-          $scope.addPlayerToPool(allFs[j], 'F2');
-        }
-        if(j > 4) {
-          $scope.addPlayerToPool(allGs[j], 'G3');
-          $scope.addPlayerToPool(allFs[j], 'F3');
+      $scope.addPlayerToPool(allGs[0], 'G1');
+      $scope.addPlayerToPool(allGs[1], 'G1');
+      $scope.addPlayerToPool(allGs[2], 'G1');
+      $scope.addPlayerToPool(allGs[3], 'G1');
+
+      $scope.addPlayerToPool(allGs[2], 'G2');
+      $scope.addPlayerToPool(allGs[3], 'G2');
+      $scope.addPlayerToPool(allGs[4], 'G2');
+      $scope.addPlayerToPool(allGs[5], 'G2');
+
+      $scope.addPlayerToPool(allGs[5], 'G3');
+      $scope.addPlayerToPool(allGs[6], 'G3');
+      $scope.addPlayerToPool(allGs[7], 'G3');
+      $scope.addPlayerToPool(allGs[8], 'G3');
+      $scope.addPlayerToPool(allGs[9], 'G3');
+      $scope.addPlayerToPool(allGs[10],'G3');
+
+      $scope.addPlayerToPool(allFs[0], 'F1');
+      $scope.addPlayerToPool(allFs[1], 'F1');
+      $scope.addPlayerToPool(allFs[2], 'F1');
+
+      $scope.addPlayerToPool(allFs[1], 'F2');
+      $scope.addPlayerToPool(allFs[2], 'F2');
+      $scope.addPlayerToPool(allFs[3], 'F2');
+
+      $scope.addPlayerToPool(allFs[3], 'F3');
+      $scope.addPlayerToPool(allFs[4], 'F3');
+      $scope.addPlayerToPool(allFs[5], 'F3');
+      $scope.addPlayerToPool(allFs[6], 'F3');
+
+      for(var j = 5; j < 12; j++) {
+        if(allFs[j]._FPPG > 11) {
           $scope.addPlayerToPool(allFs[j], 'F4');
         }
       }
