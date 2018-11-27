@@ -188,6 +188,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
 
 
             for (var i = 1; i < allTextLines.length; i++) {
+                if(allTextLines[i].length === 0) {
+                  continue;
+                }
                 var data = allTextLines[i].split(',');
 
                 var playerPosition = "";
@@ -203,14 +206,15 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                         case 0:
                             var name = data[j].replace('"', '').replace('"', '').replace('Jr.', '').replace('Sr.', '').trim();
                             var splitName = name.split(' ');
-                            playerFNameNoPeriods = splitName[0].replace('.', '');
                             playerFName = splitName[0];
+                            playerFNameNoPeriods = playerFName.replace('.', '').replace('.', '').replace('.', '');
+
                             if(splitName.length == 2) {
                                 playerLName = splitName[1];
-                                playerLNameNoPeriods = splitName[1].replace('.', '');
+                                playerLNameNoPeriods = playerLName.replace('.', '').replace('.', '').replace('.', '');
                             } else {
                                 playerLName = splitName[2];
-                                playerLNameNoPeriods = splitName[2].replace('.', '');
+                                playerLNameNoPeriods = playerLName.replace('.', '').replace('.', '').replace('.', '');
                             }
                             break;
                         case 1:
