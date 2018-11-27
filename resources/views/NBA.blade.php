@@ -317,11 +317,9 @@
                                     <div class="panel-heading">
                                         <div class='btn-toolbar pull-right'>
                                             <div class='btn-group'>
-                                                <button type="button" class="btn btn-xs btn-info" ng-click="DownloadDraftCSV()">Download</button>
-                                                <label class="btn btn-primary btn-file btn-xs">
-                                                    CSVReplace<input type="file" style="display: none;" custom-on-change="CSVReplace">
-                                                </label>
-                                                <button type="button" class="btn btn-xs btn-default" ng-click="clearDrafts()">Clear Drafts</button>
+                                              <button type="button" class="btn btn-xs btn-info" ng-click="DownloadDraftCSV()">Download</button>
+                                              <button type="button" class="btn btn-xs btn-info" ng-click="openCloseAdvanced()">Advanced Settings</button>
+                                              <button type="button" class="btn btn-xs btn-default" ng-click="clearDrafts()">Clear Drafts</button>
                                             </div>
                                         </div>
                                         <h3 class="panel-title">Generated Drafts (150 Display Cap)</h3>
@@ -331,12 +329,13 @@
                                             <div class="col-sm-3">
                                               <div class="row">
                                                 <div class="col-xs-12">
-                                                  <h4>Build Drafts - Remove Dups: <input type="checkbox" class="form-inline" ng-model="nba.removeDups"></h4>
+                                                  <h4>Build Drafts</h4>
                                                 </div>
                                               </div>
                                               <div class="row">
                                                 <div class="col-xs-12">
-                                                  <button type="button" class="btn btn-primary" ng-click="buildDrafts()" >ReBuild Drafts</button>
+                                                  <button type="button" class="btn btn-primary" ng-hide="DraftsBuilding" ng-click="buildDrafts()" >ReBuild Drafts</button>
+                                                  <button type="button" class="btn btn-danger" ng-show="DraftsBuilding" ng-click="cancelBuild()" >Cancel</button>
                                                   <strong><abbr title="Total possible valid draft combinations, only valid combinations are displayed">Total: @{{TotalValidDrafts}}</abbr></strong>
                                                 </div>
                                               </div>
@@ -394,7 +393,7 @@
                                         </div>
                                         <div class="row" >
                                             <div class="col-xs-12" >
-                                              @include('draftTable')
+                                              @include('draftTableNBA2018')
                                             </div>
                                         </div>
                                     </div>

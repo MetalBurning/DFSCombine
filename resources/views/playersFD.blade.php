@@ -20,11 +20,6 @@
                         </span>
                     </th>
                     <th>
-                        <span class="fake-link" ng-click="sortType = '_Game'; sortReverse = !sortReverse">
-                            Game
-                        </span>
-                    </th>
-                    <th>
                         <span class="fake-link"  ng-click="sortType = '_Position'; sortReverse = !sortReverse">
                             Pos
                         </span>
@@ -58,11 +53,6 @@
                         </span>
                     </th>
                     <th>
-                        <span class="fake-link" ng-click="sortType = '_Game'; sortReverse = !sortReverse">
-                            Game
-                        </span>
-                    </th>
-                    <th>
                         <span class="fake-link"  ng-click="sortType = '_FPPG'; sortReverse = !sortReverse">
                             FPPG
                         </span>
@@ -85,7 +75,6 @@
                     <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
                     <td ng-click="openClosePlayerDetails(player)">@{{player._Team}}</td>
                     <td ng-click="openClosePlayerDetails(player)">@{{player._Opponent}}</td>
-                    <td ng-click="openClosePlayerDetails(player)">@{{player._Game}}</td>
                     <td ng-click="openClosePlayerDetails(player)">@{{player._Position}}</td>
                     <td><input class="form-control actualPoints"  ng-model="player._FPPG" type="number" ng-change="updatePlayerPtsPerDollar(player)" ></td>
                     <td><input class="form-control actualPoints"  ng-model="player._ActualFantasyPoints" type="number" ></td>
@@ -95,7 +84,6 @@
                 <tr class="@{{player._playerInjured}} visible-xs  visible-sm">
                     <td><button type="button" class="btn btn-xs btn-success" ng-show="!playerInPool(player, SelectedPosition)" ng-click="addPlayerToPool(player, SelectedPosition)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button><button type="button" class="btn  btn-xs btn-danger" ng-show="playerInPool(player, SelectedPosition)" ng-click="removePlayerFromPool(player, SelectedPosition)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></td>
                     <td ng-click="openClosePlayerDetails(player)">@{{player._Name}}</td>
-                    <td ng-click="openClosePlayerDetails(player)">@{{player._Game}}</td>
                     <td><input class="form-control actualPoints"  ng-model="player._FPPG" type="number" ></td>
                     <td><input class="form-control actualPoints"  ng-model="player._ActualFantasyPoints" type="number" ></td>
                     <td ng-click="openClosePlayerDetails(player)">@{{player._Salary}}</td>

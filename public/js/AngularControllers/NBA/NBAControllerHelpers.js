@@ -24,12 +24,46 @@ angular.module('NBAApp').controller('DraftModalController', function ($scope, $u
         });
         return totalProjection.toFixed(2);
     }
+    $scope.getDraftProjectionDrop = function (draft) {
+      //splice lowest score out
+      var totalFPPG = [];
+      draft.players.forEach(function (player) {
+          totalFPPG.push(player._FPPG);
+      });
+      totalFPPG.sort(function(a, b){return a-b});
+      totalFPPG.splice(0, 1);
+
+      //sum
+      var totalFPPGDropped = 0;
+      totalFPPG.forEach(function (FPPG) {
+          totalFPPGDropped = totalFPPGDropped + FPPG;
+      });
+      totalFPPGDropped = parseFloat(totalFPPGDropped);
+      return totalFPPGDropped.toFixed(2);
+    }
     $scope.getDraftActual = function (draft) {
         var totalActual = 0;
         draft.players.forEach(function (player) {
             totalActual = totalActual + player._ActualFantasyPoints;
         });
         return totalActual.toFixed(2);
+    }
+    $scope.getDraftActualDrop = function (draft) {
+      //splice lowest score out
+      var totalActual = [];
+      draft.players.forEach(function (player) {
+          totalActual.push(player._ActualFantasyPoints);
+      });
+      totalActual.sort(function(a, b){return a-b});
+      totalActual.splice(0, 1);
+
+      //sum
+      var totalActualDropped = 0;
+      totalActual.forEach(function (ActualFantasyPoints) {
+          totalActualDropped = totalActualDropped + ActualFantasyPoints;
+      });
+      totalActualDropped = parseFloat(totalActualDropped);
+      return totalActualDropped.toFixed(2);
     }
 });
 angular.module('NBAApp').controller('DraftModalControllerWNBA', function ($scope, $uibModalInstance, draft) {
@@ -371,46 +405,24 @@ angular.module('NBAApp').controller('PlayerModalController', function ($scope, $
         $uibModalInstance.dismiss('cancel');
     };
 });
-angular.module('NBAApp').controller('AdvancedControllerNBA', function ($scope, $uibModalInstance, minTeamStack1, minTeamStack2, minTeamStack3, allTeams, teamsForStack1, teamsForStack2, teamsForStack3) {
+angular.module('NBAApp').controller('AdvancedControllerNBA', function ($scope, $uibModalInstance, _BuildSettings) {
 
-    $scope.allTeams = allTeams;
+  $scope._BuildSettings = _BuildSettings;
 
-    $scope.minTeamStack1 = minTeamStack1;
-    $scope.minTeamStack2 = minTeamStack2;
-    $scope.minTeamStack3 = minTeamStack3;
-    $scope.teamsForStack1 = teamsForStack1;
-    $scope.teamsForStack2 = teamsForStack2;
-    $scope.teamsForStack3 = teamsForStack3;
-
-    $scope.addRemoveTeamStack1 = function(team) {
-      var index = $scope.teamsForStack1.indexOf(team);
-      if(index === -1) {
-        $scope.teamsForStack1.push(team);
-      } else {
-        $scope.teamsForStack1.splice(index, 1);
-      }
+  $scope.Reset = function() {
+    $scope._BuildSettings = {
+      Use_Salary_Cap : false,
+      Min_Num_Salary_Cap_Players : 1,
+      Min_Salary_Cap : 3500,
+      Max_Salary_Cap : 4000,
     }
-    $scope.addRemoveTeamStack2 = function(team) {
-      var index = $scope.teamsForStack2.indexOf(team);
-      if(index === -1) {
-        $scope.teamsForStack2.push(team);
-      } else {
-        $scope.teamsForStack2.splice(index, 1);
-      }
-    }
-    $scope.addRemoveTeamStack3 = function(team) {
-      var index = $scope.teamsForStack3.indexOf(team);
-      if(index === -1) {
-        $scope.teamsForStack3.push(team);
-      } else {
-        $scope.teamsForStack3.splice(index, 1);
-      }
-    }
-    $scope.ok = function () {
-        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, minTeamStack3: $scope.minTeamStack3, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2, teamsForStack3: $scope.teamsForStack3});
-    };
+  }
 
-    $scope.cancel = function () {
-        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, minTeamStack3: $scope.minTeamStack3, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2, teamsForStack3: $scope.teamsForStack3});
-    };
+  $scope.ok = function () {
+      $uibModalInstance.close({_BuildSettings: $scope._BuildSettings});
+  };
+
+  $scope.cancel = function () {
+      $uibModalInstance.close({_BuildSettings: $scope._BuildSettings});
+  };
 });

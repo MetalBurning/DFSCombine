@@ -1,0 +1,81 @@
+﻿
+    <div class="modal-header">
+        <h3 class="modal-title">Single Generated Draft</h3>
+    </div>
+    <div class="modal-body" >
+      <div class="row">
+        <div class="col-xs-12">
+          <table class="table table-hover visible-md visible-lg">
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Team</th>
+                      <th>Opp</th>
+                      <th>Pos</th>
+                      <th>FPPG</th>
+                      <th>Actual</th>
+                      <th>Salary</th>
+                      <th>Pts / Sal</th>
+                      <th>Pos Rank</th>
+                  </tr>
+              </thead>
+              <tbody ng-repeat="player in draft.players">
+                  <tr class="{{player._playerInjured}}">
+                      <td>{{player._Name}}</td>
+                      <td>{{player._Team}}</td>
+                      <td>{{player._Opponent}}</td>
+                      <td>{{player._Position}}</td>
+                      <td>{{player._FPPG}}</td>
+                      <td>{{player._ActualFantasyPoints}}</td>
+                      <td>{{player._Salary}}</td>
+                      <td>{{player._ProjectedPointsPerDollar}}</td>
+                      <td>{{player._Rank}}</td>
+                  </tr>
+              </tbody>
+          </table>
+          <table class="table table-hover visible-sm visible-xs">
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Pos</th>
+                      <th>FPPG</th>
+                      <th>Actual</th>
+                      <th>Salary</th>
+                  </tr>
+              </thead>
+              <tbody ng-repeat="player in draft.players">
+                  <tr class="{{player._playerInjured}}">
+                      <td>{{player._Name}}</td>
+                      <td>{{player._Position}}</td>
+                      <td>{{player._FPPG}}</td>
+                      <td>{{player._ActualFantasyPoints}}</td>
+                      <td>{{player._Salary}}</td>
+                  </tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-2">
+            FPPG: {{getDraftProjection(draft)}}
+        </div>
+        <div class="col-xs-2">
+            Act Pts: {{getDraftActual(draft)}}
+        </div>
+        <div class="col-xs-2">
+            Salary Left: {{getDraftSalaryLeft(draft)}}
+        </div>
+        <div class="col-xs-2">
+            Avg Rank: {{draft.averageRank}}
+        </div>
+        <div class="col-xs-3">
+            Avg Value: {{draft.pointsPerDollar}}
+        </div>
+      </div>
+
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
