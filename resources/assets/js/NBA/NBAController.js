@@ -229,7 +229,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 $scope._AllPlayers.forEach(function (player) {
                     if((player._Name.includes(playerFName) && player._Name.includes(playerLName)) || (player._Name.includes(playerFNameNoPeriods) && player._Name.includes(playerLNameNoPeriods))) {
                         player._ActualFantasyPoints = playerPoints;
-                        player._FPPG = playerProjection;
+                        if(playerProjection.length > 0) {
+                          player._FPPG = playerProjection;
+                        }
                         $scope.updatePlayerPtsPerDollar(player);
                     }
                     if($scope._Positions.indexOf(player._Postion) === -1) {
