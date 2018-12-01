@@ -3,11 +3,13 @@
       <div class="panel panel-default" >
           <div class="panel-heading">
             <div class='btn-toolbar pull-right'>
+              <button type="button" class="btn btn-xs btn-info" ng-click="openCloseUpload()">Add Player Data</button>
+
               <label class="btn btn-primary btn-file btn-xs">
-                  Add Actual CSV File <input type="file" style="display: none;" custom-on-change="loadActual">
+                  Add Player CSV File <input type="file" style="display: none;" custom-on-change="loadActual">
               </label>
               <label class="btn btn-primary btn-file btn-xs">
-                  Add FanDuel Player CSV File <input type="file" style="display: none;" custom-on-change="loadPlayers">
+                  Add FanDuel CSV File <input type="file" style="display: none;" custom-on-change="loadPlayers">
               </label>
 
             </div>

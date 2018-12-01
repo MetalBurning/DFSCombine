@@ -1,0 +1,60 @@
+<div class="modal-header">
+    <h3 class="modal-title">Advanced Settings</h3>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xs-12">
+      <label>
+        Copy + Paste your players data into the text box bellow (Click on the players name manually to edit).<br>
+        Format: Player Name, Projection, Actual
+      </label>
+      <div class="form-group">
+        <label for="comment">Player Data:</label>
+        <textarea class="form-control" rows="5" ng-model="Player_Data" ng-change="updatePlayerData()"></textarea>
+      </div>
+
+    </div>
+    <div class="col-xs-12">
+      <table class="table table-hover" >
+          <thead>
+              <tr>
+                  <th>
+                      <span>
+                          Player Name
+                      </span>
+                  </th>
+                  <th>
+                      <span>
+                          Projection
+                      </span>
+                  </th>
+                  <th>
+                      <span>
+                          Actual
+                      </span>
+                  </th>
+              </tr>
+          </thead>
+          <tbody >
+              <tr ng-repeat="singlePlayer in _AllPlayers " class="{{singlePlayer._DataChanged}}">
+                  <td ng-click="singlePlayer._CanEdit = !singlePlayer._CanEdit;">{{singlePlayer._Name}}</td>
+                  <td ng-show="!singlePlayer._CanEdit" >{{singlePlayer._FPPG}}</td>
+                  <td ng-show="singlePlayer._CanEdit" ><input type="number" class="form-control input-sm" ng-model="singlePlayer._FPPG" step="0.1"></td>
+                  <td ng-show="!singlePlayer._CanEdit" >{{singlePlayer._ActualFantasyPoints}}</td>
+                  <td ng-show="singlePlayer._CanEdit" ><input type="number" class="form-control input-sm" ng-model="singlePlayer._ActualFantasyPoints" step="0.1"></td>
+
+
+              </tr>
+          </tbody>
+      </table>
+    </div>
+    <div class="col-xs-12">
+      <button class="btn btn-default" type="submit" ng-click="Reset()">Reset Settings</button>
+    </div>
+  </div>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

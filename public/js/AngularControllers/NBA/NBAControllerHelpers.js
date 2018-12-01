@@ -1,4 +1,95 @@
+angular.module('NBAApp').controller('UploadController', function ($scope, $uibModalInstance, AllPlayers) {
 
+    $scope._AllPlayers = AllPlayers;
+    $scope._AllPlayersCopy = angular.copy(AllPlayers);
+
+    $scope.Player_Data = "";
+
+    $scope.ok = function () {
+      $scope._AllPlayers.forEach(function (player) {
+        player._CanEdit = false;
+      });
+      $uibModalInstance.close();
+    };
+    $scope.cancel = function () {
+      $scope._AllPlayers.forEach(function (player) {
+        player._CanEdit = false;
+      });
+      $uibModalInstance.dismiss('cancel');
+    };
+    $scope.Reset = function () {
+        $scope._AllPlayers = $scope._AllPlayersCopy;
+        $scope._AllPlayers.forEach(function (player) {
+          player._DataChanged = '';
+          player._CanEdit = false;
+        });
+    };
+    $scope.updatePlayerData = function() {
+      allText = $scope.Player_Data;
+
+      $scope._AllPlayers.forEach(function (player) {
+        player._DataChanged = 'danger';
+        player._CanEdit = false;
+      });
+
+      var allTextLines = allText.split(/\r\n|\n/);
+      var headers = allTextLines[0].split(/\t|,/);
+
+      var playersNotFound = [];
+      var playersInFile = [];
+      for (var i = 1; i < allTextLines.length; i++) {
+          if(allTextLines[i].length === 0) {
+            continue;
+          }
+          var data = allTextLines[i].split(/\t|,/);
+
+          var playerPosition = "";
+          var playerFName = "";
+          var playerFNameNoPeriods = "";
+          var playerLName = "";
+          var playerLNameNoPeriods = "";
+
+          var playerPoints = 0;
+          var playerProjection = 0;
+          for (var j = 0; j < data.length; j++) {
+              switch (j) {
+                  case 0:
+                      var name = data[j].replace('"', '').replace('"', '').replace('Jr.', '').replace('Sr.', '').trim();
+                      var splitName = name.split(' ');
+                      playerFName = splitName[0];
+                      playerFNameNoPeriods = playerFName.replace('.', '').replace('.', '').replace('.', '');
+
+                      if(splitName.length == 2) {
+                          playerLName = splitName[1];
+                          playerLNameNoPeriods = playerLName.replace('.', '').replace('.', '').replace('.', '');
+                      } else {
+                          playerLName = splitName[2];
+                          playerLNameNoPeriods = playerLName.replace('.', '').replace('.', '').replace('.', '');
+                      }
+                      break;
+                  case 1:
+                      playerProjection = parseFloat(data[j].replace('"', '').replace('"', '').trim());
+                      break;
+                  case 2:
+                      playerPoints = parseFloat(data[j].replace('"', '').replace('"', '').trim());
+                      break;
+              }
+          }
+          $scope._AllPlayers.forEach(function (player) {
+              if((player._Name.includes(playerFName) && player._Name.includes(playerLName)) || (player._Name.includes(playerFNameNoPeriods) && player._Name.includes(playerLNameNoPeriods))) {
+                  player._ActualFantasyPoints = playerPoints;
+                  if(!isNaN(playerProjection)) {
+                    player._FPPG = playerProjection;
+                  }
+                  player._DataChanged = 'success';
+              }
+              // if($scope._Positions.indexOf(player._Postion) === -1) {
+              //   $scope._Positions.push(player._Position);
+              // }
+          });
+      }
+    }
+});
 angular.module('NBAApp').controller('DraftModalController', function ($scope, $uibModalInstance, draft) {
 
     $scope.draft = draft;

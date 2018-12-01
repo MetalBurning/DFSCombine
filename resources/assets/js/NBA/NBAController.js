@@ -96,7 +96,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         $scope.alerts = [];
       }
       $scope.alerts.forEach(function(alert) {
-        if(alert.type == type && alert.msg == message) {
+        if(alert.type === type && alert.msg === message) {
           sameNumberOfAlerts++;
         }
       });
@@ -159,7 +159,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                   }
               }
               $scope._AllPlayers.forEach(function (player) {
-                  if((player._Name.includes(playerFName) && player._Name.includes(playerLName)) && player._Position == playerPosition) {
+                  if((player._Name.includes(playerFName) && player._Name.includes(playerLName)) && player._Position === playerPosition) {
                       player._ActualFantasyPoints = playerPoints;
                   }
               });
@@ -167,14 +167,13 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
 
         $scope.$apply(function() {
-          $scope.displayNewMessage("success", "Player projections loaded as actual Success");
+          $scope.displayNewMessage("success", "Player projections file loaded succesfully");
         });
 
         reader.readAsText(file);
     }
 
     $scope.loadActual = function (event) {
-
 
       var file = event.target.files[0];
 
@@ -186,7 +185,8 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             var allTextLines = allText.split(/\r\n|\n/);
             var headers = allTextLines[0].split(',');
 
-
+            var playersNotFound = [];
+            var playersInFile = [];
             for (var i = 1; i < allTextLines.length; i++) {
                 if(allTextLines[i].length === 0) {
                   continue;
@@ -229,10 +229,10 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 $scope._AllPlayers.forEach(function (player) {
                     if((player._Name.includes(playerFName) && player._Name.includes(playerLName)) || (player._Name.includes(playerFNameNoPeriods) && player._Name.includes(playerLNameNoPeriods))) {
                         player._ActualFantasyPoints = playerPoints;
-                        if(playerProjection.length > 0) {
+                        if(!isNaN(playerProjection)) {
                           player._FPPG = playerProjection;
                         }
-                        $scope.updatePlayerPtsPerDollar(player);
+                        playersInFile.splice(indexOfPlayerInFile, 1);
                     }
                     if($scope._Positions.indexOf(player._Postion) === -1) {
                       $scope._Positions.push(player._Position);
@@ -241,8 +241,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             }
             $scope._Positions.sort();
             $scope.$apply(function() {
-
-              $scope.displayNewMessage("success", "Player Actual Results have been successfully loaded");
+              $scope.displayNewMessage("success", "Projection/Actual Data has been successfully loaded.");
 
             });
 
@@ -1699,6 +1698,29 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         totalActual = parseFloat(totalActual);
         return totalActual.toFixed(2);
     }
+    $scope.openCloseUpload = function (player) {
+        var modalInstance = $uibModal.open({
+            templateUrl: '/js/AngularControllers/modelUpload.html',
+            controller: 'UploadController',
+            size: 'lg',
+            resolve: {
+                AllPlayers: function () {
+                    return $scope._AllPlayers;
+                }
+            }
+        });
+        modalInstance.result.then(function (returnData) {
+          $scope._AllPlayers = returnData['_AllPlayers'];
+          $scope._AllPlayers.forEach(function (player) {
+            player._CanEdit = false;
+          });
+        }, function () {
+          $scope._AllPlayers.forEach(function (player) {
+            player._CanEdit = false;
+          });
+        });
+    }
+
     $scope.openCloseAdvanced = function (player) {
         var modalInstance = $uibModal.open({
             templateUrl: '/js/AngularControllers/modelAdvancedNBA.html',
