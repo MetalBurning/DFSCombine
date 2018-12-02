@@ -67,7 +67,7 @@ function BuildDrafts(playerData) {
                       });
 
                       //add only valid drafts
-                      if(isDraftTeamValid(finalPlayerList) && isDraftSalaryValid(finalPlayerList) && !doesDraftHaveDupPlayers(finalPlayerList) && hasValidSettings(finalPlayerList, Settings)) {
+                      if(isDraftTeamValid(finalPlayerList) && isDraftSalaryValid(finalPlayerList) && !doesDraftHaveDupPlayers(finalPlayerList) && hasValidSettings(finalPlayerList, Settings) && hasValidMinSalarySettings(finalPlayerList, Settings)) {
                         //_AllDrafts.push(tempDraft);
                         var tempDataObj = {
                            FPPG: parseFloat(getDraftFPPG(finalPlayerList)),
@@ -201,6 +201,28 @@ function BuildDrafts(playerData) {
       });
 
       if(players_with_valid_salary.length >= settings.Min_Num_Salary_Cap_Players) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function hasValidMinSalarySettings(draft, settings) {
+    if(!settings.Use_Min_Players) {
+      return true;
+    }
+    else
+    {
+      var contains_player_in_settings = false;
+
+      draft.forEach(function (player) {
+        if(settings.Min_Players.indexOf(player) !== -1) {
+          contains_player_in_settings = true;
+        }
+      });
+      if(!contains_player_in_settings) {
+        return true;
+      }
+      if(contains_player_in_settings && getDraftSalaryLeft(draft) <= settings.Min_Players_Salary_Left) {
         return true;
       }
     }
