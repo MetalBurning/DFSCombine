@@ -499,7 +499,15 @@ angular.module('NBAApp').controller('AdvancedControllerNBA', function ($scope, $
       Min_Num_Salary_Cap_Players : 1,
       Min_Salary_Cap : 3500,
       Max_Salary_Cap : 4000,
+      Use_Min_Players: false,
+      Min_Players : [],
+      Min_Players_Salary_Left : 0
     }
+  }
+
+  $scope.removePlayer = function(playerToRemove) {
+    var playerIndex = $scope._BuildSettings.Min_Players.indexOf(playerToRemove);
+    $scope._BuildSettings.Min_Players.splice(playerIndex, 1);
   }
 
   $scope.ok = function () {

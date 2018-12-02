@@ -63,6 +63,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       Min_Num_Salary_Cap_Players : 1,
       Min_Salary_Cap : 3500,
       Max_Salary_Cap : 4000,
+      Use_Min_Players: false,
+      Min_Players : [],
+      Min_Players_Salary_Left : 0
     };
     //$scope._AllPlayers = positionFilter($scope._AllPlayers, $scope.SelectedPosition);
 
@@ -1287,6 +1290,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                     $scope._CPlayerPool.push(player);
                     break;
             }
+            if($scope._BuildSettings.Min_Players.indexOf(player) === -1 && player._Salary < 4500) {
+              $scope._BuildSettings.Min_Players.push(player);
+            }
         }
 
     }
@@ -1351,6 +1357,57 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         }
         return false;
     }
+
+    $scope.getPlayersInPools = function () {
+        var playersInPools = [];
+        $scope._PG1PlayerPool.forEach(function(singlePlayer) {
+          if(playersInPools.indexOf(singlePlayer) === -1) {
+            playersInPools.push(singlePlayer);
+          }
+        });
+        $scope._PG2PlayerPool.forEach(function(singlePlayer) {
+          if(playersInPools.indexOf(singlePlayer) === -1) {
+            playersInPools.push(singlePlayer);
+          }
+        });
+        $scope._SG1PlayerPool.forEach(function(singlePlayer) {
+          if(playersInPools.indexOf(singlePlayer) === -1) {
+            playersInPools.push(singlePlayer);
+          }
+        });
+        $scope._SG2PlayerPool.forEach(function(singlePlayer) {
+          if(playersInPools.indexOf(singlePlayer) === -1) {
+            playersInPools.push(singlePlayer);
+          }
+        });
+        $scope._SF1PlayerPool.forEach(function(singlePlayer) {
+          if(playersInPools.indexOf(singlePlayer) === -1) {
+            playersInPools.push(singlePlayer);
+          }
+        });
+        $scope._SF2PlayerPool.forEach(function(singlePlayer) {
+          if(playersInPools.indexOf(singlePlayer) === -1) {
+            playersInPools.push(singlePlayer);
+          }
+        });
+        $scope._PF1PlayerPool.forEach(function(singlePlayer) {
+          if(playersInPools.indexOf(singlePlayer) === -1) {
+            playersInPools.push(singlePlayer);
+          }
+        });
+        $scope._PF2PlayerPool.forEach(function(singlePlayer) {
+          if(playersInPools.indexOf(singlePlayer) === -1) {
+            playersInPools.push(singlePlayer);
+          }
+        });
+        $scope._CPlayerPool.forEach(function(singlePlayer) {
+          if(playersInPools.indexOf(singlePlayer) === -1) {
+            playersInPools.push(singlePlayer);
+          }
+        });
+        return playersInPools;
+    }
+
     $scope.clearPlayerPools = function () {
         $scope._PG1PlayerPool = [];
         $scope._PG2PlayerPool = [];
@@ -1734,6 +1791,16 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
     }
 
     $scope.openCloseAdvanced = function (player) {
+
+        if($scope._BuildSettings.Min_Players.length === 0) {
+          var cheapPlayers = [];
+          $scope.getPlayersInPools().forEach(function(singlePlayer) {
+            if(singlePlayer._Salary < 4100) {
+              cheapPlayers.push(singlePlayer);
+            }
+          });
+          $scope._BuildSettings.Min_Players = $scope._BuildSettings.Min_Players.concat(cheapPlayers);
+        }
         var modalInstance = $uibModal.open({
             templateUrl: '/js/AngularControllers/modelAdvancedNBA.html',
             controller: 'AdvancedControllerNBA',
@@ -1973,6 +2040,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
           Min_Num_Salary_Cap_Players : 1,
           Min_Salary_Cap : 3500,
           Max_Salary_Cap : 4000,
+          Use_Min_Players: false,
+          Min_Players : [],
+          Min_Players_Salary_Left : 0
         };
       }
       else {
