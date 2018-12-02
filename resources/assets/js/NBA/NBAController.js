@@ -280,7 +280,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
             player._FPPG = parseFloat(player._FPPG);
             player._FPPG = player._FPPG.toFixed(2);
             player._FPPG = parseFloat(player._FPPG);
-            var pointsPerDollar = parseFloat((player._FPPG / player._Salary).toFixed(5));
+            var pointsPerDollar = parseFloat(((player._FPPG / player._Salary) * 1000)).toFixed(2);
             player._ProjectedPointsPerDollar = pointsPerDollar;
             if (player._playerInjured == 'O') {
               player._playerInjured = 'danger';
@@ -390,7 +390,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       var indexOfPlayer = $scope._AllPlayers.indexOf(player);
       if(indexOfPlayer !== -1) {
         $scope._AllPlayers[indexOfPlayer]._ProjectedPointsPerDollar = parseFloat(player._FPPG / player._Salary).toFixed(5);
-        player._ProjectedPointsPerDollar = parseFloat(player._FPPG / player._Salary).toFixed(5);
+        player._ProjectedPointsPerDollar = parseFloat(((player._FPPG / player._Salary) * 1000)).toFixed(2);
       }
     }
 
@@ -1723,6 +1723,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 if(singlePlayer._Name === singlePlayerInScope._Name) {
                   singlePlayerInScope._FPPG = singlePlayer._FPPG;
                   singlePlayerInScope._ActualFantasyPoints = singlePlayer._ActualFantasyPoints;
+                  $scope.updatePlayerPtsPerDollar(singlePlayerInScope);
                 }
               });
             });
