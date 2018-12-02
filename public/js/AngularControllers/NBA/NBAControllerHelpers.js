@@ -1,35 +1,28 @@
-angular.module('NBAApp').controller('UploadController', function ($scope, $uibModalInstance, AllPlayers) {
+angular.module('NBAApp').controller('UploadController', [ '$scope', '$uibModalInstance', 'AllPlayers', function ($scope, $uibModalInstance, AllPlayers) {
 
-    $scope._AllPlayers = AllPlayers;
+    $scope.AllPlayers = AllPlayers;
     $scope._AllPlayersCopy = angular.copy(AllPlayers);
 
     $scope.Player_Data = "";
 
     $scope.ok = function () {
-      $scope._AllPlayers.forEach(function (player) {
-        player._CanEdit = false;
-      });
-      $uibModalInstance.close();
+      $uibModalInstance.close($scope.AllPlayers);
     };
     $scope.cancel = function () {
-      $scope._AllPlayers.forEach(function (player) {
-        player._CanEdit = false;
-      });
-      $uibModalInstance.dismiss('cancel');
+      $uibModalInstance.dismiss($scope.AllPlayers);
     };
     $scope.Reset = function () {
-        $scope._AllPlayers = $scope._AllPlayersCopy;
-        $scope._AllPlayers.forEach(function (player) {
+        $scope.Player_Data = "";
+        $scope.AllPlayers = $scope._AllPlayersCopy;
+        $scope.AllPlayers.forEach(function (player) {
           player._DataChanged = '';
-          player._CanEdit = false;
         });
     };
     $scope.updatePlayerData = function() {
       allText = $scope.Player_Data;
 
-      $scope._AllPlayers.forEach(function (player) {
+      $scope.AllPlayers.forEach(function (player) {
         player._DataChanged = 'danger';
-        player._CanEdit = false;
       });
 
       var allTextLines = allText.split(/\r\n|\n/);
@@ -75,7 +68,7 @@ angular.module('NBAApp').controller('UploadController', function ($scope, $uibMo
                       break;
               }
           }
-          $scope._AllPlayers.forEach(function (player) {
+          $scope.AllPlayers.forEach(function (player) {
               if((player._Name.includes(playerFName) && player._Name.includes(playerLName)) || (player._Name.includes(playerFNameNoPeriods) && player._Name.includes(playerLNameNoPeriods))) {
                   player._ActualFantasyPoints = playerPoints;
                   if(!isNaN(playerProjection)) {
@@ -89,7 +82,7 @@ angular.module('NBAApp').controller('UploadController', function ($scope, $uibMo
           });
       }
     }
-});
+}]);
 angular.module('NBAApp').controller('DraftModalController', function ($scope, $uibModalInstance, draft) {
 
     $scope.draft = draft;

@@ -1699,25 +1699,36 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         return totalActual.toFixed(2);
     }
     $scope.openCloseUpload = function (player) {
+      var tempPlayers = [];
+      $scope._AllPlayers.forEach(function(singlePlayer) {
+        tempPlayers.push({ _Name: singlePlayer._Name, _FPPG: singlePlayer._FPPG, _ActualFantasyPoints: singlePlayer._ActualFantasyPoints });
+      });
+
         var modalInstance = $uibModal.open({
             templateUrl: '/js/AngularControllers/modelUpload.html',
             controller: 'UploadController',
             size: 'lg',
+            backdrop: 'static',
             resolve: {
                 AllPlayers: function () {
-                    return $scope._AllPlayers;
+                    return tempPlayers;
                 }
             }
         });
         modalInstance.result.then(function (returnData) {
-          $scope._AllPlayers = returnData['_AllPlayers'];
-          $scope._AllPlayers.forEach(function (player) {
-            player._CanEdit = false;
-          });
+
+            var returnedPlayers = returnData;
+            $scope._AllPlayers.forEach(function(singlePlayerInScope) {
+              returnedPlayers.forEach(function(singlePlayer) {
+                if(singlePlayer._Name === singlePlayerInScope._Name) {
+                  singlePlayerInScope._FPPG = singlePlayer._FPPG;
+                  singlePlayerInScope._ActualFantasyPoints = singlePlayer._ActualFantasyPoints;
+                }
+              });
+            });
+
         }, function () {
-          $scope._AllPlayers.forEach(function (player) {
-            player._CanEdit = false;
-          });
+
         });
     }
 

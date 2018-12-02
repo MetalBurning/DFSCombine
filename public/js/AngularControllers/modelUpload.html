@@ -1,5 +1,13 @@
 <div class="modal-header">
-    <h3 class="modal-title">Advanced Settings</h3>
+  <div class="row">
+    <div class="col-xs-6">
+      <h3 class="modal-title">Advanced Settings</h3>
+    </div>
+    <div class="col-xs-6">
+      <button class="btn btn-default pull-right" ng-click="ok()"><span class="glyphicon glyphicon-remove"></span></button>
+    </div>
+
+  </div>
 </div>
 <div class="modal-body">
   <div class="row">
@@ -36,14 +44,10 @@
               </tr>
           </thead>
           <tbody >
-              <tr ng-repeat="singlePlayer in _AllPlayers " class="{{singlePlayer._DataChanged}}">
-                  <td ng-click="singlePlayer._CanEdit = !singlePlayer._CanEdit;">{{singlePlayer._Name}}</td>
-                  <td ng-show="!singlePlayer._CanEdit" >{{singlePlayer._FPPG}}</td>
-                  <td ng-show="singlePlayer._CanEdit" ><input type="number" class="form-control input-sm" ng-model="singlePlayer._FPPG" step="0.1"></td>
-                  <td ng-show="!singlePlayer._CanEdit" >{{singlePlayer._ActualFantasyPoints}}</td>
-                  <td ng-show="singlePlayer._CanEdit" ><input type="number" class="form-control input-sm" ng-model="singlePlayer._ActualFantasyPoints" step="0.1"></td>
-
-
+              <tr ng-repeat="singlePlayer in AllPlayers " class="{{singlePlayer._DataChanged}}">
+                  <td>{{singlePlayer._Name}}</td>
+                  <td>{{singlePlayer._FPPG}}</td>
+                  <td>{{singlePlayer._ActualFantasyPoints}}</td>
               </tr>
           </tbody>
       </table>
@@ -56,5 +60,4 @@
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary" ng-click="ok()">OK</button>
-    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 </div>
