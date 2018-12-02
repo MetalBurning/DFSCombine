@@ -2034,7 +2034,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       $scope._AllPlayers = savedData._AllPlayers;
       $scope._AllPlayersMASTER = savedData._AllPlayers;
 
-      if(savedData._BuildSettings === undefined) {
+      if(savedData._BuildSettings === undefined || savedData._BuildSettings.Use_Min_Players === undefined) {
         $scope._BuildSettings = {
           Use_Salary_Cap : false,
           Min_Num_Salary_Cap_Players : 1,
@@ -2044,8 +2044,7 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
           Min_Players : [],
           Min_Players_Salary_Left : 0
         };
-      }
-      else {
+      } else {
         $scope._BuildSettings = savedData._BuildSettings;
       }
 
