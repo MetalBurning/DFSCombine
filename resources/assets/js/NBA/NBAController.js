@@ -1249,6 +1249,10 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
                 $scope._CPlayerPool.splice($scope._CPlayerPool.indexOf(player), 1);
                 break;
         }
+        if($scope._BuildSettings.Min_Players.indexOf(player) !== -1 && player._Salary < 4500) {
+          var removePlayerIndex = $scope._BuildSettings.Min_Players.indexOf(player);
+          $scope._BuildSettings.Min_Players.splice(removePlayerIndex, 1);
+        }
       }
 
     }
@@ -2034,20 +2038,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       $scope._AllPlayers = savedData._AllPlayers;
       $scope._AllPlayersMASTER = savedData._AllPlayers;
 
-      if(savedData._BuildSettings === undefined || savedData._BuildSettings.Use_Min_Players === undefined) {
-        $scope._BuildSettings = {
-          Use_Salary_Cap : false,
-          Min_Num_Salary_Cap_Players : 1,
-          Min_Salary_Cap : 3500,
-          Max_Salary_Cap : 4000,
-          Use_Min_Players: false,
-          Min_Players : [],
-          Min_Players_Salary_Left : 0
-        };
-      } else {
-        $scope._BuildSettings = savedData._BuildSettings;
-      }
-
       nba.TopRange = parseFloat(savedData.TopRange);
       nba.BottomRange = parseFloat(savedData.BottomRange);
       nba.TopLimit = parseInt(savedData.TopLimit);
@@ -2071,6 +2061,33 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
         $scope.loadPlayerInPool(savedData._PF2PlayerPool, singlePlayer, 'PF2');
         $scope.loadPlayerInPool(savedData._CPlayerPool, singlePlayer, 'C');
       });
+
+      //load buildsettings last in order to use the same players as the save file has.
+      if(savedData._BuildSettings === undefined || savedData._BuildSettings.Use_Min_Players === undefined) {
+        $scope._BuildSettings = {
+          Use_Salary_Cap : false,
+          Min_Num_Salary_Cap_Players : 1,
+          Min_Salary_Cap : 3500,
+          Max_Salary_Cap : 4000,
+          Use_Min_Players: false,
+          Min_Players : [],
+          Min_Players_Salary_Left : 0
+        };
+      } else {
+        $scope._BuildSettings = savedData._BuildSettings;
+        var playersFromDB = [];
+        savedData._BuildSettings.Min_Players.forEach(function(singlePlayer) {
+          playersFromDB.push(singlePlayer);
+        });
+        $scope._BuildSettings.Min_Players = [];
+        playersFromDB.forEach(function(playerInDB) {
+          $scope.getPlayersInPools().forEach(function(playerInApp) {
+            if(playerInDB.playerID === playerInApp.playerID) {
+              $scope._BuildSettings.Min_Players.push(playerInApp);
+            }
+          });
+        });
+      }
 
       $scope.displayNewMessage("success", "Previous save loaded successfully.");
 
