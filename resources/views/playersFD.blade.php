@@ -41,7 +41,7 @@
                     </th>
                     <th>
                         <span class="fake-link"  ng-click="sortType = '_ProjectedPointsPerDollar'; sortReverse = !sortReverse">
-                            Pts / $
+                            Value
                         </span>
                     </th>
                 </tr>

@@ -397,15 +397,6 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       }
     }
 
-    $scope.addSalaryImpliedPts = function() {
-      $scope._AllPlayers.forEach(function(player) {
-        player._FPPG = player._Salary * 0.004;
-        player._FPPG = player._FPPG.toFixed(1);
-        player._FPPG = parseFloat(player._FPPG);
-        $scope.updatePlayerPtsPerDollar(player);
-      });
-    }
-
     $scope.selectTopFPPGPlayers = function() {
       $scope.clearPlayerPools();
       if($scope._AllPlayers.length === 0) {
@@ -2042,6 +2033,10 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
       nba.BottomRange = parseFloat(savedData.BottomRange);
       nba.TopLimit = parseInt(savedData.TopLimit);
 
+      //must deep copy saved data settings for when we save/update data it is then reloaded into angular.
+      //Because of how the app works this will prevent low priced players from getting added into the min_players list only on app reload. Deep copy must be before loadplayerinpool is called
+      var BuildSettingsFromSaveCopy = angular.copy(savedData._BuildSettings);
+
       $scope._AllPlayers.forEach(function(singlePlayer) {
 
         //add team data
@@ -2074,9 +2069,9 @@ angular.module('NBAApp').controller('NBAController', ['$http', '$scope', '$filte
           Min_Players_Salary_Left : 0
         };
       } else {
-        $scope._BuildSettings = savedData._BuildSettings;
+        $scope._BuildSettings = BuildSettingsFromSaveCopy;
         var playersFromDB = [];
-        savedData._BuildSettings.Min_Players.forEach(function(singlePlayer) {
+        BuildSettingsFromSaveCopy.Min_Players.forEach(function(singlePlayer) {
           playersFromDB.push(singlePlayer);
         });
         $scope._BuildSettings.Min_Players = [];

@@ -28,7 +28,6 @@
                                             </div>
                                             <div class='btn-group'>
                                               <button type="button" class="btn btn-xs btn-info" ng-click="selectTopSpecialPlayers()" >Top Special</button>
-                                              <button type="button" class="btn btn-xs btn-info" ng-click="addSalaryImpliedPts()" >Salary Implied Pts</button>
                                               <button type="button" class="btn btn-xs btn-info" ng-click="selectTopActualPlayers()" >Top Actual</button>
                                               <button type="button" class="btn btn-xs btn-info" ng-click="selectTopFPPGPlayers()" >Top FPPG</button>
                                               <button type="button" class="btn btn-xs btn-default" ng-click="clearAllPlayerFilters()">Clear Filters</button>
@@ -355,7 +354,7 @@
                                             <div class="col-sm-4">
                                               <div class="row">
                                                 <div class="col-xs-12">
-                                                  <h4><abbr title="Top range to keep.">@{{ (parseFloat(nba.TopRange)).toFixed(2) }}</abbr> => Drafts => <abbr title="Bottom range to keep.">@{{ (parseFloat(nba.BottomRange)).toFixed(2) }}</abbr></h4>
+                                                  <h4><abbr title="Bottom range to keep.">@{{ (parseFloat(nba.BottomRange)).toFixed(2) }}</abbr> <= Drafts <= <abbr title="Top range to keep.">@{{ (parseFloat(nba.TopRange)).toFixed(2) }}</abbr></h4>
                                                 </div>
                                               </div>
                                               <div class="row">
@@ -365,9 +364,9 @@
                                                       <span class="input-group-btn">
                                                         <button class="btn btn-primary" type="button" ng-click="removeCalcDrafts()" ng-disabled="nba.TopRange === -1 || nba.BottomRange === -1">Select Range</button>
                                                       </span>
-                                                      <input type="number" class="form-control input" ng-model="nba.TopRange">
-                                                      <span class="input-group-btn" style="width:0px;"></span>
                                                       <input type="number" class="form-control input" ng-model="nba.BottomRange">
+                                                      <span class="input-group-btn" style="width:0px;"></span>
+                                                      <input type="number" class="form-control input" ng-model="nba.TopRange">
                                                     </div>
                                                   </form>
                                                 </div>

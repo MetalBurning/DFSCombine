@@ -182,12 +182,19 @@ NBAApp.filter('removeCalcDraft', function () {
             if (max >= draft.pointsPerDollar && draft.pointsPerDollar >= min) {
               filteredDrafts.push(draft);
             }
-          }else if(sortType === 'averageRank') {
+          } else if(sortType === 'averageRank') {
             if (max >= draft.averageRank && draft.averageRank >= min) {
               filteredDrafts.push(draft);
             }
+          } else if(sortType === 'FPPGDrop') {
+            if (max >= draft.FPPGDrop && draft.FPPGDrop >= min) {
+              filteredDrafts.push(draft);
+            }
+          } else if(sortType === 'ActualDrop') {
+            if (max >= draft.ActualDrop && draft.ActualDrop >= min) {
+              filteredDrafts.push(draft);
+            }
           }
-
         });
         return filteredDrafts;
     };
