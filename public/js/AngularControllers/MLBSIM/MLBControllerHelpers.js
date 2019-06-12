@@ -1,5 +1,40 @@
 
-angular.module('NFLApp').controller('DraftModalController', function ($scope, $uibModalInstance, draft) {
+angular.module('MLBApp').controller('AdvancedControllerMLB', function ($scope, $uibModalInstance, minTeamStack1, minTeamStack2, battersVSPitcher, allTeams, teamsForStack1, teamsForStack2) {
+
+    $scope.allTeams = allTeams;
+
+    $scope.minTeamStack1 = minTeamStack1;
+    $scope.minTeamStack2 = minTeamStack2;
+    $scope.battersVSPitcher = battersVSPitcher;
+    $scope.teamsForStack1 = teamsForStack1;
+    $scope.teamsForStack2 = teamsForStack2;
+
+    $scope.addRemoveTeamStack1 = function(team) {
+      var index = $scope.teamsForStack1.indexOf(team);
+      if(index === -1) {
+        $scope.teamsForStack1.push(team);
+      } else {
+        $scope.teamsForStack1.splice(index, 1);
+      }
+    }
+    $scope.addRemoveTeamStack2 = function(team) {
+      var index = $scope.teamsForStack2.indexOf(team);
+      if(index === -1) {
+        $scope.teamsForStack2.push(team);
+      } else {
+        $scope.teamsForStack2.splice(index, 1);
+      }
+    }
+    $scope.ok = function () {
+        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, battersVSPitcher: $scope.battersVSPitcher, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2});
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.close({minTeamStack1: $scope.minTeamStack1, minTeamStack2: $scope.minTeamStack2, battersVSPitcher: $scope.battersVSPitcher, teamsForStack1: $scope.teamsForStack1, teamsForStack2: $scope.teamsForStack2});
+    };
+});
+
+angular.module('MLBApp').controller('DraftModalController', function ($scope, $uibModalInstance, draft) {
 
     $scope.draft = draft;
 
@@ -11,7 +46,7 @@ angular.module('NFLApp').controller('DraftModalController', function ($scope, $u
         $uibModalInstance.dismiss('cancel');
     };
     $scope.getDraftSalaryLeft = function (draft) {
-        var startingSalary = 60000;
+        var startingSalary = 35000;
         draft.players.forEach(function (player) {
             startingSalary = startingSalary - player._Salary;
         });
@@ -32,7 +67,40 @@ angular.module('NFLApp').controller('DraftModalController', function ($scope, $u
         return totalActual.toFixed(2);
     }
 });
-angular.module('NFLApp').controller('SaveModalController', function ($scope, $uibModalInstance, $http, postObject, currentRead, site, $timeout) {
+angular.module('MLBApp').controller('DKDraftModalController', function ($scope, $uibModalInstance, draft) {
+
+    $scope.draft = draft;
+
+    $scope.ok = function () {
+        $uibModalInstance.close();
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+    $scope.getDraftSalaryLeft = function (draft) {
+        var startingSalary = 50000;
+        draft.players.forEach(function (player) {
+            startingSalary = startingSalary - player._Salary;
+        });
+        return startingSalary;
+    }
+    $scope.getDraftProjection = function (draft) {
+        var totalProjection = 0;
+        draft.players.forEach(function (player) {
+            totalProjection = totalProjection + player._FPPG;
+        });
+        return totalProjection.toFixed(2);
+    }
+    $scope.getDraftActual = function (draft) {
+        var totalActual = 0;
+        draft.players.forEach(function (player) {
+            totalActual = totalActual + player._ActualFantasyPoints;
+        });
+        return totalActual.toFixed(2);
+    }
+});
+angular.module('MLBApp').controller('SaveModalController', function ($scope, $uibModalInstance, $http, postObject, currentRead, site, $timeout) {
 
   $scope.postObject = postObject;
   $scope.currentRead = currentRead;
@@ -45,6 +113,7 @@ angular.module('NFLApp').controller('SaveModalController', function ($scope, $ui
   } else {
     $scope.title = "";
   }
+
   $scope.saved = false;
   $scope.alerts = [{type: "info", msg: "Save / Update current settings.", number: 1 }];
 
@@ -53,7 +122,6 @@ angular.module('NFLApp').controller('SaveModalController', function ($scope, $ui
   $scope.displayNewMessage = function (messageType, messageContent) {
     $scope.addAlert(messageType, messageContent);
   }
-
   $scope.addAlert = function(type, message) {
     var sameNumberOfAlerts = 1;
     $scope.alerts.forEach(function(alert) {
@@ -67,13 +135,15 @@ angular.module('NFLApp').controller('SaveModalController', function ($scope, $ui
     $scope.alerts.splice(index, 1);
   }
 
+
+
   $scope.create = function() {
     if($scope.title.length > 0 ) {
       $scope.CreateUpdateButtonEnabled = false;
-      $http.post('/NFL/create', {'postObject':JSON.stringify($scope.postObject), 'title': $scope.title, 'site': $scope.site}).then(function successCallback(response) {
+      $http.post('/MLB/create', {'postObject':JSON.stringify($scope.postObject), 'title': $scope.title, 'site': $scope.site}).then(function successCallback(response) {
          $scope.saved = true;
-         $scope.readData = response.data;
          $scope.displayNewMessage('success', 'Creating - Success');
+         $scope.readData = response.data;
          $scope.CreateUpdateButtonEnabled = true;
          $uibModalInstance.close({title: $scope.title, postObject: $scope.postObject, readData: $scope.readData});
       }, function errorCallBack(response) {
@@ -92,10 +162,10 @@ angular.module('NFLApp').controller('SaveModalController', function ($scope, $ui
   $scope.update = function() {
     if($scope.currentRead != null) {
       $scope.CreateUpdateButtonEnabled = false;
-      $http.post('/NFL/update', {'id':$scope.currentRead['id'], 'postObject':JSON.stringify($scope.postObject), 'title': $scope.title}).then(function successCallback(response) {
-         $scope.readData = response.data;
+      $http.post('/MLB/update', {'id':$scope.currentRead['id'], 'postObject':JSON.stringify($scope.postObject), 'title': $scope.title}).then(function successCallback(response) {
          $scope.displayNewMessage('success', 'Updating - Success');
          $scope.saved = true;
+         $scope.readData = response.data;
          $scope.CreateUpdateButtonEnabled = true;
       }, function errorCallBack(response) {
         if(response.data.title.length > 0) {
@@ -109,9 +179,12 @@ angular.module('NFLApp').controller('SaveModalController', function ($scope, $ui
       });
     }
   }
+
+
   $scope.hasCurrentRead = function() {
     return ($scope.currentRead != null);
   }
+
 
   $scope.ok = function () {
     if($scope.readData !== undefined) {
@@ -120,12 +193,19 @@ angular.module('NFLApp').controller('SaveModalController', function ($scope, $ui
       $uibModalInstance.dismiss();
     }
   };
+
   $scope.cancel = function () {
-      $uibModalInstance.dismiss('cancel');
+    if($scope.readData !== undefined) {
+      $uibModalInstance.close({title: $scope.title, postObject: $scope.postObject, readData: $scope.readData});
+    } else {
+      $uibModalInstance.dismiss();
+    }
+
   };
 });
 
-angular.module('NFLApp').controller('PlayerModalController', function ($scope, $uibModalInstance, allPlayers, selectedPlayer) {
+
+angular.module('MLBApp').controller('PlayerModalController', function ($scope, $uibModalInstance, allPlayers, selectedPlayer) {
 
     $scope.SelectedPlayer = selectedPlayer;
     $scope.allPlayers = allPlayers;
@@ -189,27 +269,5 @@ angular.module('NFLApp').controller('PlayerModalController', function ($scope, $
 
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
-    };
-});
-angular.module('NFLApp').controller('AdvancedControllerNFL', function ($scope, $uibModalInstance, _BuildSettings) {
-
-    $scope._BuildSettings = _BuildSettings;
-
-    $scope.Reset = function() {
-      $scope._BuildSettings = {
-        Team_Stack_Players : 1,
-        QB_RB_Stack : false,
-        QB_WR_Stack : false,
-        QB_TE_Stack : false,
-        Players_VS_Defense : 0,
-      }
-    }
-
-    $scope.ok = function () {
-        $uibModalInstance.close({_BuildSettings: $scope._BuildSettings});
-    };
-
-    $scope.cancel = function () {
-        $uibModalInstance.close({_BuildSettings: $scope._BuildSettings});
     };
 });

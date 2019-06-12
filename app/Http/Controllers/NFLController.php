@@ -30,6 +30,69 @@ class NFLController extends Controller
   {
       return view('NFL');
   }
+  public function NFL_2018()
+  {
+      return view('NFL_2018');
+  }
+  public function getSlates(Request $request)
+  {
+    $slates = DB::connection('mysql_NFL')->select("SELECT id, Year, Week, Slate_Name FROM nfl.slates WHERE Year > 2016 AND Year < 2018 ORDER BY Year Desc, Week Desc ");
+    return Response::json($slates, 200);
+  }
+  public function getSlates_2018(Request $request)
+  {
+    $slates = DB::connection('mysql_NFL')->select("SELECT id, Year, Week, Slate_Name FROM nfl.slates WHERE Year > 2017 ORDER BY Year Desc, Week Desc ");
+    return Response::json($slates, 200);
+  }
+  public function getPlayersFromSlate(Request $request)
+  {
+    $this->validate($request, [
+      'id' => 'required|integer'
+    ]);
+
+    $playersInSlate = DB::connection('mysql_NFL')->select("SELECT fc.Player_ID, nm.Full_Name, tm.FantasyCruncherTeam AS Team, op.FantasyCruncherTeam AS Opp, fc.FC_Proj, ln.Projection, ln.Salary, ln.Actual, fc.Position FROM fc_players AS fc
+INNER JOIN linestar AS ln ON fc.Player_ID = ln.Player_ID AND fc.Year = ln.Year AND fc.Week = ln.Week
+INNER JOIN names AS nm ON fc.Player_ID = nm.id
+INNER JOIN teams AS tm ON fc.Team_ID = tm.id
+INNER JOIN teams AS op ON fc.Opp_ID = op.id
+INNER JOIN slate_junction AS jn ON jn.Player_ID = fc.Player_ID
+INNER JOIN slates AS sl ON sl.id = jn.Slate_ID AND sl.Year = fc.Year AND sl.Week = fc.Week
+WHERE sl.id = $request->id");
+    if (count($playersInSlate) == 0) {
+      $errorMessage = array('error' => 'Incorrect slate id.');
+      return Response::json($errorMessage, 500);
+    }
+
+    $players = [];
+    foreach($playersInSlate as $singlePlayer)
+    {
+      $player = new stdClass();
+      $player->playerID = $singlePlayer->Player_ID;
+      $player->_Position = $singlePlayer->Position;
+      if($player->_Position == "D" || $player->_Position == "DST" ) {
+        $player->_Position = "DST";
+      }
+      $player->_Name = $singlePlayer->Full_Name;
+      $player->_FPPG = $singlePlayer->FC_Proj;//((floatval($singlePlayer->FC_Proj) + floatval($singlePlayer->Projection)) / 2);
+      $player->_ActualFantasyPoints = floatval($singlePlayer->Actual);
+      $player->_GamesPlayed = -1;
+      $player->_Salary = $singlePlayer->Salary;
+      $player->_Game = '';
+      $player->_Team = $singlePlayer->Team;
+      $player->_Opponent = $singlePlayer->Opp;
+      $player->_playerInjured = '';
+      $player->_playerInjuryDetails = '';
+      $player->_TimesInValidDrafts = 0;
+      $player->_TimesInDrafts = 0;
+      $player->_PercentInDrafts = -1;
+      $player->_Rank = -1;
+      if($player->playerID != null) {
+        $players[] = $player;
+      }
+    }
+
+    return Response::json($players, 200);
+  }
 
   public function loadFanDuelPlayers(Request $request)
   {
@@ -57,6 +120,8 @@ class NFLController extends Controller
               $player->_Position = "DST";
             }
             $player->_Name = $data[2] . " " . $data[4];
+            $player->_FName = $data[2];
+            $player->_LName = $data[4];
             $player->_FPPG = $data[5];
             $player->_ActualFantasyPoints = -1;
             $player->_GamesPlayed = $data[6];

@@ -1,0 +1,67 @@
+<div class="modal-header">
+    <h3 class="modal-title">Advanced Settings</h3>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xs-12">
+      <label>
+        <input ng-model="_BuildSettings.Use_Salary_Cap" type="checkbox"> Force x number of players between min salary and max salary into lineups?
+      </label>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Min Number Players:</label>
+        <input class="form-control" style="display:inline;" ng-model="_BuildSettings.Min_Num_Salary_Cap_Players" type="number" >
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Min Salary: </label>
+        <input class="form-control" style="display:inline;" ng-model="_BuildSettings.Min_Salary_Cap" type="number" step="100">
+        <label for="exampleInputEmail1">Max Salary: </label>
+        <input class="form-control" style="display:inline;" ng-model="_BuildSettings.Max_Salary_Cap" type="number" step="100">
+      </div>
+    </div>
+    <div class="col-xs-12">
+      <label>
+        <input ng-model="_BuildSettings.Use_Min_Players" type="checkbox"> Use the following players ONLY when Salary Left is <= x?
+      </label>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Max Salary Left: </label>
+        <input class="form-control" style="display:inline;" ng-model="_BuildSettings.Min_Players_Salary_Left" type="number" step="100">
+      </div>
+      <table class="table table-hover" >
+          <thead>
+              <tr>
+                  <th>
+                      <span>
+                          Player Name
+                      </span>
+                  </th>
+                  <th>
+                      <span>
+                          Salary
+                      </span>
+                  </th>
+                  <th>
+                      <span>
+                          Remove
+                      </span>
+                  </th>
+              </tr>
+          </thead>
+          <tbody >
+              <tr ng-repeat="singlePlayer in _BuildSettings.Min_Players ">
+                  <td>{{singlePlayer._Name}}</td>
+                  <td>{{singlePlayer._Salary}}</td>
+                  <td><button class="btn btn-default " ng-click="removePlayer(singlePlayer)"><span class="glyphicon glyphicon-remove"></span></button></td>
+              </tr>
+          </tbody>
+      </table>
+    </div>
+    <div class="col-xs-12">
+      <button class="btn btn-default" type="submit" ng-click="Reset()">Reset Settings</button>
+    </div>
+  </div>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

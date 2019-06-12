@@ -28,11 +28,22 @@ Route::post(
     '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook'
 );
 
+//admin
+Route::get('/admin', 'AdminController@admin');
+Route::post('/admin/loadFDSlate', 'AdminController@loadFDSlate');
+Route::post('/admin/uploadBDBFile', 'AdminController@uploadBDBFile');
+
 //Auth
 Auth::routes();
 
 //NFL
 Route::get('/NFL', 'NFLController@NFL');
+Route::get('/NFL_2018', 'NFLController@NFL_2018');
+
+Route::post('/NFL/getSlates', 'NFLController@getSlates');
+Route::post('/NFL/getSlates_2018', 'NFLController@getSlates_2018');
+Route::post('/NFL/getPlayersFromSlate', 'NFLController@getPlayersFromSlate');
+
 Route::post('/NFL/loadFanDuelPlayers', 'NFLController@loadFanDuelPlayers');
 Route::post('/NFL/loadDraftKingsPlayers', 'NFLController@loadDraftKingsPlayers');
 Route::post('/NFL/loadDraftKingsFPPG', 'NFLController@loadDraftKingsFPPG');
@@ -109,6 +120,10 @@ Route::post('/NHL/updateTitle', 'NHLController@updateTitle');
 
 //NHL DK
 Route::get('/NHLDK', 'NHLController@NHLDK');
+
+//MLB Sim
+Route::get('/MLBSim', 'MLBController@MLBSim');
+Route::post('/MLBSimGetPlayers', 'MLBController@MLBSimGetPlayers');
 
 //MLB
 Route::get('/MLB', 'MLBController@MLB');

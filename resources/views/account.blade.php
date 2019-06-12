@@ -63,9 +63,9 @@
                     <script
                       src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                       data-key="{{env('STRIPE_KEY')}}"
-                      data-amount="499"
+                      data-amount="799"
                       data-name="DFSCombine.com"
-                      data-description="$4.99 per month"
+                      data-description="$7.99 per month"
                       data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
                       data-locale="auto">
                     </script>

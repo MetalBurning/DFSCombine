@@ -1,0 +1,35 @@
+﻿
+<div class="modal-header">
+    <h3 class="modal-title">Advanced Settings</h3>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xs-6">
+      <div class="form-group">
+        <label for="exampleInputEmail1">Minimum Players Per Team</label>
+        <input class="form-control"  ng-model="_BuildSettings.Team_Stack_Players" type="number" >
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Maximum Players Vs Defense</label>
+        <input class="form-control"  ng-model="_BuildSettings.Players_VS_Defense" type="number" >
+      </div>
+    </div>
+    <div class="col-xs-6">
+      <label>
+        <input ng-model="_BuildSettings.QB_RB_Stack" type="checkbox"> Only build QB & RB drafts from same team
+      </label>
+      <label>
+        <input ng-model="_BuildSettings.QB_WR_Stack" type="checkbox"> Only build QB & WR drafts from same team
+      </label>
+      <label>
+        <input ng-model="_BuildSettings.QB_TE_Stack" type="checkbox"> Only build QB & TE drafts from same team
+      </label>
+      <button class="btn btn-default" type="submit" ng-click="Reset()">Reset Settings</button>
+    </div>
+  </div>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
