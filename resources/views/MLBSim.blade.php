@@ -4,6 +4,7 @@
 <script src="/js/AngularControllers/MLBSIM/MLB.js?v={{str_random(40)}}"></script>
 <script src="/js/AngularControllers/MLBSIM/MLBController.js?v={{str_random(40)}}"></script>
 <script src="/js/AngularControllers/MLBSIM/MLBControllerHelpers.js?v={{str_random(40)}}"></script>
+<script src="/js/AngularControllers/MLBSIM/MLBSimPlayerController.js?v={{str_random(40)}}"></script>
 
 <script type="text/javascript">
 DateObj = {             // make it global for easy access
@@ -74,6 +75,11 @@ DateObj = {             // make it global for easy access
                   <div class="row">
                     <div class="col-xs-12">
                       <button type="button" class="btn btn-primary" ng-click="Download_Projections()">Download Player Projections</button>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <button type="button" class="btn btn-primary" ng-click="View_Projections()">View Player Projections</button>
                     </div>
                   </div>
                 </div>

@@ -531,6 +531,30 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
     }
 
+    $scope.View_Projections = function() {
+
+      var Players = [];
+      $scope.Games.forEach(function(Game) {
+        Game.Home_Players.forEach(function(player) {
+          Players.push(player);
+        });
+        Game.Away_Players.forEach(function(player) {
+          Players.push(player);
+        });
+      });
+      console.log(Players);
+      var modalInstance = $uibModal.open({
+          templateUrl: '/js/AngularControllers/modelMLBSim.html',
+          controller: 'MLBSimPlayerController',
+          size:'lg',
+          resolve: {
+              players: function () {
+                  return Players;
+              }
+          }
+      });
+    }
+
 
     $scope.Set_Missing_BO = function() {
       $scope.Games.forEach(function(Game) {

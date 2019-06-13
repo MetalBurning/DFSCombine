@@ -1,0 +1,49 @@
+﻿
+<div class="modal-header">
+    <h3 class="modal-title">Player Simulation Projections</h3>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-xs-12">
+      <table class="table table-hover">
+          <thead>
+              <tr >
+                  <th>
+                      <span class="fake-link"  ng-click="Filter = 'Name'; ReverseOrder = !ReverseOrder">
+                            Name
+                      </span>
+                  </th>
+                  <th>
+                    <span class="fake-link"  ng-click="Filter = 'Sim_FD_Points'; ReverseOrder = !ReverseOrder">
+                        Sim_FD_Points
+                    </span>
+                  </th>
+                  <th>
+                    <span class="fake-link"  ng-click="Filter = 'Sim_DK_Points'; ReverseOrder = !ReverseOrder">
+                        Sim_DK_Points
+                    </span>
+                  </th>
+                  <th>
+                    <span class="fake-link"  ng-click="Filter = 'Sim_Y_Points'; ReverseOrder = !ReverseOrder">
+                        Sim_Y_Points
+                    </span>
+                  </th>
+              </tr>
+
+          </thead>
+          <tbody ng-repeat="player in Players | orderBy:Filter:ReverseOrder ">
+              <tr>
+                  <td>{{player.Name}}</td>
+                  <td>{{player.Sim_FD_Points}}</td>
+                  <td>{{player.Sim_DK_Points}}</td>
+                  <td>{{player.Sim_Y_Points}}</td>
+              </tr>
+          </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

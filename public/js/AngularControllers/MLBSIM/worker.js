@@ -639,21 +639,21 @@ function Run_Single_Sim(Game, iteration) {
           FD_Points_Total += player.Sim_Data[i].Sim_FD_Points;
       }
       var FD_AVG = FD_Points_Total / player.Sim_Data.length;
-      player.Sim_FD_Points = FD_AVG.toFixed(3);
+      player.Sim_FD_Points = parseFloat(FD_AVG.toFixed(3));
 
       var DK_Points_Total = 0;
       for(var i = 0; i < player.Sim_Data.length; i++) {
           DK_Points_Total += player.Sim_Data[i].Sim_DK_Points;
       }
       var DK_AVG = DK_Points_Total / player.Sim_Data.length;
-      player.Sim_DK_Points = DK_AVG.toFixed(3);
+      player.Sim_DK_Points = parseFloat(DK_AVG.toFixed(3));
 
       var Y_Points_Total = 0;
       for(var i = 0; i < player.Sim_Data.length; i++) {
           Y_Points_Total += player.Sim_Data[i].Sim_Y_Points;
       }
       var Y_AVG = Y_Points_Total / player.Sim_Data.length;
-      player.Sim_Y_Points = Y_AVG.toFixed(3);
+      player.Sim_Y_Points = parseFloat(Y_AVG.toFixed(3));
 
     });
 
@@ -704,21 +704,21 @@ function Run_Single_Sim(Game, iteration) {
           FD_Points_Total += player.Sim_Data[i].Sim_FD_Points;
       }
       var FD_AVG = FD_Points_Total / player.Sim_Data.length;
-      player.Sim_FD_Points = FD_AVG.toFixed(3);
+      player.Sim_FD_Points = parseFloat(FD_AVG.toFixed(3));
 
       var DK_Points_Total = 0;
       for(var i = 0; i < player.Sim_Data.length; i++) {
           DK_Points_Total += player.Sim_Data[i].Sim_DK_Points;
       }
       var DK_AVG = DK_Points_Total / player.Sim_Data.length;
-      player.Sim_DK_Points = DK_AVG.toFixed(3);
+      player.Sim_DK_Points = parseFloat(DK_AVG.toFixed(3));
 
       var Y_Points_Total = 0;
       for(var i = 0; i < player.Sim_Data.length; i++) {
           Y_Points_Total += player.Sim_Data[i].Sim_Y_Points;
       }
       var Y_AVG = Y_Points_Total / player.Sim_Data.length;
-      player.Sim_Y_Points = Y_AVG.toFixed(3);
+      player.Sim_Y_Points = parseFloat(Y_AVG.toFixed(3));
     });
 
     Game.Home_Score = Home_Total_Runs / iterations;
