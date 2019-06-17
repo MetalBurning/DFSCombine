@@ -11,7 +11,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.AllTeams = [];
     $scope.Games = [];
 
-    $scope.Number_Simulations = 10000;
+    $scope.Number_Simulations = 15000;
     $scope.League_Regression = 125;
     $scope.Recent_Hitter_Regression = 10;
     $scope.Recent_Pitcher_Regression = 15;
@@ -20,10 +20,29 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         return b-a;
     }
     //Set date from global date object set in the view
+    console.log(DateObj);
     $scope.Date = new Date(DateObj.Date);
+    $scope.Past_Date = new Date(DateObj.Past_Date);
+    $scope.Next_Date = new Date(DateObj.Next_Date);
     $scope.Date = new Date($scope.Date.setDate($scope.Date.getDate() + 1));
+    $scope.Past_Date = new Date($scope.Past_Date.setDate($scope.Past_Date.getDate() + 1));
+    $scope.Next_Date = new Date($scope.Next_Date.setDate($scope.Next_Date.getDate() + 1));
     $scope.worker = new Worker('js/AngularControllers/MLBSIM/worker.js');
 
+
+    $scope.GetStringDate = function(Date) {
+      var Year = Date.getFullYear();
+      var Month = Date.getMonth();
+      Month++;
+      var Day = Date.getDate();
+      if(Day < 10) {
+        Day = 0+''+Day;
+      }
+      if(Month < 10) {
+        Month = 0+''+Month;
+      }
+      return Year+'-'+Month+'-'+Day;
+    }
 
     $scope.displayNewMessage = function (messageType, messageContent) {
       $window.scrollTo(0, 0);
@@ -54,10 +73,12 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
     $scope.End_All_Simulations = function() {
       $scope.worker.terminate();
-      $scope.Sim_Building = false;
       $scope.worker = new Worker('js/AngularControllers/MLBSIM/worker.js');
+      $scope.Sim_Building = false;
+      $scope.Games.forEach(function(game) {
+        game.Sim_Building = false;
+      });
     }
-
     $scope.loadPlayers = function (event) {
 
       var yyyy = $scope.Date.getFullYear();
@@ -441,7 +462,8 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
               Home_Score_AVG : 0,
               Away_Score_AVG : 0,
               Home_Win_Percent : 0,
-              Away_Win_Percent : 0
+              Away_Win_Percent : 0,
+              Sim_Building : false
             }
 
             if(player.Home) {
@@ -678,7 +700,10 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
         var Recent_VS_R_PAs = ($scope.Recent_Hitter_Regression * 0.01) * player.Total_PA_VS_R;
         var Recent_VS_R_Hs = ($scope.Recent_Hitter_Regression * 0.01) * player.Total_H_VS_R;
-
+        if(player.Position === 'P') {
+          Recent_VS_R_PAs = ($scope.Recent_Pitcher_Regression * 0.01) * player.Total_PA_VS_R;
+          Recent_VS_R_Hs = ($scope.Recent_Pitcher_Regression * 0.01) * player.Total_H_VS_R;
+        }
         if(League_VS_R_PAs < 10) {
           League_VS_R_PAs = 10;
         }
@@ -703,7 +728,10 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
         var Recent_VS_L_PAs = ($scope.Recent_Hitter_Regression * 0.01) * player.Total_PA_VS_L;
         var Recent_VS_L_Hs = ($scope.Recent_Hitter_Regression * 0.01) * player.Total_H_VS_L;
-
+        if(player.Position === 'P') {
+          Recent_VS_L_PAs = ($scope.Recent_Pitcher_Regression * 0.01) * player.Total_PA_VS_L;
+          Recent_VS_L_Hs = ($scope.Recent_Pitcher_Regression * 0.01) * player.Total_H_VS_L;
+        }
         if(League_VS_L_PAs < 10) {
           League_VS_L_PAs = 10;
         }
@@ -726,11 +754,13 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         var Recent_Base = Pitcher_Base * ($scope.Recent_Pitcher_Regression * 0.01);
         var League_Base = parseInt($scope.League_Regression);
         Pitcher_Base = Pitcher_Base - Recent_Base ;
+
         player.TBF_Regression = ((player.TBF * Pitcher_Base) + (player.TBF_Recent * Recent_Base) + (player.TBF_League_AVG * League_Base)) / (Pitcher_Base + Recent_Base + League_Base);
         player.TBF_VS_Opp_Regression = ((player.TBF_VS_Opp * Pitcher_Base) + (player.TBF_VS_Opp_Recent * Recent_Base) ) / (Pitcher_Base + Recent_Base);
 
         player.IP_TBF_Regression = ((player.IP_TBF * Pitcher_Base) + (player.IP_TBF_Recent * Recent_Base) + (player.IP_TBF_League_AVG * League_Base)) / (Pitcher_Base + Recent_Base + League_Base);
         player.IP_TBF_VS_Opp_Regression = ((player.IP_TBF_VS_Opp * Pitcher_Base) + (player.IP_TBF_VS_Opp_Recent * Recent_Base) ) / (Pitcher_Base + Recent_Base);
+
 
         if(player.Total_PA_VS_R < 100 && player.Position === 'P') {
           //player has small amount of data
@@ -774,6 +804,11 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         var Recent_VS_R_PAs = ($scope.Recent_Hitter_Regression * 0.01) * player.Total_PA_VS_R;
         var Recent_VS_R_Hs = ($scope.Recent_Hitter_Regression * 0.01) * player.Total_H_VS_R;
 
+        if(player.Position === 'P') {
+          Recent_VS_R_PAs = ($scope.Recent_Pitcher_Regression * 0.01) * player.Total_PA_VS_R;
+          Recent_VS_R_Hs = ($scope.Recent_Pitcher_Regression * 0.01) * player.Total_H_VS_R;
+        }
+
         if(League_VS_R_PAs < 10) {
           League_VS_R_PAs = 10;
         }
@@ -798,6 +833,10 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
         var Recent_VS_L_PAs = ($scope.Recent_Hitter_Regression * 0.01) * player.Total_PA_VS_L;
         var Recent_VS_L_Hs = ($scope.Recent_Hitter_Regression * 0.01) * player.Total_H_VS_L;
+        if(player.Position === 'P') {
+          Recent_VS_L_PAs = ($scope.Recent_Pitcher_Regression * 0.01) * player.Total_PA_VS_L;
+          Recent_VS_L_Hs = ($scope.Recent_Pitcher_Regression * 0.01) * player.Total_H_VS_L;
+        }
 
         if(League_VS_L_PAs < 10) {
           League_VS_L_PAs = 10;
@@ -864,18 +903,23 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     }
 
     $scope.Start_All_Simulations = function() {
-      $scope.worker.postMessage([$scope.Games, $scope.Number_Simulations, $scope.League_Regression, $scope.Recent_Hitter_Regression, $scope.Recent_Pitcher_Regression]);
-      $scope.Sim_Building = true;
+      // $scope.worker.postMessage([$scope.Games, $scope.Number_Simulations, $scope.League_Regression, $scope.Recent_Hitter_Regression, $scope.Recent_Pitcher_Regression]);
+      // $scope.Sim_Building = true;
+      for(var j = 0; j < $scope.Games.length; j++) {
+          $scope.Start_Simulation($scope.Games[j]);
+      }
+      $scope.Sim_Building = false;
+
       // $scope.Games.forEach(function(Game) {
       //   $scope.Start_Simulation(Game);
       // });
 
-      $scope.worker.onmessage = function(event) {
-          console.log(event.data);
-          $scope.Sim_Building = false;
-          $scope.Games = event.data;
-          $scope.$apply();
-      };
+      // $scope.worker.onmessage = function(event) {
+      //     console.log(event.data);
+      //     $scope.Sim_Building = false;
+      //     $scope.Games = event.data;
+      //     $scope.$apply();
+      // };
     }
 
 
@@ -884,16 +928,44 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       var Game_Index = $scope.Games.findIndex(obj => {
         return obj.Home_Team === Game.Home_Team && obj.Away_Team === Game.Away_Team
       });
-      $scope.worker.postMessage([[Game], $scope.Number_Simulations, $scope.League_Regression, $scope.Recent_Hitter_Regression, $scope.Recent_Pitcher_Regression]);
-      $scope.Sim_Building = true;
+      $scope.Games[Game_Index].Sim_Building = true;
+      $scope.worker.postMessage([[$scope.Games[Game_Index]], $scope.Number_Simulations, $scope.League_Regression, $scope.Recent_Hitter_Regression, $scope.Recent_Pitcher_Regression]);
       // $scope.Games.forEach(function(Game) {
       //   $scope.Start_Simulation(Game);
       // });
 
+
+      //var Game = {
+      //   Home_Team : '',
+      //   Away_Team : '',
+      //   Home_Players : [],
+      //   Away_Players : [],
+      //   Scores : [],
+      //   Inning_Scores : [],
+      //   Home_Score_AVG : 0,
+      //   Away_Score_AVG : 0,
+      //   Home_Win_Percent : 0,
+      //   Away_Win_Percent : 0
+      // }
+
       $scope.worker.onmessage = function(event) {
           console.log(event.data);
+          Game_Index = $scope.Games.findIndex(obj => {
+            return obj.Home_Team === event.data[0].Home_Team && obj.Away_Team === event.data[0].Away_Team
+          });
+          $scope.Games[Game_Index].Home_Team = event.data[0].Home_Team;
+          $scope.Games[Game_Index].Away_Team = event.data[0].Away_Team;
+          $scope.Games[Game_Index].Home_Players = event.data[0].Home_Players;
+          $scope.Games[Game_Index].Away_Players = event.data[0].Away_Players;
+          $scope.Games[Game_Index].Scores = event.data[0].Scores;
+          $scope.Games[Game_Index].Inning_Scores = event.data[0].Inning_Scores;
+          $scope.Games[Game_Index].Home_Score_AVG = event.data[0].Home_Score_AVG;
+          $scope.Games[Game_Index].Away_Score_AVG = event.data[0].Away_Score_AVG;
+          $scope.Games[Game_Index].Home_Win_Percent = event.data[0].Home_Win_Percent;
+          $scope.Games[Game_Index].Away_Win_Percent = event.data[0].Away_Win_Percent;
+          $scope.Games[Game_Index].Sim_Building = false;
           $scope.Sim_Building = false;
-          $scope.Games[Game_Index] = event.data[0];
+
           $scope.$apply();
       };
 

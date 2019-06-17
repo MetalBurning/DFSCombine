@@ -9,7 +9,9 @@
         "laravel/framework": "5.3.*",
         "guzzlehttp/guzzle": "^6.2",
         "laravel/cashier": "~7.0",
-        "jacobemerick/kmeans": "~1.0"
+        "jacobemerick/kmeans": "~1.0",
+        "predis/predis": "^1.1",
+        "nesbot/carbon": "~1.38.4"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

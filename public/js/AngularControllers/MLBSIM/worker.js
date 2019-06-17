@@ -3,7 +3,7 @@ onmessage = function(Game_Data, iterations) {
 
   var League_Regression = Game_Data.data[2];
   var Recent_Hitter_Regression = Game_Data.data[3];
-  var Recent_Pitcher_Regression = Game_Data.data[3];
+  var Recent_Pitcher_Regression = Game_Data.data[4];
 
 
   Game_Data.data[0].forEach(function(Game) {
@@ -212,6 +212,10 @@ function Run_Single_Sim(Game, iteration) {
 
       var Recent_VS_R_PAs = (Recent_Hitter_Regression * 0.01) * player.Total_PA_VS_R;
       var Recent_VS_R_Hs = (Recent_Hitter_Regression * 0.01) * player.Total_H_VS_R;
+      if(player.Position === 'P') {
+        Recent_VS_R_PAs = (Recent_Pitcher_Regression * 0.01) * player.Total_PA_VS_R;
+        Recent_VS_R_Hs = (Recent_Pitcher_Regression * 0.01) * player.Total_H_VS_R;
+      }
 
       if(League_VS_R_PAs < 10) {
         League_VS_R_PAs = 10;
@@ -237,6 +241,10 @@ function Run_Single_Sim(Game, iteration) {
 
       var Recent_VS_L_PAs = (Recent_Hitter_Regression * 0.01) * player.Total_PA_VS_L;
       var Recent_VS_L_Hs = (Recent_Hitter_Regression * 0.01) * player.Total_H_VS_L;
+      if(player.Position === 'P') {
+        Recent_VS_L_PAs = (Recent_Pitcher_Regression * 0.01) * player.Total_PA_VS_L;
+        Recent_VS_L_Hs = (Recent_Pitcher_Regression * 0.01) * player.Total_H_VS_L;
+      }
 
       if(League_VS_L_PAs < 10) {
         League_VS_L_PAs = 10;
@@ -265,6 +273,7 @@ function Run_Single_Sim(Game, iteration) {
 
       player.IP_TBF_Regression = ((player.IP_TBF * Pitcher_Base) + (player.IP_TBF_Recent * Recent_Base) + (player.IP_TBF_League_AVG * League_Base)) / (Pitcher_Base + Recent_Base + League_Base);
       player.IP_TBF_VS_Opp_Regression = ((player.IP_TBF_VS_Opp * Pitcher_Base) + (player.IP_TBF_VS_Opp_Recent * Recent_Base) ) / (Pitcher_Base + Recent_Base);
+
 
       if(player.Total_PA_VS_R < 100 && player.Position === 'P') {
         //player has small amount of data
@@ -307,6 +316,10 @@ function Run_Single_Sim(Game, iteration) {
 
       var Recent_VS_R_PAs = (Recent_Hitter_Regression * 0.01) * player.Total_PA_VS_R;
       var Recent_VS_R_Hs = (Recent_Hitter_Regression * 0.01) * player.Total_H_VS_R;
+      if(player.Position === 'P') {
+        Recent_VS_R_PAs = (Recent_Pitcher_Regression * 0.01) * player.Total_PA_VS_R;
+        Recent_VS_R_Hs = (Recent_Pitcher_Regression * 0.01) * player.Total_H_VS_R;
+      }
 
       if(League_VS_R_PAs < 10) {
         League_VS_R_PAs = 10;
@@ -332,7 +345,10 @@ function Run_Single_Sim(Game, iteration) {
 
       var Recent_VS_L_PAs = (Recent_Hitter_Regression * 0.01) * player.Total_PA_VS_L;
       var Recent_VS_L_Hs = (Recent_Hitter_Regression * 0.01) * player.Total_H_VS_L;
-
+      if(player.Position === 'P') {
+        Recent_VS_L_PAs = (Recent_Pitcher_Regression * 0.01) * player.Total_PA_VS_L;
+        Recent_VS_L_Hs = (Recent_Pitcher_Regression * 0.01) * player.Total_H_VS_L;
+      }
       if(League_VS_L_PAs < 10) {
         League_VS_L_PAs = 10;
       }
@@ -466,19 +482,23 @@ function Run_Single_Sim(Game, iteration) {
     var Home_Score_Recalculated_AVG = Get_Home_AVG_Score(Game);
     var Away_Score_Recalculated_AVG = Get_Away_AVG_Score(Game);
 
+    var Run_Buffer = 0.1;
 
-    for(var m = 0; m < Game.Inning_Scores.length; m++) {
+    //the higher the loop cap the more accurate & time consuming this takes
+    for(var m = 0; m < 30; m++) {
       if(Home_Score_Recalculated_AVG < Game.Home_Players[0].Vegas_Runs && Away_Score_Recalculated_AVG < Game.Away_Players[0].Vegas_Runs) {
         //need to increase home scores avg and away score average
         for(var j = 0; j < Game.Inning_Scores.length; j++) {
           if(Game.Inning_Scores[j][53].Home_Score < Game.Home_Players[0].Vegas_Runs && Game.Inning_Scores[j][53].Away_Score < Game.Away_Players[0].Vegas_Runs) {
             //remove
             Game.Inning_Scores.splice(j, 1);
-            for(var k = 0; k < Game.Home_Players.length; k++) {
-              Game.Home_Players[k].Sim_Data.splice(j, 1);
-            }
-            for(var k = 0; k < Game.Away_Players.length; k++) {
-              Game.Away_Players[k].Sim_Data.splice(j, 1);
+            for(var k = 0; k < 10; k++) {
+              if(k < Game.Home_Players.length) {
+                Game.Home_Players[k].Sim_Data.splice(j, 1);
+              }
+              if(k < Game.Away_Players.length) {
+                Game.Away_Players[k].Sim_Data.splice(j, 1);
+              }
             }
           }
           Home_Score_Recalculated_AVG = Get_Home_AVG_Score(Game);
@@ -488,21 +508,23 @@ function Run_Single_Sim(Game, iteration) {
             break;
           }
         }
-        if(Home_Score_Recalculated_AVG >= Game.Home_Players[0].Vegas_Runs && Away_Score_Recalculated_AVG >= Game.Away_Players[0].Vegas_Runs) {
+        if(Home_Score_Recalculated_AVG >= (Game.Home_Players[0].Vegas_Runs - Run_Buffer) && Home_Score_Recalculated_AVG <= (Game.Home_Players[0].Vegas_Runs + Run_Buffer) && (Away_Score_Recalculated_AVG >= Game.Away_Players[0].Vegas_Runs -Run_Buffer) && (Away_Score_Recalculated_AVG <= Game.Away_Players[0].Vegas_Runs + Run_Buffer)) {
           break;
         }
       }
       else if(Home_Score_Recalculated_AVG > Game.Home_Players[0].Vegas_Runs && Away_Score_Recalculated_AVG > Game.Away_Players[0].Vegas_Runs) {
-        //need to increase home scores avg and away score
+        //need to decrease home scores avg and away score
         for(var j = 0; j < Game.Inning_Scores.length; j++) {
           if(Game.Inning_Scores[j][53].Home_Score > Game.Home_Players[0].Vegas_Runs && Game.Inning_Scores[j][53].Away_Score > Game.Away_Players[0].Vegas_Runs) {
             //remove
             Game.Inning_Scores.splice(j, 1);
-            for(var k = 0; k < Game.Home_Players.length; k++) {
-              Game.Home_Players[k].Sim_Data.splice(j, 1);
-            }
-            for(var k = 0; k < Game.Away_Players.length; k++) {
-              Game.Away_Players[k].Sim_Data.splice(j, 1);
+            for(var k = 0; k < 10; k++) {
+              if(k < Game.Home_Players.length) {
+                Game.Home_Players[k].Sim_Data.splice(j, 1);
+              }
+              if(k < Game.Away_Players.length) {
+                Game.Away_Players[k].Sim_Data.splice(j, 1);
+              }
             }
           }
           Home_Score_Recalculated_AVG = Get_Home_AVG_Score(Game);
@@ -512,7 +534,7 @@ function Run_Single_Sim(Game, iteration) {
             break;
           }
         }
-        if(Home_Score_Recalculated_AVG <= Game.Home_Players[0].Vegas_Runs && Away_Score_Recalculated_AVG <= Game.Away_Players[0].Vegas_Runs) {
+        if(Home_Score_Recalculated_AVG >= (Game.Home_Players[0].Vegas_Runs - Run_Buffer) && Home_Score_Recalculated_AVG <= (Game.Home_Players[0].Vegas_Runs + Run_Buffer) && (Away_Score_Recalculated_AVG >= Game.Away_Players[0].Vegas_Runs -Run_Buffer) && (Away_Score_Recalculated_AVG <= Game.Away_Players[0].Vegas_Runs + Run_Buffer)) {
           break;
         }
       }
@@ -522,11 +544,13 @@ function Run_Single_Sim(Game, iteration) {
           if(Game.Inning_Scores[j][53].Home_Score < Game.Home_Players[0].Vegas_Runs && Game.Inning_Scores[j][53].Away_Score > Game.Away_Players[0].Vegas_Runs) {
             //remove
             Game.Inning_Scores.splice(j, 1);
-            for(var k = 0; k < Game.Home_Players.length; k++) {
-              Game.Home_Players[k].Sim_Data.splice(j, 1);
-            }
-            for(var k = 0; k < Game.Away_Players.length; k++) {
-              Game.Away_Players[k].Sim_Data.splice(j, 1);
+            for(var k = 0; k < 10; k++) {
+              if(k < Game.Home_Players.length) {
+                Game.Home_Players[k].Sim_Data.splice(j, 1);
+              }
+              if(k < Game.Away_Players.length) {
+                Game.Away_Players[k].Sim_Data.splice(j, 1);
+              }
             }
           }
           Home_Score_Recalculated_AVG = Get_Home_AVG_Score(Game);
@@ -536,7 +560,7 @@ function Run_Single_Sim(Game, iteration) {
             break;
           }
         }
-        if(Home_Score_Recalculated_AVG >= Game.Home_Players[0].Vegas_Runs && Away_Score_Recalculated_AVG <= Game.Away_Players[0].Vegas_Runs) {
+        if(Home_Score_Recalculated_AVG >= (Game.Home_Players[0].Vegas_Runs - Run_Buffer) && Home_Score_Recalculated_AVG <= (Game.Home_Players[0].Vegas_Runs + Run_Buffer) && (Away_Score_Recalculated_AVG >= Game.Away_Players[0].Vegas_Runs -Run_Buffer) && (Away_Score_Recalculated_AVG <= Game.Away_Players[0].Vegas_Runs + Run_Buffer)) {
           break;
         }
       }
@@ -546,11 +570,13 @@ function Run_Single_Sim(Game, iteration) {
           if(Game.Inning_Scores[j][53].Home_Score > Game.Home_Players[0].Vegas_Runs && Game.Inning_Scores[j][53].Away_Score < Game.Away_Players[0].Vegas_Runs) {
             //remove
             Game.Inning_Scores.splice(j, 1);
-            for(var k = 0; k < Game.Home_Players.length; k++) {
-              Game.Home_Players[k].Sim_Data.splice(j, 1);
-            }
-            for(var k = 0; k < Game.Away_Players.length; k++) {
-              Game.Away_Players[k].Sim_Data.splice(j, 1);
+            for(var k = 0; k < 10; k++) {
+              if(k < Game.Home_Players.length) {
+                Game.Home_Players[k].Sim_Data.splice(j, 1);
+              }
+              if(k < Game.Away_Players.length) {
+                Game.Away_Players[k].Sim_Data.splice(j, 1);
+              }
             }
           }
           Home_Score_Recalculated_AVG = Get_Home_AVG_Score(Game);
@@ -560,7 +586,7 @@ function Run_Single_Sim(Game, iteration) {
             break;
           }
         }
-        if(Home_Score_Recalculated_AVG <= Game.Home_Players[0].Vegas_Runs && Away_Score_Recalculated_AVG >= Game.Away_Players[0].Vegas_Runs) {
+        if(Home_Score_Recalculated_AVG >= (Game.Home_Players[0].Vegas_Runs - Run_Buffer) && Home_Score_Recalculated_AVG <= (Game.Home_Players[0].Vegas_Runs + Run_Buffer) && (Away_Score_Recalculated_AVG >= Game.Away_Players[0].Vegas_Runs -Run_Buffer) && (Away_Score_Recalculated_AVG <= Game.Away_Players[0].Vegas_Runs + Run_Buffer)) {
           break;
         }
       }

@@ -8,7 +8,9 @@
 
 <script type="text/javascript">
 DateObj = {             // make it global for easy access
-    Date: '{{$Date}}'
+    Date: '{{$Date}}',
+    Next_Date: '{{$Next_Date}}',
+    Past_Date: '{{$Past_Date}}'
 };
 </script>
 
@@ -21,6 +23,14 @@ DateObj = {             // make it global for easy access
             </div>
         </div>
         <div class="row">
+          <div class="col-xs-12">
+            <ul class="pager">
+              <li class="previous"><a href="/MLBSim?Date=@{{GetStringDate(Past_Date)}}"><span aria-hidden="true">&larr;</span> @{{GetStringDate(Past_Date)}}</a></li>
+              <li class="next"><a href="/MLBSim?Date=@{{GetStringDate(Next_Date)}}">@{{GetStringDate(Next_Date)}}<span aria-hidden="true">&rarr;</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="row">
 
           <div class="col-xs-12">
             <div class="panel panel-default" >
@@ -28,12 +38,12 @@ DateObj = {             // make it global for easy access
                 Controls
               </div>
               <div class="panel-body" >
-                <div class="col-xs-6">
+                <div class="col-xs-7">
                   <div class="row">
                     <div class="col-xs-8">
                       <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1">Number Simulations: </span>
-                        <input type="text" class="form-control" ng-model="Number_Simulations" >
+                        <input type="number" class="form-control" ng-model="Number_Simulations" >
                       </div>
                     </div>
                   </div>
@@ -41,7 +51,7 @@ DateObj = {             // make it global for easy access
                     <div class="col-xs-8">
                       <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1">League Regression: </span>
-                        <input type="text" class="form-control" ng-model="League_Regression" >
+                        <input type="number" class="form-control" ng-model="League_Regression" >
                         <span class="input-group-addon">PA's</span>
                       </div>
                     </div>
@@ -50,7 +60,7 @@ DateObj = {             // make it global for easy access
                     <div class="col-xs-8">
                       <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1">Current Season Hitter Regression: </span>
-                        <input type="text" class="form-control" ng-model="Recent_Hitter_Regression" >
+                        <input type="number" class="form-control" ng-model="Recent_Hitter_Regression" >
                         <span class="input-group-addon">%</span>
                       </div>
                     </div>
@@ -59,13 +69,13 @@ DateObj = {             // make it global for easy access
                     <div class="col-xs-8">
                       <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1">Current Season Pitcher Regression: </span>
-                        <input type="text" class="form-control" ng-model="Recent_Pitcher_Regression" >
+                        <input type="number" class="form-control" ng-model="Recent_Pitcher_Regression" >
                         <span class="input-group-addon">%</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-xs-6">
+                <div class="col-xs-5">
                   <div class="row">
                     <div class="col-xs-12">
                       <button type="button" class="btn btn-primary" ng-hide="Sim_Building" ng-click="Start_All_Simulations()" >Start All Simulations</button>
@@ -98,8 +108,8 @@ DateObj = {             // make it global for easy access
               <div class="panel-body" >
                 <div class="row">
                   <div class="col-xs-6">
-                      <button type="button" class="btn btn-xs btn-info" ng-hide="Sim_Building" ng-click="Start_Simulation(Game)" >Start Simulation</button>
-                      <button type="button" class="btn btn-xs btn-danger" ng-show="Sim_Building" ng-click="End_All_Simulations()" >Cancel</button>
+                      <button type="button" class="btn btn-xs btn-info" ng-hide="Game.Sim_Building" ng-click="Start_Simulation(Game)" >Start Simulation</button>
+                      <button type="button" class="btn btn-xs btn-danger" ng-show="Game.Sim_Building" ng-click="End_All_Simulations()" >Cancel</button>
                   </div>
                 </div>
                 <div class="row">

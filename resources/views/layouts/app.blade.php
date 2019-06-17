@@ -56,14 +56,9 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                      <li><a href="{{ url('/NBA') }}">NBA - FD</a></li>
-                      <li><a href="{{ url('/WNBA') }}">WNBA - FD</a></li>
-                      <li><a href="{{ url('/NBADK') }}">NBA - DK</a></li>
-                      <li><a href="{{ url('/NFL') }}">NFL - FD</a></li>
-                      <li><a href="{{ url('/NHL') }}">NHL - FD</a></li>
-                      <li><a href="{{ url('/NHLDK') }}">NHL - DK</a></li>
-                      <li><a href="{{ url('/MLB') }}">MLB - FD</a></li>
-                      <li><a href="{{ url('/MLBDK') }}">MLB - DK</a></li>
+                      <li><a href="/MLBSim?Date={{date('Y-m-d')}}">MLBSIM</a></li>
+                      <li><a href="{{ url('/') }}">NFLSIM - Comming Soon</a></li>
+                      <li><a href="{{ url('/') }}">NBASIM - Comming Soon</a></li>
                     </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
