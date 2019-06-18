@@ -117,7 +117,7 @@ DateObj = {             // make it global for easy access
                     <table class="table table-hover">
                         <thead>
                           <tr>
-                            Sim Score: @{{Game.Away_Score_AVG}} | Sim Win Percentage: @{{Game.Away_Win_Percent}}
+                            Sim Score: @{{Game.Away_Score_AVG}} | Sim Win Percentage: @{{Game.Away_Win_Percent}}%
                           </tr>
                             <tr>
                                 <th>Players</th>
@@ -144,7 +144,7 @@ DateObj = {             // make it global for easy access
                     <table class="table table-hover">
                         <thead>
                           <tr>
-                            Sim Score: @{{Game.Home_Score_AVG}} | Sim Win Percentage: @{{Game.Home_Win_Percent}}
+                            Sim Score: @{{Game.Home_Score_AVG}} | Sim Win Percentage: @{{Game.Home_Win_Percent}}%
                           </tr>
                             <tr>
                                 <th>Players</th>
@@ -163,7 +163,6 @@ DateObj = {             // make it global for easy access
                                 <td>@{{home_player.Sim_FD_Points}}</td>
                                 <td>@{{home_player.Sim_DK_Points}}</td>
                                 <td>@{{home_player.Sim_Y_Points}}</td>
-
                             </tr>
                         </tbody>
                     </table>
@@ -175,9 +174,6 @@ DateObj = {             // make it global for easy access
 
           </div>
         </div>
-
-
-
     </div>
 </div>
 @endsection

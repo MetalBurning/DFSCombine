@@ -485,7 +485,7 @@ function Run_Single_Sim(Game, iteration) {
     var Run_Buffer = 0.1;
 
     //the higher the loop cap the more accurate & time consuming this takes
-    for(var m = 0; m < 30; m++) {
+    for(var m = 0; m < 40; m++) {
       if(Home_Score_Recalculated_AVG < Game.Home_Players[0].Vegas_Runs && Away_Score_Recalculated_AVG < Game.Away_Players[0].Vegas_Runs) {
         //need to increase home scores avg and away score average
         for(var j = 0; j < Game.Inning_Scores.length; j++) {
@@ -767,11 +767,11 @@ function Run_Single_Sim(Game, iteration) {
       }
       Total_Game_Counter++;
     });
-    Game.Home_Win_Percent = Home_Won / Total_Game_Counter;
-    Game.Away_Win_Percent = Away_Won / Total_Game_Counter;
+    Game.Home_Win_Percent = (100 * (Home_Won / Total_Game_Counter)).toFixed(2);
+    Game.Away_Win_Percent = (100 * (Away_Won / Total_Game_Counter)).toFixed(2);
 
-    Game.Home_Score_AVG = Home_Total_Runs / Total_Game_Counter;
-    Game.Away_Score_AVG = Away_Total_Runs / Total_Game_Counter;
+    Game.Home_Score_AVG = (Home_Total_Runs / Total_Game_Counter).toFixed(2);
+    Game.Away_Score_AVG = (Away_Total_Runs / Total_Game_Counter).toFixed(2);
   }
 
   //Start Main AB

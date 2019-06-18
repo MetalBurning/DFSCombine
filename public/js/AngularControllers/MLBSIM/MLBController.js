@@ -2,7 +2,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     var mlb = this;
 
     $scope.alerts = [
-      { type: 'info', msg: 'Please Upload/Load Players...', number: 1 }
+      { type: 'info', msg: 'Loading Players....', number: 1 }
     ];
 
     $scope.Positions = [];
@@ -11,7 +11,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.AllTeams = [];
     $scope.Games = [];
 
-    $scope.Number_Simulations = 15000;
+    $scope.Number_Simulations = 20000;
     $scope.League_Regression = 125;
     $scope.Recent_Hitter_Regression = 10;
     $scope.Recent_Pitcher_Regression = 15;
