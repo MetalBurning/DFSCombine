@@ -58,34 +58,34 @@ class MLBController extends Controller
         INNER JOIN teams AS tm ON tm.id = Team_ID
         INNER JOIN teams AS opp ON opp.id = Opp_ID
 
-        WHERE Date = '$Date' ");
+        WHERE Raw_Date = '$Date' ");
 
         $Past_Most_Recent_Date = DB::connection('mysql_MLB')->select(
-          "SELECT Distinct(Date) FROM mlbfd.player_hitter_fc_stats WHERE Date < '$Date' ORDER BY Date DESC LIMIT 1");
+          "SELECT Distinct(Raw_Date) FROM mlbfd.player_hitter_fc_stats WHERE Raw_Date < '$Date' ORDER BY Raw_Date DESC LIMIT 1");
 
         if(count($Past_Most_Recent_Date) == 0) {
           $Past_Date = $Date;
         }
         else {
-          $Past_Date  = date('Y-m-d', strtotime($Past_Most_Recent_Date[0]->Date));
+          $Past_Date  = date('Y-m-d', strtotime($Past_Most_Recent_Date[0]->Raw_Date));
         }
 
         $Next_Most_Recent_Date = DB::connection('mysql_MLB')->select(
-          "SELECT Distinct(Date) FROM mlbfd.player_hitter_fc_stats WHERE Date > '$Date' ORDER BY Date ASC LIMIT 1");
+          "SELECT Distinct(Raw_Date) FROM mlbfd.player_hitter_fc_stats WHERE Raw_Date > '$Date' ORDER BY Raw_Date ASC LIMIT 1");
 
         if(count($Next_Most_Recent_Date) == 0) {
           $Next_Date = $Date;
         }
         else {
-          $Next_Date  = date('Y-m-d', strtotime($Next_Most_Recent_Date[0]->Date));
+          $Next_Date  = date('Y-m-d', strtotime($Next_Most_Recent_Date[0]->Raw_Date));
         }
 
 
         if(count($Hitters_On_Date) == 0) {
 
           $Most_Recent_Date = DB::connection('mysql_MLB')->select(
-            "SELECT Distinct(Date) FROM mlbfd.player_hitter_fc_stats ORDER BY Date DESC LIMIT 1");
-          $Date = date('Y-m-d', strtotime($Most_Recent_Date[0]->Date));
+            "SELECT Distinct(Raw_Date) FROM mlbfd.player_hitter_fc_stats ORDER BY Raw_Date DESC LIMIT 1");
+          $Date = date('Y-m-d', strtotime($Most_Recent_Date[0]->Raw_Date));
 
           return redirect('/MLBSim?Date='.$Date);
 
@@ -350,13 +350,14 @@ class MLBController extends Controller
           tm.FantasyCruncherTeam AS Team,
           opp.FantasyCruncherTeam AS Opp,
           Stadium_ID,
-          v.Projected_Runs AS Projected_Runs
+          v.Projected_Runs AS Projected_Runs,
+          f.Date
           FROM player_hitter_fc_stats AS f
           INNER JOIN player_names AS pn ON pn.id = Player_ID
           INNER JOIN teams AS tm ON tm.id = f.Team_ID
           INNER JOIN teams AS opp ON opp.id = Opp_ID
-          INNER JOIN vegas AS v ON v.Team_ID = f.Team_ID AND v.Date = f.Date
-          WHERE f.Date = '$Date' ");
+          INNER JOIN vegas AS v ON v.Team_ID = f.Team_ID AND v.Date = f.Raw_Date
+          WHERE f.Raw_Date = '$Date' ");
 
         foreach ($Hitters_On_Date as &$singleHitter) {
           $newHitter = new Player();
@@ -371,6 +372,7 @@ class MLBController extends Controller
           $newHitter->Opp = $singleHitter->Opp;
           $newHitter->Stadium_ID = $singleHitter->Stadium_ID;
           $newHitter->Vegas_Runs = $singleHitter->Projected_Runs;
+          $newHitter->Date = $singleHitter->Date;
 
           $Hitter_VS_Left = DB::connection('mysql_MLB')->select(
             "SELECT
@@ -736,13 +738,14 @@ class MLBController extends Controller
           tm.FantasyCruncherTeam AS Team,
           opp.FantasyCruncherTeam AS Opp,
           Stadium_ID,
-          v.Projected_Runs AS Projected_Runs
+          v.Projected_Runs AS Projected_Runs,
+          f.Date
           FROM player_pitcher_fc_stats AS f
           INNER JOIN player_names AS pn ON pn.id = Player_ID
           INNER JOIN teams AS tm ON tm.id = Team_ID
           INNER JOIN teams AS opp ON opp.id = Opp_ID
-          INNER JOIN vegas AS v ON v.Team_ID = f.Team_ID AND v.Date = f.Date
-          WHERE f.Date = '$Date' ");
+          INNER JOIN vegas AS v ON v.Team_ID = f.Team_ID AND v.Date = f.Raw_Date
+          WHERE f.Raw_Date = '$Date' ");
 
         foreach ($Pitchers_On_Date as &$singlePitcher) {
           $newPitcher = new Player();
@@ -757,6 +760,7 @@ class MLBController extends Controller
           $newPitcher->Position = "P";
           $newPitcher->Stadium_ID = $singlePitcher->Stadium_ID;
           $newPitcher->Vegas_Runs = $singlePitcher->Projected_Runs;
+          $newPitcher->Date = $singlePitcher->Date;
 
           $Pitcher_VS_Left = DB::connection('mysql_MLB')->select(
             "SELECT

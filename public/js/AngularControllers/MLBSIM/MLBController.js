@@ -455,6 +455,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             var Game = {
               Home_Team : '',
               Away_Team : '',
+              Date : '',
               Home_Players : [],
               Away_Players : [],
               Scores : [],
@@ -469,9 +470,10 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             if(player.Home) {
               Game.Home_Team = player.Team;
               Game.Away_Team = player.Opp;
+              Game.Date = player.Date;
 
               var GameIndex = $scope.Games.findIndex(obj => {
-                return obj.Home_Team === Game.Home_Team && obj.Away_Team === Game.Away_Team
+                return obj.Home_Team === Game.Home_Team && obj.Away_Team === Game.Away_Team && obj.Date === Game.Date
               });
               if(GameIndex === -1) {
                 Game.Home_Players.push(player);
@@ -484,9 +486,10 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
             else {
               Game.Away_Team = player.Team;
               Game.Home_Team = player.Opp;
+              Game.Date = player.Date;
 
               var GameIndex = $scope.Games.findIndex(obj => {
-                return obj.Home_Team === Game.Home_Team && obj.Away_Team === Game.Away_Team
+                return obj.Home_Team === Game.Home_Team && obj.Away_Team === Game.Away_Team && obj.Date === Game.Date
               });
               if(GameIndex === -1) {
                 Game.Away_Players.push(player);
