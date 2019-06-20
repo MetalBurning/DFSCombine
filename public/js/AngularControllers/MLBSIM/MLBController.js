@@ -929,7 +929,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.Start_Simulation = function(Game) {
 
       var Game_Index = $scope.Games.findIndex(obj => {
-        return obj.Home_Team === Game.Home_Team && obj.Away_Team === Game.Away_Team
+        return obj.Home_Team === Game.Home_Team && obj.Away_Team === Game.Away_Team && obj.Date === Game.Date
       });
       $scope.Games[Game_Index].Sim_Building = true;
       $scope.worker.postMessage([[$scope.Games[Game_Index]], $scope.Number_Simulations, $scope.League_Regression, $scope.Recent_Hitter_Regression, $scope.Recent_Pitcher_Regression]);
