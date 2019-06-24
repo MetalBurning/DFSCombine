@@ -115,22 +115,26 @@ class MLBController extends Controller
       $Season_Start_2019 = date('Y-m-d', strtotime("03/01/2019"));
       $Season_Start_2018 = date('Y-m-d', strtotime("03/01/2018"));
       $Season_Start_2017 = date('Y-m-d', strtotime("03/01/2017"));
-      $Current_Season_Date = null;
-      if($Season_Start_2021 < $Date) {
-        $Current_Season_Date = $Season_Start_2021;
-      }
-      else if($Season_Start_2020 < $Date) {
-        $Current_Season_Date = $Season_Start_2020;
-      }
-      else if($Season_Start_2019 < $Date) {
-        $Current_Season_Date = $Season_Start_2019;
-      }
-      else if($Season_Start_2018 < $Date) {
-        $Current_Season_Date = $Season_Start_2018;
-      }
-      else  {
-        $Current_Season_Date = $Season_Start_2017;
-      }
+
+      $Current_Season_Date = date('Y-m-d', strtotime('-7 days', strtotime($Date)));
+
+
+      // $Current_Season_Date = null;
+      // if($Season_Start_2021 < $Date) {
+      //   $Current_Season_Date = $Season_Start_2021;
+      // }
+      // else if($Season_Start_2020 < $Date) {
+      //   $Current_Season_Date = $Season_Start_2020;
+      // }
+      // else if($Season_Start_2019 < $Date) {
+      //   $Current_Season_Date = $Season_Start_2019;
+      // }
+      // else if($Season_Start_2018 < $Date) {
+      //   $Current_Season_Date = $Season_Start_2018;
+      // }
+      // else  {
+      //   $Current_Season_Date = $Season_Start_2017;
+      // }
 
 
 
