@@ -15,12 +15,12 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.League_Regression = 125;
     $scope.Recent_Hitter_Regression = 10;
     $scope.Recent_Pitcher_Regression = 15;
+    $scope.Auto_Match_Vegas = true;
 
     var compareNumbers = function(a, b) {
         return b-a;
     }
     //Set date from global date object set in the view
-    console.log(DateObj);
     $scope.Date = new Date(DateObj.Date);
     $scope.Past_Date = new Date(DateObj.Past_Date);
     $scope.Next_Date = new Date(DateObj.Next_Date);
@@ -104,7 +104,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
           }
       }).then(function successCallBack(response) {
           response.data.forEach(function(player) {
-            console.log(player);
 
             player.Vegas_Runs = parseFloat(player.Vegas_Runs);
 
@@ -508,7 +507,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
           $scope.Set_Missing_BO();
 
       }, function errorCallBack(response) {
-          console.log(response);
           $scope.displayNewMessage("danger", "Error: Players could not be loaded.");
       });
       //clear input
@@ -567,7 +565,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
           Players.push(player);
         });
       });
-      console.log(Players);
       var modalInstance = $uibModal.open({
           templateUrl: '/js/AngularControllers/modelMLBSim.html',
           controller: 'MLBSimPlayerController',
@@ -906,6 +903,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     }
 
     $scope.Start_All_Simulations = function() {
+      $scope.Clear_Games_Sim_Data();
       // $scope.worker.postMessage([$scope.Games, $scope.Number_Simulations, $scope.League_Regression, $scope.Recent_Hitter_Regression, $scope.Recent_Pitcher_Regression]);
       // $scope.Sim_Building = true;
       for(var j = 0; j < $scope.Games.length; j++) {
@@ -917,42 +915,19 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       //   $scope.Start_Simulation(Game);
       // });
 
-      // $scope.worker.onmessage = function(event) {
-      //     console.log(event.data);
-      //     $scope.Sim_Building = false;
-      //     $scope.Games = event.data;
-      //     $scope.$apply();
-      // };
     }
 
 
     $scope.Start_Simulation = function(Game) {
-
+      $scope.Clear_Game_Sim_Data(Game);
       var Game_Index = $scope.Games.findIndex(obj => {
         return obj.Home_Team === Game.Home_Team && obj.Away_Team === Game.Away_Team && obj.Date === Game.Date
       });
       $scope.Games[Game_Index].Sim_Building = true;
       $scope.worker.postMessage([[$scope.Games[Game_Index]], $scope.Number_Simulations, $scope.League_Regression, $scope.Recent_Hitter_Regression, $scope.Recent_Pitcher_Regression]);
-      // $scope.Games.forEach(function(Game) {
-      //   $scope.Start_Simulation(Game);
-      // });
 
-
-      //var Game = {
-      //   Home_Team : '',
-      //   Away_Team : '',
-      //   Home_Players : [],
-      //   Away_Players : [],
-      //   Scores : [],
-      //   Inning_Scores : [],
-      //   Home_Score_AVG : 0,
-      //   Away_Score_AVG : 0,
-      //   Home_Win_Percent : 0,
-      //   Away_Win_Percent : 0
-      // }
 
       $scope.worker.onmessage = function(event) {
-          console.log(event.data);
           Game_Index = $scope.Games.findIndex(obj => {
             return obj.Home_Team === event.data[0].Home_Team && obj.Away_Team === event.data[0].Away_Team
           });
@@ -987,7 +962,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       //
       //     $scope.Run_Single_Sim(Game, j);
       //     //var t1 = performance.now();
-      //     //console.log("Call to Run_Single_Sim took " + (t1 - t0) + " milliseconds.")
       //     //$scope.Update_Game_Scores(Game, j);
       //
       // }
@@ -1250,7 +1224,22 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       });
       return Away_Total_Runs;
     }
-    $scope.Clear_Player_Sim_Object = function(Game) {
+    $scope.Clear_Games_Sim_Data = function() {
+      $scope.Games.forEach(function(Game) {
+        Game.Home_Players.forEach(function(player) {
+          player.Sim_Data = [];
+          player.Sim_FD_Points = 0;
+        });
+        Game.Away_Players.forEach(function(player) {
+          player.Sim_Data = [];
+          player.Sim_FD_Points = 0;
+
+        });
+        Game.Scores = [];
+        Game.Inning_Scores = [];
+      });
+    }
+    $scope.Clear_Game_Sim_Data = function(Game) {
       Game.Home_Players.forEach(function(player) {
         player.Sim_Data = [];
         player.Sim_FD_Points = 0;
@@ -1263,7 +1252,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       Game.Scores = [];
       Game.Inning_Scores = [];
     }
-
     $scope.Update_Game_Scores = function(Game, iteration) {
       var Home_Total_Runs = 0;
       Game.Home_Players.forEach(function(player) {
@@ -2374,8 +2362,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
           return 1;
         }
-        // console.log(Hitter);
-        // console.log(Pitcher);
         return 0;
       }
 
@@ -2477,7 +2463,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         Final_Z = Final_Z * Hitter.Stadium_Left_HR;
       }
 
-      //console.log("HR_NHR: "+Final_Z);
       return Final_Z;
     }
 
@@ -2670,7 +2655,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       {
           Final_Z = 0;
       }
-      //console.log("Double_NDouble: "+Final_Z);
       if(Hitter.Hand === 'L') {
         Final_Z = Final_Z * Hitter.Stadium_Right_Double;
       }
@@ -2777,7 +2761,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         Final_Z = Final_Z * Hitter.Stadium_Left_AVG;
       }
 
-      //console.log("Hit_NH_Odds: "+Final_Z);
 
       return Final_Z;
     }
@@ -2872,7 +2855,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       {
           Final_Z = 0;
       }
-      //console.log("SO_NSO_Odds: "+Final_Z);
 
       return Final_Z;
     }
@@ -2968,7 +2950,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       {
           Final_Z = 0;
       }
-      //console.log("BB_NBB_Odds: "+Final_Z);
 
       return Final_Z;
     }
@@ -3064,7 +3045,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       {
           Final_Z = 0;
       }
-      //console.log("HBP_NHBP_Odds: "+Final_Z);
 
       return Final_Z;
     }
@@ -3089,7 +3069,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       {
           Final_Z = 0;
       }
-      //console.log("Get_IP_Per_BF: "+Final_Z);
 
       return Final_Z;
     }
@@ -3114,7 +3093,6 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       {
           Final_Z = 0;
       }
-      //console.log("Get_BF_Per_Game: "+Final_Z);
 
       return Final_Z;
     }

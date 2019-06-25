@@ -1,5 +1,4 @@
 onmessage = function(Game_Data, iterations) {
-  //console.log(Game);
 
   var League_Regression = Game_Data.data[2];
   var Recent_Hitter_Regression = Game_Data.data[3];
@@ -27,7 +26,6 @@ function Start_Simulation(Game, iterations, League_Regression, Recent_Hitter_Reg
 
       Run_Single_Sim(Game, j);
       //var t1 = performance.now();
-      //console.log("Call to Run_Single_Sim took " + (t1 - t0) + " milliseconds.")
       //$scope.Update_Game_Scores(Game, j);
 
   }
@@ -35,6 +33,17 @@ function Start_Simulation(Game, iterations, League_Regression, Recent_Hitter_Reg
 
   Update_Player_Fantasy_Scores(Game, iterations);
   Update_Game_Data(Game);
+  Clear_Sim_Data(Game);
+}
+
+function Clear_Sim_Data(Game) {
+  Game.Inning_Scores = [];
+  Game.Home_Players.forEach(function(player) {
+    player.Sim_Data = [];
+  });
+  Game.Away_Players.forEach(function(player) {
+    player.Sim_Data = [];
+  });
 }
 
 
@@ -626,7 +635,6 @@ function Run_Single_Sim(Game, iteration) {
           Sim_Data.Sim_FD_Points = ((Sim_Data.Sim_R_VS_Starting_P * 3.2) + (Sim_Data.Sim_R_VS_Bullpen * 3.2) + (Sim_Data.Sim_BB * 3) + (Sim_Data.Sim_RBI * 3.5) + (Sim_Data.Sim_HBP * 3) + (Sim_Data.Sim_Single * 3)+ (Sim_Data.Sim_Double * 6)+ (Sim_Data.Sim_Triple * 9)+ (Sim_Data.Sim_HR * 12)+ (Sim_Data.Sim_SB * 6));
           Sim_Data.Sim_DK_Points = ((Sim_Data.Sim_R_VS_Starting_P * 2) + (Sim_Data.Sim_R_VS_Bullpen * 2) + (Sim_Data.Sim_BB * 2) + (Sim_Data.Sim_RBI * 2) + (Sim_Data.Sim_HBP * 2) + (Sim_Data.Sim_Single * 3)+ (Sim_Data.Sim_Double * 5)+ (Sim_Data.Sim_Triple * 8)+ (Sim_Data.Sim_HR * 10)+ (Sim_Data.Sim_SB * 5));
           Sim_Data.Sim_Y_Points = ((Sim_Data.Sim_R_VS_Starting_P * 1.9) + (Sim_Data.Sim_R_VS_Bullpen * 1.9) + (Sim_Data.Sim_BB * 2.6) + (Sim_Data.Sim_RBI * 1.9) + (Sim_Data.Sim_HBP * 2.6) + (Sim_Data.Sim_Single * 2.6)+ (Sim_Data.Sim_Double * 5.2)+ (Sim_Data.Sim_Triple * 7.8)+ (Sim_Data.Sim_HR * 10.4)+ (Sim_Data.Sim_SB * 4.2));
-
         }
         else {
           if(Game.Inning_Scores[Sim_Counter][Sim_Data.Sim_P_IP].Away_Score < 4 && Sim_Data.Sim_P_IP > 17) {
@@ -1753,8 +1761,6 @@ function Run_Single_Sim(Game, iteration) {
 
         return 1;
       }
-      // console.log(Hitter);
-      // console.log(Pitcher);
       return 0;
     }
 
@@ -1860,7 +1866,6 @@ function Run_Single_Sim(Game, iteration) {
       Final_Z = Final_Z * Hitter.Stadium_Left_HR;
     }
 
-    //console.log("HR_NHR: "+Final_Z);
     return Final_Z;
   }
 
@@ -2053,7 +2058,6 @@ function Run_Single_Sim(Game, iteration) {
     {
         Final_Z = 0;
     }
-    //console.log("Double_NDouble: "+Final_Z);
     if(Hitter.Hand === 'L') {
       Final_Z = Final_Z * Hitter.Stadium_Right_Double;
     }
@@ -2160,7 +2164,6 @@ function Run_Single_Sim(Game, iteration) {
       Final_Z = Final_Z * Hitter.Stadium_Left_AVG;
     }
 
-    //console.log("Hit_NH_Odds: "+Final_Z);
 
     return Final_Z;
   }
@@ -2255,7 +2258,6 @@ function Run_Single_Sim(Game, iteration) {
     {
         Final_Z = 0;
     }
-    //console.log("SO_NSO_Odds: "+Final_Z);
 
     return Final_Z;
   }
@@ -2351,7 +2353,6 @@ function Run_Single_Sim(Game, iteration) {
     {
         Final_Z = 0;
     }
-    //console.log("BB_NBB_Odds: "+Final_Z);
 
     return Final_Z;
   }
@@ -2447,7 +2448,6 @@ function Run_Single_Sim(Game, iteration) {
     {
         Final_Z = 0;
     }
-    //console.log("HBP_NHBP_Odds: "+Final_Z);
 
     return Final_Z;
   }
@@ -2472,7 +2472,6 @@ function Run_Single_Sim(Game, iteration) {
     {
         Final_Z = 0;
     }
-    //console.log("Get_IP_Per_BF: "+Final_Z);
 
     return Final_Z;
   }
