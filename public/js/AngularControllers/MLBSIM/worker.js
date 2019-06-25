@@ -3,16 +3,17 @@ onmessage = function(Game_Data, iterations) {
   var League_Regression = Game_Data.data[2];
   var Recent_Hitter_Regression = Game_Data.data[3];
   var Recent_Pitcher_Regression = Game_Data.data[4];
+  var Auto_Match_Vegas = Game_Data.data[5];
 
 
   Game_Data.data[0].forEach(function(Game) {
-    Start_Simulation(Game, Game_Data.data[1], League_Regression, Recent_Hitter_Regression, Recent_Pitcher_Regression);
+    Start_Simulation(Game, Game_Data.data[1], League_Regression, Recent_Hitter_Regression, Recent_Pitcher_Regression, Auto_Match_Vegas);
   });
 
   self.postMessage(Game_Data.data[0]);
 };
 
-function Start_Simulation(Game, iterations, League_Regression, Recent_Hitter_Regression, Recent_Pitcher_Regression) {
+function Start_Simulation(Game, iterations, League_Regression, Recent_Hitter_Regression, Recent_Pitcher_Regression, Auto_Match_Vegas) {
 
   Clear_Player_Sim_Object(Game);
 
@@ -29,7 +30,9 @@ function Start_Simulation(Game, iterations, League_Regression, Recent_Hitter_Reg
       //$scope.Update_Game_Scores(Game, j);
 
   }
-  Remove_Games_Out_Of_Vegas(Game);
+  if(Auto_Match_Vegas) {
+    Remove_Games_Out_Of_Vegas(Game);
+  }
 
   Update_Player_Fantasy_Scores(Game, iterations);
   Update_Game_Data(Game);
