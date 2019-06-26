@@ -15,7 +15,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.League_Regression = 125;
     $scope.Recent_Hitter_Regression = 10;
     $scope.Recent_Pitcher_Regression = 15;
-    $scope.Auto_Match_Vegas = true;
+    $scope.Auto_Match_Vegas = false;
 
     var compareNumbers = function(a, b) {
         return b-a;
@@ -924,7 +924,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
         return obj.Home_Team === Game.Home_Team && obj.Away_Team === Game.Away_Team && obj.Date === Game.Date
       });
       $scope.Games[Game_Index].Sim_Building = true;
-      $scope.worker.postMessage([[$scope.Games[Game_Index]], $scope.Number_Simulations, $scope.League_Regression, $scope.Recent_Hitter_Regression, $scope.Recent_Pitcher_Regression]);
+      $scope.worker.postMessage([[$scope.Games[Game_Index]], $scope.Number_Simulations, $scope.League_Regression, $scope.Recent_Hitter_Regression, $scope.Recent_Pitcher_Regression, $scope.Auto_Match_Vegas]);
 
 
       $scope.worker.onmessage = function(event) {
