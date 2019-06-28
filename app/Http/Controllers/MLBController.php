@@ -94,7 +94,7 @@ class MLBController extends Controller
           return redirect('/MLBSim?Date='.$Date);
         }
         else {
-          $Updated_Date = $Hitters_On_Date[0]->Updated_Date;
+          $Updated_Date = $Hitters_On_Date[0]->Updated_Date . " UTC";//need to add UTC for production mysql server
         }
 
       return view('MLBSim', ['Date' => $Date, 'Past_Date' => $Past_Date, 'Next_Date' => $Next_Date, 'Updated_Date' => $Updated_Date]);
