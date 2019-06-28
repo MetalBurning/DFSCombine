@@ -52,13 +52,15 @@ class MLBController extends Controller
         Batting_Order,
         pn.Full_Name,
         tm.FantasyCruncherTeam AS Team,
-        opp.FantasyCruncherTeam AS Opp
+        opp.FantasyCruncherTeam AS Opp,
+        Updated_Date
         FROM player_hitter_fc_stats
         INNER JOIN player_names AS pn ON pn.id = Player_ID
         INNER JOIN teams AS tm ON tm.id = Team_ID
         INNER JOIN teams AS opp ON opp.id = Opp_ID
 
         WHERE Raw_Date = '$Date' ");
+
 
         $Past_Most_Recent_Date = DB::connection('mysql_MLB')->select(
           "SELECT Distinct(Raw_Date) FROM mlbfd.player_hitter_fc_stats WHERE Raw_Date < '$Date' ORDER BY Raw_Date DESC LIMIT 1");
@@ -83,16 +85,19 @@ class MLBController extends Controller
 
         if(count($Hitters_On_Date) == 0) {
 
+          $Updated_Date = '';
+
           $Most_Recent_Date = DB::connection('mysql_MLB')->select(
             "SELECT Distinct(Raw_Date) FROM mlbfd.player_hitter_fc_stats ORDER BY Raw_Date DESC LIMIT 1");
           $Date = date('Y-m-d', strtotime($Most_Recent_Date[0]->Raw_Date));
 
           return redirect('/MLBSim?Date='.$Date);
-
+        }
+        else {
+          $Updated_Date = $Hitters_On_Date[0]->Updated_Date;
         }
 
-
-      return view('MLBSim', ['Date' => $Date, 'Past_Date' => $Past_Date, 'Next_Date' => $Next_Date]);
+      return view('MLBSim', ['Date' => $Date, 'Past_Date' => $Past_Date, 'Next_Date' => $Next_Date, 'Updated_Date' => $Updated_Date]);
     }
 
     public function MLBSimGetPlayers(Request $request)
@@ -140,7 +145,6 @@ class MLBController extends Controller
 
       if (Cache::has('All_Players_'.$Date)) {
         $Cache_Players = Cache::get('All_Players_'.$Date);
-      //  print_r($Cache_Players);
         return json_encode($Cache_Players);
       }
       else {
@@ -354,7 +358,8 @@ class MLBController extends Controller
           opp.FantasyCruncherTeam AS Opp,
           Stadium_ID,
           v.Projected_Runs AS Projected_Runs,
-          f.Date
+          f.Date,
+          Updated_Date
           FROM player_hitter_fc_stats AS f
           INNER JOIN player_names AS pn ON pn.id = Player_ID
           INNER JOIN teams AS tm ON tm.id = f.Team_ID
@@ -376,6 +381,7 @@ class MLBController extends Controller
           $newHitter->Stadium_ID = $singleHitter->Stadium_ID;
           $newHitter->Vegas_Runs = $singleHitter->Projected_Runs;
           $newHitter->Date = $singleHitter->Date;
+          $newHitter->Updated_Date = $singleHitter->Updated_Date;
 
           $Hitter_VS_Left = DB::connection('mysql_MLB')->select(
             "SELECT
@@ -742,7 +748,8 @@ class MLBController extends Controller
           opp.FantasyCruncherTeam AS Opp,
           Stadium_ID,
           v.Projected_Runs AS Projected_Runs,
-          f.Date
+          f.Date,
+          Updated_Date
           FROM player_pitcher_fc_stats AS f
           INNER JOIN player_names AS pn ON pn.id = Player_ID
           INNER JOIN teams AS tm ON tm.id = Team_ID
@@ -764,6 +771,7 @@ class MLBController extends Controller
           $newPitcher->Stadium_ID = $singlePitcher->Stadium_ID;
           $newPitcher->Vegas_Runs = $singlePitcher->Projected_Runs;
           $newPitcher->Date = $singlePitcher->Date;
+          $newPitcher->Updated_Date = $singlePitcher->Updated_Date;
 
           $Pitcher_VS_Left = DB::connection('mysql_MLB')->select(
             "SELECT

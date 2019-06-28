@@ -11,10 +11,10 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.AllTeams = [];
     $scope.Games = [];
 
-    $scope.Number_Simulations = 20000;
-    $scope.League_Regression = 125;
-    $scope.Recent_Hitter_Regression = 10;
-    $scope.Recent_Pitcher_Regression = 15;
+    $scope.Number_Simulations = 50000;
+    $scope.League_Regression = 100;
+    $scope.Recent_Hitter_Regression = 15;
+    $scope.Recent_Pitcher_Regression = 20;
     $scope.Auto_Match_Vegas = false;
 
     var compareNumbers = function(a, b) {
@@ -24,11 +24,13 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
     $scope.Date = new Date(DateObj.Date);
     $scope.Past_Date = new Date(DateObj.Past_Date);
     $scope.Next_Date = new Date(DateObj.Next_Date);
+    $scope.Updated_Date = new Date(DateObj.Updated_Date);
     $scope.Date = new Date($scope.Date.setDate($scope.Date.getDate() + 1));
     $scope.Past_Date = new Date($scope.Past_Date.setDate($scope.Past_Date.getDate() + 1));
     $scope.Next_Date = new Date($scope.Next_Date.setDate($scope.Next_Date.getDate() + 1));
-    $scope.worker = new Worker('js/AngularControllers/MLBSIM/worker.js');
 
+    $scope.worker = new Worker('js/AngularControllers/MLBSIM/worker.js');
+    console.log($scope.Updated_Date);
 
     $scope.GetStringDate = function(Date) {
       var Year = Date.getFullYear();
@@ -43,6 +45,34 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       }
       return Year+'-'+Month+'-'+Day;
     }
+
+    $scope.timeSince = function(date) {
+      var seconds = Math.floor((new Date() - date) / 1000);
+
+      var interval = Math.floor(seconds / 31536000);
+
+      if (interval > 1) {
+        return interval + " years";
+      }
+      interval = Math.floor(seconds / 2592000);
+      if (interval > 1) {
+        return interval + " months";
+      }
+      interval = Math.floor(seconds / 86400);
+      if (interval > 1) {
+        return interval + " days";
+      }
+      interval = Math.floor(seconds / 3600);
+      if (interval > 1) {
+        return interval + " hours";
+      }
+      interval = Math.floor(seconds / 60);
+      if (interval > 1) {
+        return interval + " minutes";
+      }
+      return Math.floor(seconds) + " seconds";
+    }
+
 
     $scope.displayNewMessage = function (messageType, messageContent) {
       $window.scrollTo(0, 0);

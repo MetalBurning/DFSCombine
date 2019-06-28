@@ -10,7 +10,8 @@
 DateObj = {             // make it global for easy access
     Date: '{{$Date}}',
     Next_Date: '{{$Next_Date}}',
-    Past_Date: '{{$Past_Date}}'
+    Past_Date: '{{$Past_Date}}',
+    Updated_Date: '{{$Updated_Date}}'
 };
 </script>
 
@@ -35,7 +36,7 @@ DateObj = {             // make it global for easy access
           <div class="col-xs-12">
             <div class="panel panel-default" >
               <div class="panel-heading">
-                Controls
+                Controls (Updated: @{{timeSince(Updated_Date)}} ago)
               </div>
               <div class="panel-body" >
                 <div class="col-xs-7">

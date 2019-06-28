@@ -16,7 +16,8 @@ class Player
   public $Vegas;
   public $Stadium_ID;
   public $Date;
-  
+  public $Created_Date;
+
   public $Name;
   public $Team;
   public $Opp;
