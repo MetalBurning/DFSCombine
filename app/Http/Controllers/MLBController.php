@@ -59,7 +59,7 @@ class MLBController extends Controller
         INNER JOIN teams AS tm ON tm.id = Team_ID
         INNER JOIN teams AS opp ON opp.id = Opp_ID
 
-        WHERE Raw_Date = '$Date' ");
+        WHERE Raw_Date = '$Date' ORDER BY Updated_Date DESC");
 
 
         $Past_Most_Recent_Date = DB::connection('mysql_MLB')->select(
