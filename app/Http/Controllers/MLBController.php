@@ -440,7 +440,7 @@ class MLBController extends Controller
             SUM(l.H) AS Total_H
             FROM hitter_data_lefties AS l
               INNER JOIN bdb_data AS bd ON bd.Player_ID = l.Player_ID AND bd.Date = l.Date
-              WHERE '$Recent_Hitters_Data' < l.Date AND l.Date < '$Date' AND l.Player_ID = $newHitter->Player_ID AND bd.Home = $newHitter->Home "
+              WHERE '$Current_Season_Date' < l.Date AND l.Date < '$Date' AND l.Player_ID = $newHitter->Player_ID AND bd.Home = $newHitter->Home "
             );
             $newHitter->H_PA_VS_L_Recent = $Hitter_VS_Left_Recent[0]->H_PA;
 
@@ -523,7 +523,7 @@ class MLBController extends Controller
             SUM(l.H) AS Total_H
             FROM hitter_data_righties AS l
               INNER JOIN bdb_data AS bd ON bd.Player_ID = l.Player_ID AND bd.Date = l.Date
-              WHERE '$Recent_Hitters_Data' < l.Date AND l.Date < '$Date' AND l.Player_ID = $newHitter->Player_ID AND bd.Home = $newHitter->Home  "
+              WHERE '$Current_Season_Date' < l.Date AND l.Date < '$Date' AND l.Player_ID = $newHitter->Player_ID AND bd.Home = $newHitter->Home  "
             );
             $newHitter->H_PA_VS_R_Recent = $Hitter_VS_Right_Recent[0]->H_PA;
 
