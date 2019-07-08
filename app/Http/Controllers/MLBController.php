@@ -97,6 +97,19 @@ class MLBController extends Controller
           $Updated_Date = $Hitters_On_Date[0]->Updated_Date . " UTC";//need to add UTC for production mysql server
         }
 
+        if(Cache::has('Data_Added_Time_'.$Date)) {
+          //cached data exists, check if its too old
+          $Cache_Time = Cache::get('Data_Added_Time_'.$Date);
+          $DB_Updated_Time = Carbon::parse($Updated_Date);
+
+          if($Cache_Time < $DB_Updated_Time) {
+            //reset cache
+            Cache::flush();
+          }
+        }
+
+
+
       return view('MLBSim', ['Date' => $Date, 'Past_Date' => $Past_Date, 'Next_Date' => $Next_Date, 'Updated_Date' => $Updated_Date]);
     }
 
@@ -1104,6 +1117,7 @@ class MLBController extends Controller
         $All_Players = array_merge($Final_Hitters, $Final_Pitchers);
 
         Cache::put('All_Players_'.$Date, $All_Players, Carbon::now()->addMinutes(10));
+        Cache::put('Data_Added_Time_'.$Date, Carbon::now(), Carbon::now()->addMinutes(10));
 
         return json_encode($All_Players);
       }
