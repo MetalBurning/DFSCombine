@@ -1273,10 +1273,15 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
       Game.Home_Players.forEach(function(player) {
         player.Sim_Data = [];
         player.Sim_FD_Points = 0;
+        player.Sim_DK_Points = 0;
+        player.Sim_Y_Points = 0;
+
       });
       Game.Away_Players.forEach(function(player) {
         player.Sim_Data = [];
         player.Sim_FD_Points = 0;
+        player.Sim_DK_Points = 0;
+        player.Sim_Y_Points = 0;
 
       });
       Game.Scores = [];
