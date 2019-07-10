@@ -277,14 +277,20 @@ function Run_Single_Sim(Game, iteration) {
       player.SF_PA_VS_L_Regression = ((player.SF_PA_VS_L * player.Total_PA_VS_L) + (player.SF_PA_VS_L_Recent * Recent_VS_L_PAs) + (player.SF_PA_League_VS_L * League_VS_L_PAs)) / (player.Total_PA_VS_L + Recent_VS_L_PAs + League_VS_L_PAs);
 
       var Pitcher_Base = 600;
+      if((player.Total_PA_VS_R < 100 || player.Total_PA_VS_L < 100) && player.Position === 'P') {
+        Pitcher_Base = 1;
+      }
       var Recent_Base = Pitcher_Base * (Recent_Pitcher_Regression * 0.01);
       var League_Base = parseInt(League_Regression);
+
+
       Pitcher_Base = Pitcher_Base - Recent_Base ;
       player.TBF_Regression = ((player.TBF * Pitcher_Base) + (player.TBF_Recent * Recent_Base) + (player.TBF_League_AVG * League_Base)) / (Pitcher_Base + Recent_Base + League_Base);
       player.TBF_VS_Opp_Regression = ((player.TBF_VS_Opp * Pitcher_Base) + (player.TBF_VS_Opp_Recent * Recent_Base) ) / (Pitcher_Base + Recent_Base);
 
       player.IP_TBF_Regression = ((player.IP_TBF * Pitcher_Base) + (player.IP_TBF_Recent * Recent_Base) + (player.IP_TBF_League_AVG * League_Base)) / (Pitcher_Base + Recent_Base + League_Base);
       player.IP_TBF_VS_Opp_Regression = ((player.IP_TBF_VS_Opp * Pitcher_Base) + (player.IP_TBF_VS_Opp_Recent * Recent_Base) ) / (Pitcher_Base + Recent_Base);
+
 
 
       if(player.Total_PA_VS_R < 100 && player.Position === 'P') {
@@ -380,6 +386,9 @@ function Run_Single_Sim(Game, iteration) {
       player.SF_PA_VS_L_Regression = ((player.SF_PA_VS_L * player.Total_PA_VS_L) + (player.SF_PA_VS_L_Recent * Recent_VS_L_PAs) + (player.SF_PA_League_VS_L * League_VS_L_PAs)) / (player.Total_PA_VS_L + Recent_VS_L_PAs + League_VS_L_PAs);
 
       var Pitcher_Base = 600;
+      if((player.Total_PA_VS_R < 100 || player.Total_PA_VS_L < 100) && player.Position === 'P') {
+        Pitcher_Base = 1;
+      }
       var Recent_Base = Pitcher_Base * (Recent_Pitcher_Regression * 0.01);
       var League_Base = parseInt(League_Regression);
       Pitcher_Base = Pitcher_Base - Recent_Base;

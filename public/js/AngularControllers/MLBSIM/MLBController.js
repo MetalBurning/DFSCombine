@@ -959,7 +959,7 @@ angular.module('MLBApp').controller('MLBController', ['$http', '$scope', '$filte
 
       $scope.worker.onmessage = function(event) {
           Game_Index = $scope.Games.findIndex(obj => {
-            return obj.Home_Team === event.data[0].Home_Team && obj.Away_Team === event.data[0].Away_Team
+            return obj.Home_Team === event.data[0].Home_Team && obj.Away_Team === event.data[0].Away_Team && obj.Date === event.data[0].Date
           });
           $scope.Games[Game_Index].Home_Team = event.data[0].Home_Team;
           $scope.Games[Game_Index].Away_Team = event.data[0].Away_Team;
