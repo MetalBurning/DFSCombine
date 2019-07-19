@@ -370,14 +370,12 @@ class MLBController extends Controller
           tm.FantasyCruncherTeam AS Team,
           opp.FantasyCruncherTeam AS Opp,
           Stadium_ID,
-          v.Projected_Runs AS Projected_Runs,
           f.Date,
           Updated_Date
           FROM player_hitter_fc_stats AS f
           INNER JOIN player_names AS pn ON pn.id = Player_ID
           INNER JOIN teams AS tm ON tm.id = f.Team_ID
           INNER JOIN teams AS opp ON opp.id = Opp_ID
-          INNER JOIN vegas AS v ON v.Team_ID = f.Team_ID AND v.Date = f.Raw_Date
           WHERE f.Raw_Date = '$Date' ");
 
         foreach ($Hitters_On_Date as &$singleHitter) {
@@ -392,7 +390,7 @@ class MLBController extends Controller
           $newHitter->Team = $singleHitter->Team;
           $newHitter->Opp = $singleHitter->Opp;
           $newHitter->Stadium_ID = $singleHitter->Stadium_ID;
-          $newHitter->Vegas_Runs = $singleHitter->Projected_Runs;
+          $newHitter->Vegas_Runs = -1;
           $newHitter->Date = $singleHitter->Date;
           $newHitter->Updated_Date = $singleHitter->Updated_Date;
 
@@ -760,14 +758,12 @@ class MLBController extends Controller
           tm.FantasyCruncherTeam AS Team,
           opp.FantasyCruncherTeam AS Opp,
           Stadium_ID,
-          v.Projected_Runs AS Projected_Runs,
           f.Date,
           Updated_Date
           FROM player_pitcher_fc_stats AS f
           INNER JOIN player_names AS pn ON pn.id = Player_ID
           INNER JOIN teams AS tm ON tm.id = Team_ID
           INNER JOIN teams AS opp ON opp.id = Opp_ID
-          INNER JOIN vegas AS v ON v.Team_ID = f.Team_ID AND v.Date = f.Raw_Date
           WHERE f.Raw_Date = '$Date' ");
 
         foreach ($Pitchers_On_Date as &$singlePitcher) {
@@ -782,7 +778,7 @@ class MLBController extends Controller
           $newPitcher->Opp = $singlePitcher->Opp;
           $newPitcher->Position = "P";
           $newPitcher->Stadium_ID = $singlePitcher->Stadium_ID;
-          $newPitcher->Vegas_Runs = $singlePitcher->Projected_Runs;
+          $newPitcher->Vegas_Runs = -1;
           $newPitcher->Date = $singlePitcher->Date;
           $newPitcher->Updated_Date = $singlePitcher->Updated_Date;
 
@@ -1116,8 +1112,8 @@ class MLBController extends Controller
 
         $All_Players = array_merge($Final_Hitters, $Final_Pitchers);
 
-        Cache::put('All_Players_'.$Date, $All_Players, Carbon::now()->addMinutes(10));
-        Cache::put('Data_Added_Time_'.$Date, Carbon::now(), Carbon::now()->addMinutes(10));
+        Cache::put('All_Players_'.$Date, $All_Players, Carbon::now()->addMinutes(30));
+        Cache::put('Data_Added_Time_'.$Date, Carbon::now(), Carbon::now()->addMinutes(30));
 
         return json_encode($All_Players);
       }

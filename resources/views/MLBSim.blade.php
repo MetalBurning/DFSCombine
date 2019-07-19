@@ -93,15 +93,6 @@ DateObj = {             // make it global for easy access
                       <button type="button" class="btn btn-primary" ng-click="View_Projections()">View Player Projections</button>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-xs-12">
-                      <div class="checkbox">
-                       <label>
-                         <input type="checkbox" ng-model="Auto_Match_Vegas"> Auto Match Vegas (BETA)
-                       </label>
-                     </div>
-                    </div>
-                  </div>
                 </div>
 
               </div>

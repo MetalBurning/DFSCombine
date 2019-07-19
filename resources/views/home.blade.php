@@ -5,17 +5,17 @@
   <div class="row">
     <div class="jumbotron">
       <h1>DFSCombine.com - Daily Fantasy Sports Tools</h1>
-      <p>Calculate all possible fantasy drafts from the players of your choosing.</p>
+      <p>Simulate MLB / NFL / NBA games.</p>
       <p><a class="btn btn-primary btn-lg" href="#how" role="button">Learn more</a></p>
     </div>
   </div>
   <hr class="featurette-divider">
   <div class="row featurette">
     <div class="col-sm-6">
-      <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="/images/singleDraft.png" data-holder-rendered="true">
+      <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="/images/singlegame_DFSCombine.png" data-holder-rendered="true">
     </div>
     <div class="col-sm-6">
-      <h2 class="featurette-heading"> DFS Simulator: $9.99/month</h2>
+      <h2 class="featurette-heading"> DFS Simulator: $5.99/month</h2>
         <p>Simulate games for the following sports: MLB, NFL/NBA coming soon. </p>
         <p>Supported sites: DraftKings, FanDuel, Yahoo</p>
         @if (Auth::guest())
@@ -27,7 +27,7 @@
   <hr class="featurette-divider" id="how">
   <div class="row featurette">
     <div class="col-sm-6 col-sm-push-6">
-      <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="/images/selectPlayers.png" data-holder-rendered="true">
+      <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="500x500" src="/images/controls_dfscombine.png" data-holder-rendered="true">
     </div>
     <div class="col-sm-6 col-sm-pull-6">
       <h2 class="featurette-heading" >How does it work?</h2>
