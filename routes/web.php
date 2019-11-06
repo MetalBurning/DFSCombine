@@ -78,6 +78,7 @@ Route::post('/NBA/update', 'NBAController@update');
 Route::post('/NBA/delete', 'NBAController@delete');
 
 Route::post('/NBA/updateTitle', 'NBAController@updateTitle');
+Route::get('/NBA/NBA_Tool', 'NBAController@NBA_Tool');
 
 //WNBA
 Route::get('/WNBA', 'WNBAController@WNBA');

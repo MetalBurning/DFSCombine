@@ -31,6 +31,12 @@ class NBAController extends Controller
     {
         return view('NBA');
     }
+
+    public function NBA_Tool(Request $request)
+    {
+      return view('NBA_Tool');
+    }
+
     public function loadFanDuelPlayers(Request $request)
     {
         $userID = Auth::user()->id;

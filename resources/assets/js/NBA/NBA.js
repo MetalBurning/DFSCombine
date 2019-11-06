@@ -130,6 +130,17 @@ NBAApp.filter('playersInPosition', function () {
         return totalPlayers;
     };
 })
+NBAApp.filter('playersOnTeam', function () {
+    return function (allPlayers, team) {
+        var filteredPlayers = [];
+        allPlayers.forEach(function (player) {
+            if(player.PlayerTeam === team) {
+                filteredPlayers.push(player)
+            }
+        });
+        return filteredPlayers;
+    };
+})
 NBAApp.filter('removePosition', function () {
     return function (players, position) {
         var filteredPlayers = [];
