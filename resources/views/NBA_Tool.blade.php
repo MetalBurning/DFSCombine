@@ -25,8 +25,10 @@
                                 <th>@{{singleTeam}}</th>
                                 <th>Projection</th>
                                 <th>Salary</th>
+                                <th>Over%</th>
                                 <th>Value</th>
-                                <th>Pos Ownership</th>
+                                <th>Pos Own</th>
+                                <th>Adj Own</th>
                                 <th>PG</th>
                                 <th>SG</th>
                                 <th>SF</th>
@@ -38,8 +40,14 @@
                                   <td>@{{singlePlayer.PlayerName}}</td>
                                   <td>@{{(singlePlayer.PlayerPerMinFDPoints * singlePlayer.PlayerMinutes).toFixed(2)}}</td>
                                   <td>@{{singlePlayer.PlayerSalary}}</td>
+
+                                  <td><input class="form-control actualPoints"  ng-model="singlePlayer.Over" ng-change="ModifyAdjustedOwnership(singlePlayer)"></td>
+
                                   <td style="background-color: @{{ getGradientColor(0, getMaxValue(), singlePlayer.PlayerValue) }}">@{{singlePlayer.PlayerValue.toFixed(2)}}</td>
                                   <td style="background-color: @{{ getGradientColor(0, getMaxOwnershipPosition(singlePlayer.PlayerPosition), singlePlayer.PlayerOwnership) }}">@{{singlePlayer.PlayerOwnership.toFixed(1)}}</td>
+
+                                  <td style="background-color: @{{ getGradientColor(0, getMaxAdjustedOwnershipPosition(singlePlayer.PlayerPosition), singlePlayer.AdjustedOwnership) }}">@{{singlePlayer.AdjustedOwnership.toFixed(2)}}</td>
+
 
                                   <td ng-if="singlePlayer.PlayerPosition === 'PG'" ><input class="form-control actualPoints"  ng-model="singlePlayer.PlayerMinutes" type="number" ng-change="updatePlayerMinutes(singlePlayer.PlayerName)" ></td>
                                   <td ng-if="singlePlayer.PlayerPosition !== 'PG'">-</td>
@@ -58,6 +66,8 @@
                                 </tr>
                                 <tr>
                                   <th>Position Minute Totals</th>
+                                  <th></th>
+                                  <th></th>
                                   <th></th>
                                   <th></th>
                                   <th></th>
@@ -83,6 +93,7 @@
                               <thead>
                                 <th>Name</th>
                                 <th>Projection</th>
+                                <th>Adjusted Exposure</th>
                                 <th>Minutes</th>
                                 <th>Ownership</th>
                               </thead>
@@ -90,8 +101,8 @@
                                 <tr  ng-repeat="singlePlayer in AllPlayers ">
                                   <td>@{{singlePlayer.PlayerName}}</td>
                                   <td>@{{(singlePlayer.PlayerPerMinFDPoints * singlePlayer.PlayerMinutes).toFixed(2)}}</td>
+                                  <td>@{{singlePlayer.AdjustedOwnership.toFixed(2)}}</td>
                                   <td>@{{singlePlayer.PlayerMinutes}}</td>
-
                                   <td>@{{singlePlayer.PlayerOwnership}}</td>
                                 </tr>
                               </tbody>
@@ -123,13 +134,13 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Draft #</th>
+                                            <th>Settings #</th>
                                             <th>Title</th>
-                                            <th>Draft Created Date</th>
+                                            <th>Date</th>
                                             <th>Load</th>
                                         </tr>
                                     </thead>
-                                    <tbody ng-repeat="savedSettings in savedPastSettings">
+                                    <tbody ng-repeat="savedSettings in savedPastSettings | orderBy: '-Date'">
                                       <tr>
                                         <td class="col-md-1">@{{$index+1}}</td>
                                         <td class="col-md-3"><input class="form-control" type="text" ng-model="savedSettings.Title"></td>

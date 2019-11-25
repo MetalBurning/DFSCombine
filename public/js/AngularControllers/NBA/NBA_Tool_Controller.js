@@ -43,7 +43,7 @@ angular.module('NBAApp').controller('NBAToolController', [ '$scope', '$filter', 
 
     $scope.loadProjections = function(event) {
       var file = event.target.files[0];
-
+        $scope.clearData();
         var allText = "";
         var reader = new FileReader();
         reader.onload = function (e) {
@@ -122,7 +122,9 @@ angular.module('NBAApp').controller('NBAToolController', [ '$scope', '$filter', 
                 PlayerPerMinFDPointsCopy : PlayerPerMinFDPoints,
                 PlayerPosition : "",
                 PlayerOwnership : 0,
-                PlayerSalary : 0
+                PlayerSalary : 0,
+                AdjustedOwnership : 0,
+                Over : 0
               });
             }
         }
@@ -192,6 +194,9 @@ angular.module('NBAApp').controller('NBAToolController', [ '$scope', '$filter', 
                         player.PlayerOpp = PlayerOpp;
                         player.PlayerOwnership = PlayerOwnership;
                         player.PlayerValue = (((player.PlayerPerMinFDPoints * player.PlayerMinutes) / player.PlayerSalary) * 1000);
+                        player.AdjustedOwnership = player.PlayerOwnership;
+                        player.Over = 0;
+
                     }
                     if(!$scope.AllTeams.includes(PlayerTeam)) {
                       $scope.AllTeams.push(PlayerTeam);
@@ -270,6 +275,13 @@ angular.module('NBAApp').controller('NBAToolController', [ '$scope', '$filter', 
       });
     }
 
+    $scope.clearData = function() {
+      $scope.Title = "Main";
+      $scope.Date  = new Date()
+      $scope.AllPlayers = [];
+      $scope.AllTeams = [];
+    }
+
     $scope.save = function() {
       $scope.Title = $scope.uuidv4();
       mainObj = {
@@ -285,7 +297,7 @@ angular.module('NBAApp').controller('NBAToolController', [ '$scope', '$filter', 
       $scope.savedPastSettings.forEach(function(singleSetting) {
         if(singleSetting.Title === title) {
           $scope.Title = singleSetting.Title;
-          $scope.Date = singleSetting.Date;
+          $scope.Date = Date.parse(singleSetting.Date);
           $scope.AllPlayers = singleSetting.AllPlayers;
           $scope.AllTeams = singleSetting.AllTeams;
         }
@@ -310,6 +322,29 @@ angular.module('NBAApp').controller('NBAToolController', [ '$scope', '$filter', 
       }
     }
 
+
+    $scope.ModifyAdjustedOwnership = function(player) {
+      if(player.Over === undefined || player.Over === "" || player.Over === "-") {
+        player.AdjustedOwnership = player.PlayerOwnership;
+      }
+      else {
+        // var value = 100/player.PlayerOwnership;
+        if(parseFloat(player.Over) < -100) {
+          player.Over = -100;
+        }
+        var adjustment = 100 + parseFloat(player.Over);
+        player.AdjustedOwnership = player.PlayerOwnership * (adjustment*0.01);
+      }
+    }
+    $scope.getMaxAdjustedOwnershipPosition = function(position) {
+      var currentMax = 0;
+      $scope.AllPlayers.forEach(function (player) {
+          if(player.AdjustedOwnership > currentMax && player.PlayerPosition === position) {
+            currentMax = player.AdjustedOwnership;
+          }
+      });
+      return currentMax;
+    }
     $scope.uuidv4 = function() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
