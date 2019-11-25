@@ -194,9 +194,6 @@ angular.module('NBAApp').controller('NBAToolController', [ '$scope', '$filter', 
                         player.PlayerOpp = PlayerOpp;
                         player.PlayerOwnership = PlayerOwnership;
                         player.PlayerValue = (((player.PlayerPerMinFDPoints * player.PlayerMinutes) / player.PlayerSalary) * 1000);
-                        player.AdjustedOwnership = player.PlayerOwnership;
-                        player.Over = 0;
-
                     }
                     if(!$scope.AllTeams.includes(PlayerTeam)) {
                       $scope.AllTeams.push(PlayerTeam);
