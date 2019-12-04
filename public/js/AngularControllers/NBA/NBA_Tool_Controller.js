@@ -105,6 +105,21 @@ angular.module('NBAApp').controller('NBAToolController', [ '$scope', '$filter', 
               }
 
 
+              var DoubleDouble = 0;
+              if((PlayerPoints >= 10 && PlayerRebounds >= 10) || (PlayerPoints >= 10 && PlayerAssists >= 10) || (PlayerRebounds >= 10 && PlayerAssists >= 10)) {
+                DoubleDouble = 1;
+              }
+              var TripleDouble = 0;
+              if((PlayerPoints >= 10 && PlayerRebounds >= 10 && PlayerAssists >= 10)) {
+                TripleDouble = 1;
+              }
+
+              var PlayerDKPoints = ((PlayerPoints * 1) + (PlayerThrees * 0.5)+ (PlayerRebounds * 1.25) + (PlayerAssists * 1.5) + (PlayerSteals * 2) + (PlayerBlocks * 2) + (PlayerTurnovers * -0.5) + (DoubleDouble * 1.5) + (TripleDouble * 3));
+              var PlayerPerMinDKPoints = 0;
+              if(PlayerMinutes !== 0) {
+                PlayerPerMinDKPoints = PlayerDKPoints / PlayerMinutes;
+              }
+
               $scope.AllPlayers.push({
                 PlayerName : PlayerName,
                 PlayerTeam : PlayerTeam,
@@ -120,6 +135,9 @@ angular.module('NBAApp').controller('NBAToolController', [ '$scope', '$filter', 
                 PlayerFDPoints : PlayerFDPoints,
                 PlayerPerMinFDPoints : PlayerPerMinFDPoints,
                 PlayerPerMinFDPointsCopy : PlayerPerMinFDPoints,
+                PlayerDKPoints : PlayerDKPoints,
+                PlayerPerMinDKPoints : PlayerPerMinDKPoints,
+                PlayerPerMinDKPointsCopy : PlayerPerMinDKPoints,
                 PlayerPosition : "",
                 PlayerOwnership : 0,
                 PlayerSalary : 0,
@@ -194,6 +212,12 @@ angular.module('NBAApp').controller('NBAToolController', [ '$scope', '$filter', 
                         player.PlayerOpp = PlayerOpp;
                         player.PlayerOwnership = PlayerOwnership;
                         player.PlayerValue = (((player.PlayerPerMinFDPoints * player.PlayerMinutes) / player.PlayerSalary) * 1000);
+                        if(player.AdjustedOwnership === 0) {
+                          player.AdjustedOwnership = player.PlayerOwnership
+                        }
+                        else {
+                          $scope.ModifyAdjustedOwnership(player);
+                        }
                     }
                     if(!$scope.AllTeams.includes(PlayerTeam)) {
                       $scope.AllTeams.push(PlayerTeam);
