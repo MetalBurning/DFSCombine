@@ -321,6 +321,32 @@ angular.module('NBAApp').controller('NBAToolController', [ '$scope', '$filter', 
           $scope.Date = Date.parse(singleSetting.Date);
           $scope.AllPlayers = singleSetting.AllPlayers;
           $scope.AllTeams = singleSetting.AllTeams;
+
+          //rebuild projections
+          $scope.AllPlayers.forEach(function(singlePlayer) {
+            var PlayerFDPoints = ((singlePlayer.PlayerPoints * 1) + (singlePlayer.PlayerRebounds * 1.2) + (singlePlayer.PlayerAssists * 1.5) + (singlePlayer.PlayerSteals * 3) + (singlePlayer.PlayerBlocks * 3) + (singlePlayer.PlayerTurnovers * -1));
+            var PlayerPerMinFDPoints = 0;
+            if(singlePlayer.PlayerMinutes !== 0) {
+              singlePlayer.PlayerPerMinFDPoints = PlayerFDPoints / singlePlayer.PlayerMinutes;
+            }
+
+
+            var DoubleDouble = 0;
+            if((singlePlayer.PlayerPoints >= 10 && singlePlayer.PlayerRebounds >= 10) || (singlePlayer.PlayerPoints >= 10 && singlePlayer.PlayerAssists >= 10) || (singlePlayer.PlayerRebounds >= 10 && singlePlayer.PlayerAssists >= 10)) {
+              DoubleDouble = 1;
+            }
+            var TripleDouble = 0;
+            if((singlePlayer.PlayerPoints >= 10 && singlePlayer.PlayerRebounds >= 10 && singlePlayer.PlayerAssists >= 10)) {
+              TripleDouble = 1;
+            }
+
+            var PlayerDKPoints = ((singlePlayer.PlayerPoints * 1) + (singlePlayer.PlayerThrees * 0.5)+ (singlePlayer.PlayerRebounds * 1.25) + (singlePlayer.PlayerAssists * 1.5) + (singlePlayer.PlayerSteals * 2) + (singlePlayer.PlayerBlocks * 2) + (singlePlayer.PlayerTurnovers * -0.5) + (DoubleDouble * 1.5) + (TripleDouble * 3));
+            var PlayerPerMinDKPoints = 0;
+            if(singlePlayer.PlayerMinutes !== 0) {
+              singlePlayer.PlayerPerMinDKPoints = PlayerDKPoints / singlePlayer.PlayerMinutes;
+            }
+          });
+
         }
       });
       // for(var singleSetting in $scope.savedPastSettings) {
