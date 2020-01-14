@@ -80,6 +80,8 @@ Route::post('/NBA/delete', 'NBAController@delete');
 Route::post('/NBA/updateTitle', 'NBAController@updateTitle');
 Route::get('/NBA/NBA_Tool', 'NBAController@NBA_Tool');
 
+Route::get('/NBA/Test', 'NBAController@Test');
+
 //WNBA
 Route::get('/WNBA', 'WNBAController@WNBA');
 Route::post('/WNBA/loadFanDuelPlayers', 'WNBAController@loadFanDuelPlayers');

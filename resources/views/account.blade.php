@@ -57,7 +57,7 @@
             </div>
 
             <div class="row">
-              @if (!Auth::user()->subscribed('main'))
+              @if (Auth::user()->subscribed('main'))
                 <div class="col-xs-12" >
                   <form action="/startSubscription" method="POST">
                     <script
@@ -73,12 +73,14 @@
                   </form>
                 </div>
               @endif
+              @if (Auth::user()->subscribed('main'))
               <div class="col-xs-12" ng-if="_User.subscribed && !_User.onGracePeriod">
                 <button type="button" class="btn btn-danger" ng-disabled="disabledSubButton" ng-click="cancelSubscription()" >Cancel Subscription</button>
               </div>
               <div class="col-xs-12" ng-if="_User.subscribed && _User.onGracePeriod">
                 <button type="button" class="btn btn-success" ng-disabled="disabledSubButton" ng-click="resumeSubscription()" >Resume Subscription</button>
               </div>
+              @endif
             </div>
           </div>
         </div>

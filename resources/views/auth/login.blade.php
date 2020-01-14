@@ -14,8 +14,11 @@
                             <label for="email" class="col-md-4 control-label">E-Mail Address</label>
 
                             <div class="col-md-6">
+                              @if ($errors->has('email'))
                                 <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required autofocus>
-
+                              @else
+                                <input id="email" type="email" class="form-control" name="email" value="defaultUser@defaultUser.com" required autofocus>
+                              @endif
                                 @if ($errors->has('email'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('email') }}</strong>
@@ -28,8 +31,11 @@
                             <label for="password" class="col-md-4 control-label">Password</label>
 
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password" required>
-
+                                @if ($errors->has('password'))
+                                  <input id="password" type="password" class="form-control" name="password" required>
+                                @else
+                                  <input id="password" type="password" class="form-control" name="password" value="defaultUser$D5z0%" required>
+                                @endif
                                 @if ($errors->has('password'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('password') }}</strong>
@@ -53,7 +59,11 @@
                                 <button type="submit" class="btn btn-primary">
                                     Login
                                 </button>
-
+                                @if (session('status'))
+                                    <div class="alert alert-success">
+                                        {{ session('status') }}
+                                    </div>
+                                @endif
                                 <a class="btn btn-link" href="{{ url('/password/reset') }}">
                                     Forgot Your Password?
                                 </a>
