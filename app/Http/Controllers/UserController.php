@@ -53,8 +53,8 @@ class UserController extends Controller
       ]);
       $id = Auth::user()->id;
       $user = User::find($id);
-      $user->fill(array('email' => $request['email']));
-      $user->save();
+      // $user->fill(array('email' => $request['email']));
+      // $user->save();
       return Response::json($user->email);
     }
     public function startSubscription(Request $request) {
