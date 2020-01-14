@@ -14,9 +14,9 @@
 
     <div class="col-xs-12">
       <h2 class="featurette-heading"> Discontinued</h2>
-        <p>This project grew from a love of Full-Stack development and eventually I found many other similar projects that were already to market and were projects that I loved using.</p>
-        <p>Therefor, I have decided to stop working on this website and persue other ventures.</p>
-        <p>The following links will guide you to some of the projects that exist on this website. You need to login to interact with many of them, I've added a default user that has credentials automatically filled, just hit the login button. </p>
+        <p>This project grew from a love of Full-Stack development and fantasy sports data. Eventually I found other similar projects that were already to market and were projects that I loved using.</p>
+        <p>Therefore, I have decided to stop working on this website and pursue other ventures.</p>
+        <p>The following links will guide you to some of the projects that exist on this website. You need to login to interact with them, I've added a default user that has credentials automatically filled, just hit the login button. </p>
         <ul>
           <li>MLB Simulator: <a href="/MLBSim?Date=2019-07-07">http://dfscombine.com/MLBSim?Date=2019-07-07</a></li>
           <li>Fanduel NBA brute-force optimizer (2018-2019 rules): <a href="/NBA">http://dfscombine.com/NBA</a></li>
@@ -27,6 +27,7 @@
           <li><a href="https://github.com/MetalBurning">https://github.com/MetalBurning</a></li>
           <li><a href="https://www.linkedin.com/in/jacob-r/">https://www.linkedin.com/in/jacob-r/</a></li>
         </ul>
+        <p>This project was a blast to work on and I learned a ton from the iterations I put into it. I hope you enjoy it! </p>
     </div>
   </div>
   <hr class="featurette-divider">
