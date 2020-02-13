@@ -57,8 +57,8 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
                       <li><a href="/MLBSim?Date={{date('Y-m-d')}}">MLBSIM</a></li>
-                      <li><a href="{{ url('/') }}">NFLSIM - Comming Soon</a></li>
-                      <li><a href="{{ url('/') }}">NBASIM - Comming Soon</a></li>
+                      <li><a href="{{ url('/') }}">NFLSIM - Coming Soon</a></li>
+                      <li><a href="{{ url('/') }}">NBASIM - Coming Soon</a></li>
                     </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
